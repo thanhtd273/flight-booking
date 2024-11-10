@@ -2,7 +2,19 @@ package com.group5.flight.booking.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.group5.flight.booking.core.DataStatus;
-import jakarta.persistence.*;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Transient;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.CascadeType;
+
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -10,7 +22,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 
 @Entity
 @Table(name = "_user")
@@ -47,11 +65,11 @@ public class User implements UserDetails, Serializable {
     @Column(name = "otp_expiration_time")
     private Date otpExpirationTime;
 
-    @Column(name = "create_date")
-    private Date createDate;
+    @Column(name = "created_at")
+    private Date createdAt;
 
-    @Column(name = "modified_date")
-    private Date modifiedDate;
+    @Column(name = "updated_at")
+    private Date updatedAt;
 
     @Column(name = "status")
     private Integer status;
