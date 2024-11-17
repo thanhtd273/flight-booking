@@ -71,4 +71,24 @@ public class AuthServiceImpl implements AuthService {
     public User signUp(UserInfo userInfo) throws LogicException {
         return userService.createUser(userInfo);
     }
+    
+    //quoc added
+     @Override
+    public ErrorCode forgotPassword(UserInfo userInfo) throws LogicException {
+        User user = userService.findByEmail(userInfo.getEmail());
+        if (ObjectUtils.isEmpty(user)) {
+            throw new LogicException(ErrorCode.EMAIL_NOT_FOUND);
+        }
+        int otpCode = generateOtp();
+        user.setOtpCode(otpCode);
+        user.setOtpExpirationTime(new Date(System.currentTimeMillis() + 5 * 60 * 1000)); 
+        userService.updateUser(user.getId(), userService.getUserInfo(user)); 
+        emailService.sendOtpEmail(userInfo.getEmail(), otpCode); 
+        return ErrorCode.SUCCESS;
+    }
+
+    
+    private int generateOtp() {
+        return (int) (Math.random() * 900000) + 100000; 
+    }
 }

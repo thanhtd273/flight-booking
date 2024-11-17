@@ -8,15 +8,42 @@ import java.util.Map;
 import java.util.function.Function;
 
 public interface JwtService {
-    String extractEmail(String token);
+    //String extractEmail(String token);
 
     <T> T extractClaim(String token, Function<Claims, T> claimsSolver);
 
-    String generateToken(User user);
+   private final String SECRET_KEY = "your-secret-key"; 
 
-    String generateToken(Map<String, Object> extraClaims, User user);
+    public String generateToken(User user) {
+        return Jwts.builder()
+                .setSubject(user.getEmail())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // expired after 1 hour.
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .compact();
+    }
 
-    ErrorCode validateToken(String token, User user);
+    public String extractEmail(String token) {
+        return Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
 
-    int getExpireIn();
+    public ErrorCode validateToken(String token, User user) {
+        try {
+            Claims claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+            if (!claims.getSubject().equals(user.getEmail())) {
+                return ErrorCode.INVALID_TOKEN;
+            }
+            return ErrorCode.SUCCESS;
+        } catch (Exception e) {
+            return ErrorCode.INVALID_TOKEN;
+        }
+    }
+
+    public int getExpireIn() {
+        return 3600; // Token expired.
+    }
 }

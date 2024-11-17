@@ -13,4 +13,8 @@ public interface AuthService {
     LoginSessionInfo login(HttpServletRequest request, Credential credential) throws LogicException;
 
     User signUp(UserInfo userInfo) throws LogicException;
+ErrorCode forgotPassword(UserInfo userInfo) throws LogicException;  //quoc added
+	ErrorCode changePassword(UpdatePasswordInfo updatePasswordInfo) throws LogicException;  //quoc added
+
+    ErrorCode verifyPasswordResetCode(OTPInfo passwordResetInfo) throws LogicException;  //quoc added
 }
