@@ -95,7 +95,9 @@ CREATE TABLE flight (
     updated_at TIMESTAMP,
     status INTEGER,
     constraint flight_plane_fk foreign key (plane_id) references plane(plane_id),
-    constraint flight_airline_fk foreign key (airline_id) references airline(airline_id)
+    constraint flight_airline_fk foreign key (airline_id) references airline(airline_id),
+    constraint flight_from_airport_fk foreign key (from_airport_id) references airport(airport_id),
+    constraint flight_to_airport_fk foreign key (to_airport_id) references airport(airport_id)
 );
 
 CREATE TABLE seat (

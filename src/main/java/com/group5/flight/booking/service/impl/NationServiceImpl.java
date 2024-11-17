@@ -11,12 +11,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class NationServiceImpl implements NationService {
 
     private final NationDao nationDao;
+
+    @Override
+    public List<Nation> getAllNations() {
+        return nationDao.findByDeletedFalse();
+    }
 
     @Override
     public Nation findByNationId(Long nationId) {
@@ -60,5 +66,13 @@ public class NationServiceImpl implements NationService {
         nation.setDeleted(true);
         nation.setUpdatedAt(new Date(System.currentTimeMillis()));
         return ErrorCode.SUCCESS;
+    }
+
+    @Override
+    public NationInfo getNationInfo(Long nationId) {
+        Nation nation = findByNationId(nationId);
+        if (ObjectUtils.isEmpty(nation)) return null;
+
+        return new NationInfo(nation.getName());
     }
 }

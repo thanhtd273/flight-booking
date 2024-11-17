@@ -13,17 +13,12 @@ import java.util.List;
 @Getter
 @Setter
 public class SearchCriteria {
-    private Float minPrice;
 
-    private Float maxPrice;
+    private DataRange<Float> priceRange;
 
-    private Date departureFrom;
+    private DataRange<Date> departureRanges;
 
-    private Date departureTo;
-
-    private Date arrivalFrom;
-
-    private Date arrivalTo;
+    private DataRange<Date> arrivalRanges;
 
     private List<Long> airlineIds;
 }

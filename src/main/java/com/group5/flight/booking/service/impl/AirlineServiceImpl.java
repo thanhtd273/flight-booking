@@ -11,12 +11,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class AirlineServiceImpl implements AirlineService {
 
     private final AirlineDao airlineDao;
+
+    @Override
+    public List<Airline> getAllAirlines() {
+        return airlineDao.findByDeletedFalse();
+    }
 
     @Override
     public Airline findByAirlineId(Long airlineId) {
@@ -69,5 +75,16 @@ public class AirlineServiceImpl implements AirlineService {
         airline.setDeleted(true);
         airline.setUpdatedAt(new Date(System.currentTimeMillis()));
         return ErrorCode.SUCCESS;
+    }
+
+    @Override
+    public AirlineInfo getAirlineInfo(Long airlineId) {
+        Airline airline = findByAirlineId(airlineId);
+        if (ObjectUtils.isEmpty(airline)) return null;
+
+        AirlineInfo airlineInfo = new AirlineInfo();
+        airlineInfo.setName(airline.getName());
+        airlineInfo.setCode(airlineInfo.getCode());
+        return airlineInfo;
     }
 }

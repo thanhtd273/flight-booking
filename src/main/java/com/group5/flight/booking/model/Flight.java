@@ -15,7 +15,7 @@ public class Flight {
     private Long flightId;
 
     @Column(name = "plane_id")
-    private String planeId;
+    private Long planeId;
 
     @Column(name = "airline_id")
     private Long airlineId;
