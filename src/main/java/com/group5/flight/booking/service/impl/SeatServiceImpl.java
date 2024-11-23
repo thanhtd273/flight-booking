@@ -64,8 +64,9 @@ public class SeatServiceImpl implements SeatService {
         Seat seat = new Seat();
         seat.setClassLevel(seatInfo.getSeatClass());
         seat.setSeatCode(seatInfo.getSeatNumber());
-        seat.setAvailable(true); // Assuming new seats are available by default
-
+        seat.setAvailable(true);
+        seat.setCreatedAt(Timestamp.from(Instant.now()));
+        seat.setUpdatedAt(Timestamp.from(Instant.now()));
         logger.info("Creating new seat {} for flight {}", seatInfo.getSeatNumber(), flight.getId());
         return seatDao.save(seat);
     }
