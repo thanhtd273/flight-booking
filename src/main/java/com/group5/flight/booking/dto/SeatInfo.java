@@ -1,18 +1,63 @@
 package com.group5.flight.booking.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.group5.flight.booking.model.Seat;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@AllArgsConstructor
+import java.math.BigDecimal;
+
+@Data
 @NoArgsConstructor
-@Getter
-@Setter
+@AllArgsConstructor
 public class SeatInfo {
-    private String classLevel;
 
-    private String seatCode;
+    @JsonProperty("flight_id")
+    private Long flightId;
 
-    private Boolean available;
+    @JsonProperty("seat_number")
+    private String seatNumber;
+
+    @JsonProperty("seat_class")
+    private String seatClass;
+
+    @JsonProperty("price")
+    private BigDecimal price;
+
+    @JsonProperty("status")
+    private String status;
+
+    public SeatInfo(Long flightId, String seatNumber, String seatClass, BigDecimal price) {
+        this.flightId = flightId;
+        this.seatNumber = seatNumber;
+        this.seatClass = seatClass;
+        this.price = price;
+    }
+
+    public static SeatInfo fromEntity(Seat seat) {
+        if (seat == null || seat.getFlight() == null) {
+            throw new IllegalArgumentException("Seat or Flight cannot be null");
+        }
+        return new SeatInfo(
+            seat.getFlight().getId(),
+            seat.getSeatNumber(),
+            seat.getSeatClass(),
+            seat.getPrice(),
+            seat.getStatus()
+        );
+    }
+
+    public boolean isValidForCreate() {
+        return flightId != null &&
+               seatNumber != null && !seatNumber.trim().isEmpty() &&
+               seatClass != null && !seatClass.trim().isEmpty() &&
+               price != null && price.compareTo(BigDecimal.ZERO) > 0;
+    }
+
+    public boolean isValidForUpdate() {
+        return flightId != null &&
+               seatNumber != null && !seatNumber.trim().isEmpty();
+    }
 }
