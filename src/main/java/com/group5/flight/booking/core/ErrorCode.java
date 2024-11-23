@@ -27,7 +27,12 @@ public enum ErrorCode {
     NOT_FOUND_MENU(404, "Menu does not exist"),
     NOT_FOUND_CATEGORY(404, "Category does not exist"),
     NOT_FOUND_MEETING(404, "Meeting does not exist"),
-    CALL_API_ERROR(404, "Call external API fail");
+    CALL_API_ERROR(404, "Call external API fail"),
+    //The added
+    NOT_FOUND(404, "Resource not found"),
+    DUPLICATE(400, "Resource already exists"),
+    INVALID_INPUT(400, "Invalid input data"),
+    INVALID_OPERATION(400, "Invalid operation");
 
     final int value;
     final String message;
