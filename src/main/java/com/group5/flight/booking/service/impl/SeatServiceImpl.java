@@ -14,9 +14,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
-import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.Instant;
 
 @Service
 @Transactional
@@ -49,25 +51,29 @@ public class SeatServiceImpl implements SeatService {
 
     @Override
     public Seat create(SeatInfo seatInfo) throws LogicException {
+        if (ObjectUtils.isEmpty(seatInfo)) {
+            throw new LogicException(ErrorCode.DATA_NULL, "Seat info is empty");
+        }
         validateSeatInfo(seatInfo);
-        
+
         Flight flight = flightDao.findById(seatInfo.getFlightId())
             .orElseThrow(() -> new LogicException(ErrorCode.NOT_FOUND, 
                 String.format("Flight with id %d not found", seatInfo.getFlightId())));
 
-        if (seatDao.existsByFlightAndSeatNumber(flight, seatInfo.getSeatNumber())) {
+        if (seatDao.existsByFlightAndSeatNumber(flight, seatInfo.getSeatCode())) {
             throw new LogicException(ErrorCode.DUPLICATE, 
                 String.format("Seat number %s already exists in flight %d", 
-                    seatInfo.getSeatNumber(), flight.getFlightId()));
+                    seatInfo.getSeatCode(), seatInfo.getFlightId()));
         }
 
         Seat seat = new Seat();
-        seat.setClassLevel(seatInfo.getSeatClass());
-        seat.setSeatCode(seatInfo.getSeatNumber());
-        seat.setAvailable(true);
+        seat.setClassLevel(seatInfo.getClassLevel());
+        seat.setSeatCode(seatInfo.getSeatCode());
+        seat.setAvailable(seatInfo.getAvailable() != null ? seatInfo.getAvailable() : true);
         seat.setCreatedAt(Timestamp.from(Instant.now()));
         seat.setUpdatedAt(Timestamp.from(Instant.now()));
-        logger.info("Creating new seat {} for flight {}", seatInfo.getSeatNumber(), flight.getId());
+
+        logger.info("Creating new seat {} for flight {}", seatInfo.getSeatCode(), seatInfo.getFlightId());
         return seatDao.save(seat);
     }
 
@@ -80,19 +86,20 @@ public class SeatServiceImpl implements SeatService {
             .orElseThrow(() -> new LogicException(ErrorCode.NOT_FOUND, 
                 String.format("Flight with id %d not found", seatInfo.getFlightId())));
 
-        if (!existingSeat.getSeatCode().equals(seatInfo.getSeatNumber()) &&
-            seatDao.existsByFlightAndSeatNumber(flight, seatInfo.getSeatNumber())) {
+        if (!existingSeat.getSeatCode().equals(seatInfo.getSeatCode()) &&
+            seatDao.existsByFlightAndSeatNumber(flight, seatInfo.getSeatCode())) {
             throw new LogicException(ErrorCode.DUPLICATE, 
                 String.format("Seat number %s already exists in flight %d", 
-                    seatInfo.getSeatNumber(), flight.getId()));
+                    seatInfo.getSeatCode(), seatInfo.getFlightId()));
         }
 
-        existingSeat.setClassLevel(seatInfo.getSeatClass());
-        existingSeat.setSeatCode(seatInfo.getSeatNumber());
+        existingSeat.setClassLevel(seatInfo.getClassLevel());
+        existingSeat.setSeatCode(seatInfo.getSeatCode());
 
-        logger.info("Updating seat {} for flight {}", id, flight.getId());
+        logger.info("Updating seat {} for flight {}", id, seatInfo.getFlightId());
         return seatDao.save(existingSeat);
     }
+    
 
     @Override
     public ErrorCode delete(Long id) throws LogicException {
@@ -126,10 +133,10 @@ public class SeatServiceImpl implements SeatService {
         if (info.getFlightId() == null) {
             throw new LogicException(ErrorCode.INVALID_INPUT, "Flight ID is required");
         }
-        if (!StringUtils.hasText(info.getSeatNumber())) {
-            throw new LogicException(ErrorCode.INVALID_INPUT, "Seat number is required");
+        if (!StringUtils.hasText(info.getSeatCode())) {
+            throw new LogicException(ErrorCode.INVALID_INPUT, "Seat code is required");
         }
-        if (!StringUtils.hasText(info.getSeatClass())) {
+        if (!StringUtils.hasText(info.getClassLevel())) {
             throw new LogicException(ErrorCode.INVALID_INPUT, "Seat class is required");
         }
     }
