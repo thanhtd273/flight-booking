@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
@@ -36,24 +35,10 @@ public class SeatInfo {
         this.price = price;
     }
 
-    public static SeatInfo fromEntity(Seat seat) {
-        if (seat == null || seat.getFlight() == null) {
-            throw new IllegalArgumentException("Seat or Flight cannot be null");
-        }
-        return new SeatInfo(
-            seat.getFlight().getId(),
-            seat.getSeatNumber(),
-            seat.getSeatClass(),
-            seat.getPrice(),
-            seat.getStatus()
-        );
-    }
-
     public boolean isValidForCreate() {
         return flightId != null &&
                seatNumber != null && !seatNumber.trim().isEmpty() &&
                seatClass != null && !seatClass.trim().isEmpty() &&
-               price != null && price.compareTo(BigDecimal.ZERO) > 0;
     }
 
     public boolean isValidForUpdate() {
