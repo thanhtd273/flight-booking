@@ -34,18 +34,6 @@ public class SeatController {
         }
     }
 
-    @GetMapping("/flights/{flightId}")
-    public APIResponse getSeatsByFlight(@PathVariable Long flightId, HttpServletResponse response) {
-        long start = System.currentTimeMillis();
-        try {
-            List<Seat> seats = seatService.getSeatsByFlight(flightId);
-            return new APIResponse(ErrorCode.SUCCESS, "", System.currentTimeMillis() - start, seats);
-        } catch (Exception e) {
-            logger.error("Call API GET /seats/flights/{} failed, error: {}", flightId, e.getMessage());
-            return ExceptionHandler.handleException(response, e, start);
-        }
-    }
-
     @GetMapping("/{id}")
     public APIResponse getSeatById(@PathVariable Long id, HttpServletResponse response) {
         long start = System.currentTimeMillis();
@@ -71,21 +59,6 @@ public class SeatController {
         }
     }
 
-    @PutMapping("/{id}")
-    public APIResponse updateSeat(@PathVariable Long id, 
-                                @RequestBody SeatInfo seatInfo, 
-                                HttpServletResponse response) {
-        long start = System.currentTimeMillis();
-        try {
-            Seat seat = seatService.update(id, seatInfo);
-            return new APIResponse(ErrorCode.SUCCESS, "Seat updated successfully", 
-                System.currentTimeMillis() - start, seat);
-        } catch (Exception e) {
-            logger.error("Call API PUT /seats/{} failed, error: {}", id, e.getMessage());
-            return ExceptionHandler.handleException(response, e, start);
-        }
-    }
-
     @DeleteMapping("/{id}")
     public APIResponse deleteSeat(@PathVariable Long id, HttpServletResponse response) {
         long start = System.currentTimeMillis();
@@ -98,4 +71,17 @@ public class SeatController {
             return ExceptionHandler.handleException(response, e, start);
         }
     }
+
+    @GetMapping("/flights/{flightId}/available")
+    public APIResponse getAvailableSeatsByFlight(@PathVariable Long flightId, HttpServletResponse response) {
+        long start = System.currentTimeMillis();
+        try {
+            List<Seat> availableSeats = seatService.getAvailableSeatsByFlight(flightId);
+            return new APIResponse(ErrorCode.SUCCESS, "", System.currentTimeMillis() - start, availableSeats);
+        } catch (Exception e) {
+            logger.error("Call API GET /seats/flights/{}/available failed, error: {}", flightId, e.getMessage());
+            return ExceptionHandler.handleException(response, e, start);
+        }
+    }
+
 }

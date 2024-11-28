@@ -10,17 +10,16 @@ import java.util.List;
 public interface SeatService {
     List<Seat> getAllSeats();
     
-    List<Seat> getSeatsByFlight(Long flightId) throws LogicException;
-
     Seat findBySeatId(Long id) throws LogicException;
     
     Seat create(SeatInfo seatInfo) throws LogicException;
-
-    Seat update(Long id, SeatInfo seatInfo) throws LogicException;
 
     ErrorCode delete(Long id) throws LogicException;
 
     List<Seat> getAvailableSeats();
 
     void updateSeatStatus(Long id, Boolean isAvailable) throws LogicException;
+
+    List<Seat> getAvailableSeatsByFlight(Long flightId) throws LogicException;
+
 }
