@@ -32,7 +32,12 @@ public enum ErrorCode {
     NOT_FOUND(404, "Resource not found"),
     DUPLICATE(400, "Resource already exists"),
     INVALID_INPUT(400, "Invalid input data"),
-    INVALID_OPERATION(400, "Invalid operation");
+    INVALID_OPERATION(400, "Invalid operation"),
+    PASSENGER_NOT_FOUND(404, "Passenger not found"),
+    INVALID_PASSENGER_INFO(400, "Invalid passenger information"),
+    SEAT_NOT_FOUND(404, "Seat not found"),
+    INVALID_SEAT_INFO(400, "Invalid seat information"),
+    SEAT_ALREADY_BOOKED(400, "Seat is already booked");
 
     final int value;
     final String message;

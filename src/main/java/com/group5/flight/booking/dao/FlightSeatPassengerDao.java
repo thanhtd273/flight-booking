@@ -25,4 +25,7 @@ public interface FlightSeatPassengerDao extends JpaRepository<FlightSeatPassenge
        "WHERE fsp.flightId = :flightId AND s.available = true")
     List<Seat> findAvailableSeatsByFlight(@Param("flightId") Long flightId);
 
+    @Query("SELECT fsp FROM FlightSeatPassenger fsp WHERE fsp.seat = :seat")
+    Optional<FlightSeatPassenger> findBySeat(@Param("seat") Seat seat);
+
 }

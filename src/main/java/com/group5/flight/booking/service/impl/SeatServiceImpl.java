@@ -6,6 +6,7 @@ import com.group5.flight.booking.dao.SeatDao;
 import com.group5.flight.booking.dao.FlightSeatPassengerDao;
 import com.group5.flight.booking.dto.SeatInfo;
 import com.group5.flight.booking.model.Seat;
+import com.group5.flight.booking.model.FlightSeatPassenger;
 import com.group5.flight.booking.service.SeatService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -80,12 +81,6 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
-    public List<Seat> getAvailableSeats() {
-        logger.info("Fetching available seats");
-        return seatDao.findByStatus("AVAILABLE");
-    }
-
-    @Override
     public void updateSeatStatus(Long id, Boolean isAvailable) throws LogicException {
         logger.info("Updating seat status for ID: {} to {}", id, isAvailable);
         Seat seat = findBySeatId(id);
@@ -100,13 +95,29 @@ public class SeatServiceImpl implements SeatService {
         }
         return flightSeatPassengerDao.findAvailableSeatsByFlight(flightId);
     }
-    
+
+    @Override
+    public SeatInfo getSeatInfo(Long id) throws LogicException {
+        logger.info("Getting seat info for ID: {}", id);
+        Seat seat = findBySeatId(id);
+
+
+        return new SeatInfo(
+            seat.getSeatId(),
+            seat.getClassLevel(),
+            seat.getSeatCode(),
+            seat.getAvailable(),
+            new java.sql.Timestamp(seat.getCreatedAt().getTime()),
+            new java.sql.Timestamp(seat.getUpdatedAt().getTime())
+        );
+    }
+
     private void validateSeatInfo(SeatInfo info) throws LogicException {
         if (!StringUtils.hasText(info.getSeatCode())) {
-            throw new LogicException(ErrorCode.INVALID_INPUT, "Seat code is required");
+            throw new LogicException(ErrorCode.INVALID_SEAT_INFO, "Seat code is required");
         }
         if (!StringUtils.hasText(info.getClassLevel())) {
-            throw new LogicException(ErrorCode.INVALID_INPUT, "Seat class is required");
+            throw new LogicException(ErrorCode.INVALID_SEAT_INFO, "Seat class is required");
         }
     }
 }

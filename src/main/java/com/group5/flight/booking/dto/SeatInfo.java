@@ -1,19 +1,18 @@
 package com.group5.flight.booking.dto;
 
+import java.sql.Timestamp;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.util.ObjectUtils;
-
-import java.sql.Timestamp;
+import org.springframework.util.StringUtils;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 public class SeatInfo {
-    private Long flightId;
     private Long seatId;
     private String classLevel;
     private String seatCode;
@@ -21,14 +20,4 @@ public class SeatInfo {
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
-    public boolean isValidForCreate() {
-        return !ObjectUtils.isEmpty(classLevel) && !classLevel.trim().isEmpty() &&
-               !ObjectUtils.isEmpty(seatCode) && !seatCode.trim().isEmpty();
-    }
-
-    public boolean isValidForUpdate() {
-        return !ObjectUtils.isEmpty(seatId) &&
-               !ObjectUtils.isEmpty(classLevel) && !classLevel.trim().isEmpty() &&
-               !ObjectUtils.isEmpty(seatCode) && !seatCode.trim().isEmpty();
-    }
 }

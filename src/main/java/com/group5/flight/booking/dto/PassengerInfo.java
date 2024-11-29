@@ -1,5 +1,7 @@
 package com.group5.flight.booking.dto;
 
+import java.util.Date;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +16,7 @@ public class PassengerInfo {
 
     private String lastName;
 
-    private String birthday;
+    private Date birthday;
 
     private String gender;
 

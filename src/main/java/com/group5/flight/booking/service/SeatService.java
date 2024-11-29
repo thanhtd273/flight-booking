@@ -16,10 +16,10 @@ public interface SeatService {
 
     ErrorCode delete(Long id) throws LogicException;
 
-    List<Seat> getAvailableSeats();
-
     void updateSeatStatus(Long id, Boolean isAvailable) throws LogicException;
 
     List<Seat> getAvailableSeatsByFlight(Long flightId) throws LogicException;
+
+    SeatInfo getSeatInfo(Long id) throws LogicException;
 
 }
