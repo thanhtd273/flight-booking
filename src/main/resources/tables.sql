@@ -119,12 +119,13 @@ CREATE TABLE passenger (
     gender VARCHAR(10),
     phone VARCHAR(15) NOT NULL,
     email VARCHAR(75) NOT NULL,
-
+    nationality_id BIGINT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
     deleted BOOLEAN,
 
-    constraint passenger_user_fk foreign key (user_id) references _user(user_id)
+    constraint passenger_user_fk foreign key (user_id) references _user(user_id),
+    constraint passenger_nationality_fk foreign key (nationality_id) references nation(nation_id)
 );
 
 CREATE TABLE flight_seat_passenger (
@@ -135,6 +136,18 @@ CREATE TABLE flight_seat_passenger (
     CONSTRAINT flight_fk FOREIGN KEY (flight_id) REFERENCES flight(flight_id),
     CONSTRAINT seat_fk FOREIGN KEY (seat_id) REFERENCES seat(seat_id),
     CONSTRAINT passenger_fk FOREIGN KEY (passenger_id) REFERENCES passenger(passenger_id)
+);
+
+CREATE TABLE contact (
+    contact_id BIGSERIAL PRIMARY KEY,
+    first_name VARCHAR(75),
+    last_name VARCHAR(75),
+    phone VARCHAR(15) NOT NULL,
+    email VARCHAR(75) NOT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP,
+    deleted BOOLEAN
 );
 
 

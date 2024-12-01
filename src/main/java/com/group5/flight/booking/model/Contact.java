@@ -6,16 +6,13 @@ import lombok.Data;
 import java.util.Date;
 
 @Entity
-@Table(name = "passenger")
+@Table(name = "contact")
 @Data
-public class Passenger {
+public class Contact {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "passenger_id")
-    private Long passengerId;
-
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "contact_id")
+    private Long contactId;
 
     @Column(name = "first_name")
     private String firstName;
@@ -23,20 +20,11 @@ public class Passenger {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "birthday")
-    private Date birthday;
-
-    @Column(name = "gender")
-    private String gender;
-
     @Column(name = "phone")
     private String phone;
 
     @Column(name = "email")
     private String email;
-
-    @Column(name = "nationality_id")
-    private Long nationalityId;
 
     @Column(name = "created_at")
     private Date createdAt;
