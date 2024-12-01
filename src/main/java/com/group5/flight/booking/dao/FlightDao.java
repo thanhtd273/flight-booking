@@ -17,6 +17,9 @@ public interface FlightDao extends JpaRepository<Flight, Long> {
     @Query("SELECT u FROM Flight u " +
             "WHERE u.fromAirportId = :fromAirportId " +
             "AND u.toAirportId = :toAirportId " +
-            "AND DATE(u.departureDate) = :departureDate")
-    List<Flight> findByFromAndToAirportAndDepartureDate(@Param("fromAirportId") Long fromAirportId, Long toAirportId, Date departureDate);
+            "AND DATE(u.departureDate) = DATE(:departureDate) " +
+            "ORDER BY u.departureDate")
+    List<Flight> findByFromAndToAirportAndDepartureDate(@Param("fromAirportId") Long fromAirportId,
+                                                        @Param("toAirportId") Long toAirportId,
+                                                        @Param("departureDate") Date departureDate);
 }

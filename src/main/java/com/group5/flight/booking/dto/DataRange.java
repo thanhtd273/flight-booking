@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DataRange <T>{
-    T from;
+    T start;
 
-    T to;
+    T end;
 }

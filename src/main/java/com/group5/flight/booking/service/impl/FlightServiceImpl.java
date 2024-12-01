@@ -12,11 +12,18 @@ import com.group5.flight.booking.service.AirportService;
 import com.group5.flight.booking.service.FlightService;
 import com.group5.flight.booking.service.PlaneService;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.Query;
+import org.apache.commons.lang3.Range;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -33,6 +40,10 @@ public class FlightServiceImpl implements FlightService {
     private final AirlineService airlineService;
 
     private final EntityManager entityManager;
+
+    private static final String DEPARTURE_DATE = "departureDate";
+
+    private static final String RETURN_DATE = "returnDate";
 
     @Override
     public Flight create(FlightInfo flightInfo) throws LogicException {
@@ -86,11 +97,84 @@ public class FlightServiceImpl implements FlightService {
     }
 
     @Override
-    public List<Flight> search(SearchCriteria searchCriteria) throws LogicException {
-        String hql = "SELECT u FROM Flight u ORDER BY createdAt";
-        Query<Flight> query = (Query<Flight>) entityManager.createQuery(hql);
+    public List<FlightInfo> filter(SearchCriteria searchCriteria)
+            throws LogicException {
+        Long fromAirportId = searchCriteria.getFromAirportId();
+        Long toAirportId = searchCriteria.getToAirportId();
+        Date departureDate = searchCriteria.getDepartureDate();
 
-        return query.getResultList();
+        if (ObjectUtils.isEmpty(searchCriteria.getFromAirportId())
+                || ObjectUtils.isEmpty(searchCriteria.getToAirportId())
+                || ObjectUtils.isEmpty(searchCriteria.getDepartureDate())) {
+            throw new LogicException(ErrorCode.BLANK_FIELD);
+        }
+        if (ObjectUtils.isEmpty(searchCriteria)) {
+            return findFlight(fromAirportId, toAirportId, departureDate);
+        }
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Flight> criteriaQuery = criteriaBuilder.createQuery(Flight.class);
+        Root<Flight> root = criteriaQuery.from(Flight.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        predicates.add(criteriaBuilder.equal(root.get("fromAirportId"), fromAirportId));
+        predicates.add(criteriaBuilder.equal(root.get("toAirportId"), toAirportId));
+
+        Date startOfDay = setHourAndMinuteAndSecond(departureDate, LocalTime.of(0, 0, 0));
+        Date endOfDay = setHourAndMinute(departureDate, LocalTime.of(23, 59, 59));
+
+        predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(DEPARTURE_DATE), startOfDay));
+        predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get(DEPARTURE_DATE), endOfDay));
+        
+        Float minPrice = searchCriteria.getMinPrice();
+        if (!ObjectUtils.isEmpty(minPrice))
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("basePrice"), minPrice));
+
+
+        Float maxPrice = searchCriteria.getMaxPrice();
+        if (!ObjectUtils.isEmpty(maxPrice))
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("basePrice"), maxPrice));
+
+        List<Range<LocalTime>> departureTimes = searchCriteria.getDepartureTimes();
+        if (!ObjectUtils.isEmpty(departureTimes)) {
+            departureTimes.forEach(range -> {
+                        if (!ObjectUtils.isEmpty(range.getMinimum())) {
+                            Date startDate = setHourAndMinute(departureDate, range.getMinimum());
+                            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(DEPARTURE_DATE), startDate));
+                        }
+                        if (!ObjectUtils.isEmpty(range.getMaximum())) {
+                            Date startDate = setHourAndMinute(departureDate, range.getMaximum());
+                            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get(DEPARTURE_DATE), startDate));
+                        }
+                    }
+            );
+        }
+
+        List<Range<LocalTime>> arrivalTimes = searchCriteria.getArrivalTimes();
+        if (!ObjectUtils.isEmpty(arrivalTimes)) {
+            arrivalTimes.forEach(range -> {
+                        if (!ObjectUtils.isEmpty(range.getMinimum())) {
+                            Date startDate = setHourAndMinute(departureDate, range.getMinimum());
+                            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(RETURN_DATE), startDate));
+                        }
+                        if (!ObjectUtils.isEmpty(range.getMaximum())) {
+                            Date startDate = setHourAndMinute(departureDate, range.getMaximum());
+                            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get(RETURN_DATE), startDate));
+                        }
+                    }
+            );
+        }
+
+
+        List<Long> airlineIds = searchCriteria.getAirlineIds();
+        if (!ObjectUtils.isEmpty(airlineIds)) {
+            predicates.add(root.get("airlineId").in(airlineIds));
+        }
+
+        criteriaQuery.select(root).where(predicates.toArray(new Predicate[0]));
+        List<Flight> flights = entityManager.createQuery(criteriaQuery).getResultList();
+
+        return flights.stream().map(this::getFlightInfo).toList();
     }
 
     @Override
@@ -114,5 +198,22 @@ public class FlightServiceImpl implements FlightService {
 
         return new FlightInfo(planeId, planeInfo, airlineId, airlineInfo, fromAirportId, fromAirport, toAirportId, toAirport,
                 flight.getDepartureDate(), flight.getReturnDate(), flight.getBasePrice(), flight.getNumOfPassengers());
+    }
+
+    private Date setHourAndMinute(Date date, LocalTime time) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, time.getHour());
+        calendar.set(Calendar.MINUTE, time.getMinute());
+        return calendar.getTime();
+    }
+
+    private Date setHourAndMinuteAndSecond(Date date, LocalTime time) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, time.getHour());
+        calendar.set(Calendar.MINUTE, time.getMinute());
+        calendar.set(Calendar.SECOND, time.getSecond());
+        return calendar.getTime();
     }
 }
