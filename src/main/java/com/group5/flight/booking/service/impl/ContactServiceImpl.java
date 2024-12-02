@@ -35,7 +35,7 @@ public class ContactServiceImpl implements ContactService {
         if (ObjectUtils.isEmpty(contactInfo)) {
             throw new LogicException(ErrorCode.DATA_NULL);
         }
-        if (!contactInfo.isAllNotNull()) {
+        if (!contactInfo.isAllNull()) {
             throw new LogicException(ErrorCode.BLANK_FIELD, "Contact's info is required");
         }
 

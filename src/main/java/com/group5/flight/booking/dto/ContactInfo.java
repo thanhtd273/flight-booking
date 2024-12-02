@@ -21,7 +21,7 @@ public class ContactInfo {
 
     private String email;
 
-    public boolean isAllNotNull() {
+    public boolean isAllNull() {
         return ObjectUtils.isEmpty(firstName) && ObjectUtils.isEmpty(lastName)
                 && ObjectUtils.isEmpty(phone) && ObjectUtils.isEmpty(email);
     }
