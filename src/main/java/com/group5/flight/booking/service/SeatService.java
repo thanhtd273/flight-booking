@@ -13,13 +13,12 @@ public interface SeatService {
     Seat findBySeatId(Long id) throws LogicException;
     
     Seat create(SeatInfo seatInfo) throws LogicException;
+    
+    Seat update(Long id, SeatInfo seatInfo) throws LogicException;
 
     ErrorCode delete(Long id) throws LogicException;
-
-    void updateSeatStatus(Long id, Boolean isAvailable) throws LogicException;
 
     List<Seat> getAvailableSeatsByFlight(Long flightId) throws LogicException;
 
     SeatInfo getSeatInfo(Long id) throws LogicException;
-
-}
+} 

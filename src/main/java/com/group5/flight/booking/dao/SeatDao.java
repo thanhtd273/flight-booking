@@ -9,12 +9,9 @@ import java.util.Optional;
 
 @Repository
 public interface SeatDao extends JpaRepository<Seat, Long> {
-
-    List<Seat> findByStatus(String status);
-
-    Optional<Seat> findBySeatId(Long seatId);
-
-    List<Seat> findByClassLevel(String classLevel);
-
-    boolean existsBySeatCode(String seatCode);
+    List<Seat> findByDeletedFalse();
+    
+    Optional<Seat> findBySeatIdAndDeletedFalse(Long seatId);
+    
+    List<Seat> findByAvailableTrueAndSeatIdIn(List<Long> seatIds);
 }

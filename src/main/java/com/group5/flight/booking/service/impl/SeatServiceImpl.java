@@ -9,115 +9,115 @@ import com.group5.flight.booking.model.Seat;
 import com.group5.flight.booking.model.FlightSeatPassenger;
 import com.group5.flight.booking.service.SeatService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
-import java.sql.Timestamp;
-import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class SeatServiceImpl implements SeatService {
 
-    private static final Logger logger = LoggerFactory.getLogger(SeatServiceImpl.class);
     private final SeatDao seatDao;
     private final FlightSeatPassengerDao flightSeatPassengerDao;
 
     @Override
     public List<Seat> getAllSeats() {
-        logger.info("Fetching all seats");
-        return seatDao.findAll();
+        return seatDao.findByDeletedFalse();
     }
 
     @Override
     public Seat findBySeatId(Long id) throws LogicException {
-        logger.info("Finding seat by ID: {}", id);
-        return seatDao.findById(id)
-            .orElseThrow(() -> new LogicException(ErrorCode.NOT_FOUND, 
-                String.format("Seat with id %d not found", id)));
+        return seatDao.findBySeatIdAndDeletedFalse(id)
+                      .orElseThrow(() -> new LogicException(ErrorCode.DATA_NULL, "Seat not found"));
     }
 
     @Override
     public Seat create(SeatInfo seatInfo) throws LogicException {
-        logger.info("Creating seat with info: {}", seatInfo);
         if (ObjectUtils.isEmpty(seatInfo)) {
-            throw new LogicException(ErrorCode.DATA_NULL, "Seat info is empty");
+            throw new LogicException(ErrorCode.DATA_NULL);
         }
-        validateSeatInfo(seatInfo);
-
-        if (seatDao.existsBySeatCode(seatInfo.getSeatCode())) {
-            throw new LogicException(ErrorCode.DUPLICATE, 
-                String.format("Seat code %s already exists", seatInfo.getSeatCode()));
+        if (!seatInfo.isAllNotNull()) {
+            throw new LogicException(ErrorCode.BLANK_FIELD, "Seat's info is required");
         }
 
         Seat seat = new Seat();
         seat.setClassLevel(seatInfo.getClassLevel());
         seat.setSeatCode(seatInfo.getSeatCode());
         seat.setAvailable(seatInfo.getAvailable() != null ? seatInfo.getAvailable() : true);
-        seat.setCreatedAt(Timestamp.from(Instant.now()));
-        seat.setUpdatedAt(Timestamp.from(Instant.now()));
+        seat.setCreatedAt(new Date(System.currentTimeMillis()));
 
+        seat = seatDao.save(seat);
+
+        if (!ObjectUtils.isEmpty(seatInfo.getFlightId()) && !ObjectUtils.isEmpty(seatInfo.getPassengerId())) {
+            FlightSeatPassenger fsp = new FlightSeatPassenger();
+            fsp.setFlightId(seatInfo.getFlightId());
+            fsp.setSeatId(seat.getSeatId());
+            fsp.setPassengerId(seatInfo.getPassengerId());
+            flightSeatPassengerDao.save(fsp);
+        }
+
+        return seat;
+    }
+
+    @Override
+    public Seat update(Long id, SeatInfo seatInfo) throws LogicException {
+        if (ObjectUtils.isEmpty(seatInfo)) {
+            throw new LogicException(ErrorCode.DATA_NULL, "Seat info is null");
+        }
+        Seat seat = findBySeatId(id);
+        if (ObjectUtils.isEmpty(seat)) {
+            throw new LogicException(ErrorCode.DATA_NULL, "Seat does not exist");
+        }
+        if (!ObjectUtils.isEmpty(seatInfo.getClassLevel())) {
+            seat.setClassLevel(seatInfo.getClassLevel());
+        }
+        if (!ObjectUtils.isEmpty(seatInfo.getSeatCode())) {
+            seat.setSeatCode(seatInfo.getSeatCode());
+        }
+        if (seatInfo.getAvailable() != null) {
+            seat.setAvailable(seatInfo.getAvailable());
+        }
+
+        seat.setUpdatedAt(new Date(System.currentTimeMillis()));
         return seatDao.save(seat);
     }
 
     @Override
     public ErrorCode delete(Long id) throws LogicException {
-        logger.info("Deleting seat with ID: {}", id);
         Seat seat = findBySeatId(id);
+        if (ObjectUtils.isEmpty(seat))
+            return ErrorCode.DATA_NULL;
         
-        if (!seat.getAvailable()) {
-            throw new LogicException(ErrorCode.INVALID_OPERATION, 
-                "Cannot delete a seat that is not available");
+        List<FlightSeatPassenger> assignments = flightSeatPassengerDao.findBySeatId(id);
+        if (!assignments.isEmpty()) {
+            throw new LogicException(ErrorCode.FAIL, "Cannot delete seat that is assigned to flights");
         }
 
-        seatDao.delete(seat);
+        seat.setUpdatedAt(new Date(System.currentTimeMillis()));
+        seatDao.save(seat);
         return ErrorCode.SUCCESS;
     }
 
     @Override
-    public void updateSeatStatus(Long id, Boolean isAvailable) throws LogicException {
-        logger.info("Updating seat status for ID: {} to {}", id, isAvailable);
-        Seat seat = findBySeatId(id);
-        seat.setAvailable(isAvailable);
-        seatDao.save(seat);
-    }
-
-    @Override
     public List<Seat> getAvailableSeatsByFlight(Long flightId) throws LogicException {
-        if (flightId == null) {
-            throw new LogicException(ErrorCode.INVALID_INPUT, "Flight ID cannot be null");
-        }
-        return flightSeatPassengerDao.findAvailableSeatsByFlight(flightId);
+        return flightSeatPassengerDao.findAvailableSeatsByFlightId(flightId);
     }
 
     @Override
-    public SeatInfo getSeatInfo(Long id) throws LogicException {
-        logger.info("Getting seat info for ID: {}", id);
-        Seat seat = findBySeatId(id);
-
-
-        return new SeatInfo(
-            seat.getSeatId(),
-            seat.getClassLevel(),
-            seat.getSeatCode(),
-            seat.getAvailable(),
-            new java.sql.Timestamp(seat.getCreatedAt().getTime()),
-            new java.sql.Timestamp(seat.getUpdatedAt().getTime())
-        );
-    }
-
-    private void validateSeatInfo(SeatInfo info) throws LogicException {
-        if (!StringUtils.hasText(info.getSeatCode())) {
-            throw new LogicException(ErrorCode.INVALID_SEAT_INFO, "Seat code is required");
+    public SeatInfo getSeatInfo(Long seatId) throws LogicException {
+        Seat seat = findBySeatId(seatId);
+        if (ObjectUtils.isEmpty(seat)) {
+            throw new LogicException(ErrorCode.DATA_NULL, "Seat not found");
         }
-        if (!StringUtils.hasText(info.getClassLevel())) {
-            throw new LogicException(ErrorCode.INVALID_SEAT_INFO, "Seat class is required");
-        }
+
+        SeatInfo seatInfo = new SeatInfo();
+        seatInfo.setClassLevel(seat.getClassLevel());
+        seatInfo.setSeatCode(seat.getSeatCode());
+        seatInfo.setAvailable(seat.getAvailable());
+
+        return seatInfo;
     }
 }
+
