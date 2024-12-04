@@ -39,8 +39,13 @@ public class PassengerController {
     public APIResponse findByPassengerId(@PathVariable(value = "passengerId") Long passengerId, HttpServletResponse response) {
         long start = System.currentTimeMillis();
         try {
+<<<<<<< HEAD
             PassengerInfo passengerInfo = passengerService.getPassengerInfo(passengerId);
             return new APIResponse(ErrorCode.SUCCESS, "", System.currentTimeMillis() - start, passengerInfo);
+=======
+            Passenger passenger = passengerService.findByPassengerId(passengerId);
+            return new APIResponse(ErrorCode.SUCCESS, "", System.currentTimeMillis() - start, passenger);
+>>>>>>> main
         } catch (Exception e) {
             logger.error("Call API GET /api/v1/flight-booking/passengers/{} failed, error: {}", passengerId, e.getMessage());
             return ExceptionHandler.handleException(response, e, start);
@@ -61,7 +66,11 @@ public class PassengerController {
 
     @PutMapping(value = "/{passengerId}/update")
     public APIResponse updatePassenger(@PathVariable(value = "passengerId") Long passengerId, @RequestBody PassengerInfo passengerInfo,
+<<<<<<< HEAD
                                        HttpServletResponse response) {
+=======
+                                   HttpServletResponse response) {
+>>>>>>> main
         long start = System.currentTimeMillis();
         try {
             Passenger passenger = passengerService.update(passengerId, passengerInfo);

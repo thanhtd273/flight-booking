@@ -11,34 +11,31 @@ import lombok.Data;
 import java.util.Date;
 
 @Entity
-@Table(name= "flight")
+@Table(name = "booking")
 @Data
-public class Flight {
+public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "booking_id")
+    private Long bookingId;
+
+    @Column(name = "booking_code")
+    private Long bookingCode;
+
     @Column(name = "flight_id")
     private Long flightId;
 
-    @Column(name = "plane_id")
-    private Long planeId;
+    @Column(name = "contact_id")
+    private Long contactId;
 
-    @Column(name = "airline_id")
-    private Long airlineId;
+    @Column(name = "invoice_id")
+    private Long invoiceId;
 
-    @Column(name = "from_airport_id")
-    private Long fromAirportId;
+    @Column(name = "payment_method")
+    private String paymentMethod;
 
-    @Column(name = "to_airport_id")
-    private Long toAirportId;
-
-    @Column(name = "departure_date")
-    private Date departureDate;
-
-    @Column(name = "return_date")
-    private Date returnDate;
-
-    @Column(name = "base_price")
-    private Float basePrice;
+    @Column(name = "ticket_number")
+    private Long ticketNumber;
 
     @Column(name = "num_of_passengers")
     private Integer numOfPassengers;

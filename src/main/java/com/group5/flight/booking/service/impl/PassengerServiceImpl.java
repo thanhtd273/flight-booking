@@ -3,86 +3,80 @@ package com.group5.flight.booking.service.impl;
 import com.group5.flight.booking.core.ErrorCode;
 import com.group5.flight.booking.core.exception.LogicException;
 import com.group5.flight.booking.dao.PassengerDao;
+import com.group5.flight.booking.dto.NationInfo;
 import com.group5.flight.booking.dto.PassengerInfo;
+import com.group5.flight.booking.model.Nation;
 import com.group5.flight.booking.model.Passenger;
+import com.group5.flight.booking.service.NationService;
 import com.group5.flight.booking.service.PassengerService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class PassengerServiceImpl implements PassengerService {
 
-    private static final Logger logger = LoggerFactory.getLogger(PassengerServiceImpl.class);
     private final PassengerDao passengerDao;
+
+    private final NationService nationService;
 
     @Override
     public List<Passenger> getAllPassengers() {
-        logger.info("Fetching all passengers");
-        return passengerDao.findAll();
+        return passengerDao.findByDeletedFalse();
     }
 
     @Override
-    public Passenger findByPassengerId(Long id) throws LogicException {
-        logger.info("Finding passenger by ID: {}", id);
-        return passengerDao.findById(id)
-            .orElseThrow(() -> new LogicException(ErrorCode.PASSENGER_NOT_FOUND, 
-                String.format("Passenger with id %d not found", id)));
+    public Passenger findByPassengerId(Long passengerId) {
+        return passengerDao.findByPassengerIdAndDeletedFalse(passengerId);
     }
 
     @Override
     public Passenger create(PassengerInfo passengerInfo) throws LogicException {
-        logger.info("Creating passenger with info: {}", passengerInfo);
         if (ObjectUtils.isEmpty(passengerInfo)) {
-            throw new LogicException(ErrorCode.DATA_NULL, "Passenger info is empty");
+            throw new LogicException(ErrorCode.DATA_NULL);
         }
-        validatePassengerInfo(passengerInfo);
+        if (!passengerInfo.isAllNotNull()) {
+            throw new LogicException(ErrorCode.BLANK_FIELD, "Passenger's info is required");
+        }
+
+        Nation nation = nationService.findByNationId(passengerInfo.getNationalityId());
+        if (ObjectUtils.isEmpty(nation)) {
+            throw new LogicException(ErrorCode.DATA_NULL, "Nation does not found");
+        }
 
         Passenger passenger = new Passenger();
+        passenger.setNationalityId(passengerInfo.getNationalityId());
         passenger.setFirstName(passengerInfo.getFirstName());
         passenger.setLastName(passengerInfo.getLastName());
-        passenger.setEmail(passengerInfo.getEmail());
-        passenger.setPhone(passengerInfo.getPhone());
         passenger.setBirthday(passengerInfo.getBirthday());
         passenger.setGender(passengerInfo.getGender());
-        passenger.setCreatedAt(new java.util.Date());
-        passenger.setUpdatedAt(new java.util.Date());
+        passenger.setPhone(passengerInfo.getPhone());
+        passenger.setEmail(passengerInfo.getEmail());
+
+        passenger.setCreatedAt(new Date(System.currentTimeMillis()));
+        passenger.setDeleted(false);
 
         return passengerDao.save(passenger);
     }
 
     @Override
-    public ErrorCode delete(Long id) throws LogicException {
-        logger.info("Deleting passenger with ID: {}", id);
-        Passenger passenger = findByPassengerId(id);
-        passengerDao.deleteById(id);
-        return ErrorCode.SUCCESS;
-    }
-
-    @Override
-    public Passenger update(Long id, PassengerInfo passengerInfo) throws LogicException {
-        logger.info("Updating passenger with ID: {}", id);
-        Passenger passenger = findByPassengerId(id);
+    public Passenger update(Long passengerId, PassengerInfo passengerInfo) throws LogicException {
+        if (ObjectUtils.isEmpty(passengerInfo)) {
+            throw new LogicException(ErrorCode.DATA_NULL, "Passenger info is null");
+        }
+        Passenger passenger = findByPassengerId(passengerId);
+        if (ObjectUtils.isEmpty(passenger)) {
+            throw new LogicException(ErrorCode.DATA_NULL, "Passenger does not exist");
+        }
         if (!ObjectUtils.isEmpty(passengerInfo.getFirstName())) {
             passenger.setFirstName(passengerInfo.getFirstName());
         }
         if (!ObjectUtils.isEmpty(passengerInfo.getLastName())) {
             passenger.setLastName(passengerInfo.getLastName());
-        }
-        if (!ObjectUtils.isEmpty(passengerInfo.getEmail())) {
-            passenger.setEmail(passengerInfo.getEmail());
-        }
-        if (!ObjectUtils.isEmpty(passengerInfo.getPhone())) {
-            passenger.setPhone(passengerInfo.getPhone());
         }
         if (!ObjectUtils.isEmpty(passengerInfo.getBirthday())) {
             passenger.setBirthday(passengerInfo.getBirthday());
@@ -90,43 +84,43 @@ public class PassengerServiceImpl implements PassengerService {
         if (!ObjectUtils.isEmpty(passengerInfo.getGender())) {
             passenger.setGender(passengerInfo.getGender());
         }
-        passenger.setUpdatedAt(new java.util.Date());
+        if (!ObjectUtils.isEmpty(passengerInfo.getPhone())) {
+            passenger.setPhone(passengerInfo.getPhone());
+        }
+        if (!ObjectUtils.isEmpty(passengerInfo.getEmail())) {
+            passenger.setEmail(passengerInfo.getEmail());
+        }
 
+        passenger.setUpdatedAt(new Date(System.currentTimeMillis()));
         return passengerDao.save(passenger);
     }
 
     @Override
-    public List<Passenger> findByLastName(String lastName) {
-        logger.info("Finding passengers by last name: {}", lastName);
-        return passengerDao.findByLastName(lastName);
+    public ErrorCode delete(Long passengerId) {
+        Passenger passenger = findByPassengerId(passengerId);
+        if (ObjectUtils.isEmpty(passenger))
+            return ErrorCode.DATA_NULL;
+        passenger.setDeleted(true);
+        passenger.setUpdatedAt(new Date(System.currentTimeMillis()));
+        return ErrorCode.SUCCESS;
     }
 
     @Override
-    public PassengerInfo getPassengerInfo(Long id) throws LogicException {
-        logger.info("Getting passenger info for ID: {}", id);
-        Passenger passenger = findByPassengerId(id);
-        return new PassengerInfo(
-            passenger.getFirstName(),
-            passenger.getLastName(),
-            passenger.getBirthday(),
-            passenger.getGender(),
-            passenger.getEmail(),
-            passenger.getPhone()
-        );
-    }
+    public PassengerInfo getPassengerInfo(Long passengerId) {
+        Passenger passenger = findByPassengerId(passengerId);
+        if (ObjectUtils.isEmpty(passenger)) return null;
 
-    private void validatePassengerInfo(PassengerInfo info) throws LogicException {
-        if (!StringUtils.hasText(info.getFirstName())) {
-            throw new LogicException(ErrorCode.INVALID_PASSENGER_INFO, "First name is required");
-        }
-        if (!StringUtils.hasText(info.getLastName())) {
-            throw new LogicException(ErrorCode.INVALID_PASSENGER_INFO, "Last name is required");
-        }
-        if (!StringUtils.hasText(info.getEmail())) {
-            throw new LogicException(ErrorCode.INVALID_PASSENGER_INFO, "Email is required");
-        }
-        if (!StringUtils.hasText(info.getPhone())) {
-            throw new LogicException(ErrorCode.INVALID_PASSENGER_INFO, "Phone number is required");
-        }
+        PassengerInfo passengerInfo = new PassengerInfo();
+        passengerInfo.setFirstName(passenger.getFirstName());
+        passengerInfo.setLastName(passenger.getLastName());
+        passengerInfo.setBirthday(passenger.getBirthday());
+        passengerInfo.setEmail(passenger.getEmail());
+        passengerInfo.setPhone(passenger.getPhone());
+
+        NationInfo nationInfo = nationService.getNationInfo(passengerInfo.getNationalityId());
+        passengerInfo.setNationalityId(passenger.getNationalityId());
+        passengerInfo.setNation(nationInfo);
+
+        return passengerInfo;
     }
 }

@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.util.ObjectUtils;
+
+import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,4 +26,13 @@ public class PassengerInfo {
     private String email;
 
     private String phone;
+
+    private Long nationalityId;
+
+    private NationInfo nation;
+    public boolean isAllNotNull() {
+        return ObjectUtils.isEmpty(firstName) && ObjectUtils.isEmpty(lastName)
+                && ObjectUtils.isEmpty(birthday) && ObjectUtils.isEmpty(gender)
+                && ObjectUtils.isEmpty(email) && ObjectUtils.isEmpty(phone) && ObjectUtils.isEmpty(nationalityId);
+    }
 }

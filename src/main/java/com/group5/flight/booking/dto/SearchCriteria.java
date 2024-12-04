@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.Range;
 
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
@@ -13,12 +15,19 @@ import java.util.List;
 @Getter
 @Setter
 public class SearchCriteria {
+    private Long fromAirportId;
 
-    private DataRange<Float> priceRange;
+    private Long toAirportId;
 
-    private DataRange<Date> departureRanges;
+    private Date departureDate;
 
-    private DataRange<Date> arrivalRanges;
+    private Float minPrice;
+
+    private Float maxPrice;
+
+    private List<Range<LocalTime>> departureTimes;
+
+    private List<Range<LocalTime>> arrivalTimes;
 
     private List<Long> airlineIds;
 }

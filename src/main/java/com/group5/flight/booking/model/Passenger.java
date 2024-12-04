@@ -1,6 +1,11 @@
 package com.group5.flight.booking.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 import java.util.Date;
@@ -34,6 +39,9 @@ public class Passenger {
 
     @Column(name = "email")
     private String email;
+
+    @Column(name = "nationality_id")
+    private Long nationalityId;
 
     @Column(name = "created_at")
     private Date createdAt;

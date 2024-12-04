@@ -119,12 +119,13 @@ CREATE TABLE passenger (
     gender VARCHAR(10),
     phone VARCHAR(15) NOT NULL,
     email VARCHAR(75) NOT NULL,
-
+    nationality_id BIGINT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
     deleted BOOLEAN,
 
-    constraint passenger_user_fk foreign key (user_id) references _user(user_id)
+    constraint passenger_user_fk foreign key (user_id) references _user(user_id),
+    constraint passenger_nationality_fk foreign key (nationality_id) references nation(nation_id)
 );
 
 CREATE TABLE flight_seat_passenger (
@@ -137,11 +138,55 @@ CREATE TABLE flight_seat_passenger (
     CONSTRAINT passenger_fk FOREIGN KEY (passenger_id) REFERENCES passenger(passenger_id)
 );
 
+CREATE TABLE contact (
+    contact_id BIGSERIAL PRIMARY KEY,
+    first_name VARCHAR(75),
+    last_name VARCHAR(75),
+    phone VARCHAR(15) NOT NULL,
+    email VARCHAR(75) NOT NULL,
 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP,
+    deleted BOOLEAN
+);
 
+CREATE TABLE invoice (
+    invoice_id BIGSERIAL PRIMARY KEY,
+    contact_id BIGINT NOT NULL,
+    total_amount FLOAT NOT NULL,
 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP,
+    deleted BOOLEAN,
+    CONSTRAINT contact_fk FOREIGN KEY (contact_id) REFERENCES contact(contact_id)
+);
 
+CREATE TABLE booking (
+    booking_id BIGSERIAL PRIMARY KEY,
+    booking_code BIGINT,
+    flight_id BIGINT NOT NULL,
+    contact_id BIGINT,
+    invoice_id BIGINT,
+    payment_method VARCHAR(10),
+    ticket_number BIGINT,
+    num_of_passengers INTEGER NOT NULL,
 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP,
+    status INTEGER,
+
+    CONSTRAINT flight_fk FOREIGN KEY (flight_id) REFERENCEs flight(flight_id),
+    CONSTRAINT contact_fk FOREIGN KEY (contact_id) REFERENCES contact(contact_id),
+    CONSTRAINT invoice_fk FOREIGN KEY (invoice_id) REFERENCES invoice(invoice_fk)
+);
+
+CREATE TABLE booking_passenger (
+    id BIGSERIAL PRIMARY KEY,
+    passenger_id BIGINT NOT NULL,
+    booking_id BIGINT NOT NULL,
+    CONSTRAINT passenger_fk FOREIGN KEY (passenger_id) REFERENCES passenger(passenger_id),
+    CONSTRAINT booking_fk FOREIGN KEY (booking_id) REFERENCES booking(booking_id)
+);
 
 
 

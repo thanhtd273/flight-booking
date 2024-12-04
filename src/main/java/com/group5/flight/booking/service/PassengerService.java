@@ -11,16 +11,14 @@ public interface PassengerService {
 
     List<Passenger> getAllPassengers();
 
-    Passenger findByPassengerId(Long id) throws LogicException;
+    Passenger findByPassengerId(Long passengerId);
 
     Passenger create(PassengerInfo passengerInfo) throws LogicException;
 
-    ErrorCode delete(Long id) throws LogicException;
+    Passenger update(Long passengerId, PassengerInfo passengerInfo) throws LogicException;
 
+    ErrorCode delete(Long passengerId);
 
-    Passenger update(Long id, PassengerInfo passengerInfo) throws LogicException;
+    PassengerInfo getPassengerInfo(Long passengerId);
 
-    List<Passenger> findByLastName(String lastName);
-
-    PassengerInfo getPassengerInfo(Long id) throws LogicException;
 }
