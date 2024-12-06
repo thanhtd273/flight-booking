@@ -8,26 +8,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
-import java.util.Date;
-
 @Entity
-@Table(name = "nation")
+@Table(name = "booking_passenger")
 @Data
-public class Nation {
+public class BookingPassenger {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "nation_id")
-    private Long nationId;
+    @Column(name = "id")
+    private Long id;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "booking_id")
+    private Long bookingId;
 
-    @Column(name = "created_at")
-    private Date createdAt;
-
-    @Column(name = "updated_at")
-    private Date updatedAt;
-
-    @Column(name = "deleted")
-    private Boolean deleted;
+    @Column(name = "passenger_id")
+    private Long passengerId;
 }

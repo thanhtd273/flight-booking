@@ -11,22 +11,19 @@ import lombok.Data;
 import java.util.Date;
 
 @Entity
-@Table(name = "airport")
+@Table(name = "invoice")
 @Data
-public class Airport {
+public class Invoice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "airport_id")
-    private Long airportId;
+    @Column(name = "invoice_id")
+    private Long invoiceId;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "contact_id")
+    private Long contactId;
 
-    @Column(name = "airport_code")
-    private String airportCode;
-
-    @Column(name = "city_id")
-    private Long cityId;
+    @Column(name = "total_amount")
+    private Float totalAmount;
 
     @Column(name = "created_at")
     private Date createdAt;
