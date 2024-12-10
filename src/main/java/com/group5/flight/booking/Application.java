@@ -28,8 +28,13 @@ public class Application extends javax.swing.JFrame{
     private final double loginSize = 60;
 
     public Application() {
-        initComponents();
+        System.out.println("Starting Application constructor...");
+        PanelLoginAndRegister panel = new PanelLoginAndRegister();
+        System.out.println("PanelLoginAndRegister created...");
+        add(panel);
+        System.out.println("Panel added to frame...");
         init();
+        System.out.println("Application initialized...");
     }
 
     private void init() {
@@ -98,13 +103,10 @@ public class Application extends javax.swing.JFrame{
         });
     }
 
-    @SuppressWarnings("unchecked")
-
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
         java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Main().setVisible(true);
+            public void run() { new Application().setVisible(true);
             }
         });
     }

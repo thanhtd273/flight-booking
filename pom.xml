@@ -92,8 +92,8 @@
                 </dependency>
                 <dependency>
                     <groupId>com.miglayout</groupId>
-                    <artifactId>miglayout-swing</artifactId>
-                    <version>11.0</version>
+                    <artifactId>miglayout</artifactId>
+                    <version>4.0</version>
                 </dependency>
 
 	</dependencies>

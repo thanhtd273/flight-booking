@@ -5,6 +5,7 @@ import com.group5.flight.booking.core.APIResponse;
 import com.group5.flight.booking.view.swing.Button;
 import com.group5.flight.booking.view.swing.MyPasswordField;
 import com.group5.flight.booking.view.swing.MyTextField;
+import net.miginfocom.swing.MigLayout;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -29,22 +30,22 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
     private void initRegister() {
         register.setLayout(new MigLayout("wrap", "push[center]push", "push[]25[]10[]10[]25[]push"));
         JLabel label = new JLabel("Create Account");
-        label.setFont(new Font("sansserif", 1, 30));
+        label.setFont(new Font("sanserif", Font.BOLD, 30));
         label.setForeground(new Color(7, 164, 121));
         register.add(label);
 
         MyTextField txtUser = new MyTextField();
-        txtUser.setPrefixIcon(new ImageIcon(getClass().getResource("/com/raven/icon/user.png")));
+        txtUser.setPrefixIcon(new ImageIcon(getClass().getResource("/com/group5/flight/booking/view/icon/user.png")));
         txtUser.setHint("Name");
         register.add(txtUser, "w 60%");
 
         MyTextField txtEmail = new MyTextField();
-        txtEmail.setPrefixIcon(new ImageIcon(getClass().getResource("/com/raven/icon/mail.png")));
+        txtEmail.setPrefixIcon(new ImageIcon(getClass().getResource("/com/group5/flight/booking/view/icon/mail.png")));
         txtEmail.setHint("Email");
         register.add(txtEmail, "w 60%");
 
         MyPasswordField txtPass = new MyPasswordField();
-        txtPass.setPrefixIcon(new ImageIcon(getClass().getResource("/com/raven/icon/pass.png")));
+        txtPass.setPrefixIcon(new ImageIcon(getClass().getResource("/com/group5/flight/booking/view/icon/pass.png")));
         txtPass.setHint("Password");
         register.add(txtPass, "w 60%");
 
@@ -65,23 +66,23 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
     private void initLogin() {
         login.setLayout(new MigLayout("wrap", "push[center]push", "push[]25[]10[]10[]25[]push"));
         JLabel label = new JLabel("Sign In");
-        label.setFont(new Font("sansserif", 1, 30));
+        label.setFont(new Font("sanserif", 1, 30));
         label.setForeground(new Color(7, 164, 121));
         login.add(label);
 
         MyTextField txtEmail = new MyTextField();
-        txtEmail.setPrefixIcon(new ImageIcon(getClass().getResource("/com/raven/icon/mail.png")));
+        txtEmail.setPrefixIcon(new ImageIcon(getClass().getResource("/com/group5/flight/booking/view/icon/mail.png")));
         txtEmail.setHint("Email");
         login.add(txtEmail, "w 60%");
 
         MyPasswordField txtPass = new MyPasswordField();
-        txtPass.setPrefixIcon(new ImageIcon(getClass().getResource("/com/raven/icon/pass.png")));
+        txtPass.setPrefixIcon(new ImageIcon(getClass().getResource("/com/group5/flight/booking/view/icon/pass.png")));
         txtPass.setHint("Password");
         login.add(txtPass, "w 60%");
 
         JButton cmdForget = new JButton("Forgot your password ?");
         cmdForget.setForeground(new Color(100, 100, 100));
-        cmdForget.setFont(new Font("sansserif", 1, 12));
+        cmdForget.setFont(new Font("sanserif", 1, 12));
         cmdForget.setContentAreaFilled(false);
         cmdForget.setCursor(new Cursor(Cursor.HAND_CURSOR));
         login.add(cmdForget);
@@ -139,7 +140,17 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
         }
     }
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+
+    public void showRegister(boolean show) {
+        if (show) {
+            register.setVisible(true);
+            login.setVisible(false);
+        } else {
+            register.setVisible(false);
+            login.setVisible(true);
+        }
+    }
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents//
     private void initComponents() {
 
         login = new javax.swing.JPanel();
