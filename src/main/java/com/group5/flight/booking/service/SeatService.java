@@ -21,4 +21,6 @@ public interface SeatService {
     List<Seat> getAvailableSeatsByFlight(Long flightId) throws LogicException;
 
     SeatInfo getSeatInfo(Long id) throws LogicException;
+
+    List<Object[]> countAvailableSeatsByClass() throws LogicException;
 } 
