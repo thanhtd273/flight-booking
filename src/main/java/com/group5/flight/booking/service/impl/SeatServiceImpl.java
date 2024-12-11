@@ -89,12 +89,6 @@ public class SeatServiceImpl implements SeatService {
         Seat seat = findBySeatId(id);
         if (ObjectUtils.isEmpty(seat))
             return ErrorCode.DATA_NULL;
-        
-        List<FlightSeatPassenger> assignments = flightSeatPassengerDao.findBySeatId(id);
-        if (!assignments.isEmpty()) {
-            throw new LogicException(ErrorCode.FAIL, "Cannot delete seat that is assigned to flights");
-        }
-
         seat.setUpdatedAt(new Date(System.currentTimeMillis()));
         seatDao.save(seat);
         return ErrorCode.SUCCESS;

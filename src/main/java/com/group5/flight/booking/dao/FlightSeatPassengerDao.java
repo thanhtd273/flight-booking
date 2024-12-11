@@ -11,10 +11,7 @@ import java.util.List;
 
 @Repository
 public interface FlightSeatPassengerDao extends JpaRepository<FlightSeatPassenger, Long> {
-    List<FlightSeatPassenger> findBySeatId(Long seatId);
-    
-    List<FlightSeatPassenger> findByFlightId(Long flightId);
-
     @Query("SELECT s FROM Seat s JOIN FlightSeatPassenger fsp ON s.seatId = fsp.seatId WHERE fsp.flightId = :flightId AND s.available = true")
     List<Seat> findAvailableSeatsByFlightId(@Param("flightId") Long flightId);
+
 }
