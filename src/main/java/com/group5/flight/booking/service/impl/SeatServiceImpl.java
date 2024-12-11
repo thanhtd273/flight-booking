@@ -24,12 +24,12 @@ public class SeatServiceImpl implements SeatService {
 
     @Override
     public List<Seat> getAllSeats() {
-        return seatDao.findByDeletedFalse();
+        return seatDao.findAllSeats();
     }
 
     @Override
     public Seat findBySeatId(Long id) throws LogicException {
-        return seatDao.findBySeatIdAndDeletedFalse(id)
+        return seatDao.findBySeatId(id)
                       .orElseThrow(() -> new LogicException(ErrorCode.DATA_NULL, "Seat not found"));
     }
 
@@ -119,5 +119,11 @@ public class SeatServiceImpl implements SeatService {
 
         return seatInfo;
     }
+
+    @Override
+    public List<Object[]> countAvailableSeatsByClass() throws LogicException {
+        return seatDao.countAvailableSeatsByClass();
+    }
+
 }
 
