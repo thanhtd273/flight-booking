@@ -14,8 +14,7 @@ public class SeatInfo {
     private String classLevel;
     private String seatCode;
     private Boolean available;
-    private Long flightId;  
-    private Long passengerId;  
+
 
     public boolean isAllNotNull() {
         return !ObjectUtils.isEmpty(classLevel) && 
