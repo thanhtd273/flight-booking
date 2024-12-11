@@ -49,16 +49,6 @@ public class SeatServiceImpl implements SeatService {
         seat.setCreatedAt(new Date(System.currentTimeMillis()));
 
         seat = seatDao.save(seat);
-
-        if (!ObjectUtils.isEmpty(seatInfo.getFlightId()) && !ObjectUtils.isEmpty(seatInfo.getPassengerId())) {
-            FlightSeatPassenger fsp = new FlightSeatPassenger();
-            fsp.setFlightId(seatInfo.getFlightId());
-            fsp.setSeatId(seat.getSeatId());
-            fsp.setPassengerId(seatInfo.getPassengerId());
-            flightSeatPassengerDao.save(fsp);
-        }
-
-        return seat;
     }
 
     @Override
