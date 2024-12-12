@@ -2,6 +2,7 @@ package com.group5.flight.booking.view.component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.group5.flight.booking.core.APIResponse;
+import com.group5.flight.booking.view.model.ModelUser;
 import com.group5.flight.booking.view.swing.Button;
 import com.group5.flight.booking.view.swing.MyPasswordField;
 import com.group5.flight.booking.view.swing.MyTextField;
@@ -11,6 +12,8 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,15 +22,22 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public PanelLoginAndRegister() {
+
+    public ModelUser getUser() {
+        return user;
+    }
+
+    private ModelUser user;
+
+    public PanelLoginAndRegister(ActionListener eventRegister) {
         initComponents();
-        initRegister();
+        initRegister(eventRegister);
         initLogin();
         login.setVisible(false);
         register.setVisible(true);
     }
 
-    private void initRegister() {
+    private void initRegister(ActionListener eventRegister) {
         register.setLayout(new MigLayout("wrap", "push[center]push", "push[]25[]10[]10[]25[]push"));
         JLabel label = new JLabel("Create Account");
         label.setFont(new Font("sanserif", Font.BOLD, 30));
@@ -52,6 +62,7 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         Button cmd = new Button();
         cmd.setBackground(new Color(7, 164, 121));
         cmd.setForeground(new Color(250, 250, 250));
+        cmd.addActionListener(eventRegister);
         cmd.setText("SIGN UP");
         cmd.addActionListener(e -> {
             String name = txtUser.getText();
@@ -61,6 +72,15 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         });
 
         register.add(cmd, "w 40%, h 40");
+        cmd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae){
+                String userName = txtUser.getText().trim();
+                String email = txtEmail.getText().trim();
+                String password = String.valueOf(txtPass.getPassword());
+                user = new ModelUser(0, userName, email, password);
+            }
+        });
     }
 
     private void initLogin() {
