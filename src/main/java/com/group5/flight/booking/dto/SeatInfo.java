@@ -4,15 +4,21 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.util.ObjectUtils;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class SeatInfo {
     private String classLevel;
-
     private String seatCode;
-
     private Boolean available;
+
+
+    public boolean isAllNotNull() {
+        return !ObjectUtils.isEmpty(classLevel) && 
+               !ObjectUtils.isEmpty(seatCode) && 
+               !ObjectUtils.isEmpty(available);
+    }
 }
