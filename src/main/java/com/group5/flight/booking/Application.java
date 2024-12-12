@@ -28,9 +28,21 @@ public class Application extends javax.swing.JFrame{
     private final double loginSize = 60;
 
     public Application() {
-        initComponents();
+        bg = new javax.swing.JLayeredPane();
+        setContentPane(bg); // Đặt bg làm nội dung chính của JFrame
+
+        // Tạo các panel giao diện
+        cover = new PanelCover();
+        loginAndRegister = new PanelLoginAndRegister();
+
+        // Thêm giao diện vào JFrame
+        bg.add(cover);
+        bg.add(loginAndRegister);
+
+        // Gọi hàm init để thiết lập
         init();
     }
+
 
     private void init() {
         layout = new MigLayout("fill, insets 0");
@@ -101,12 +113,11 @@ public class Application extends javax.swing.JFrame{
     @SuppressWarnings("unchecked")
 
 	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Main().setVisible(true);
-            }
-        });
+        // Nếu không cần Spring Boot để chạy backend:
+        java.awt.EventQueue.invokeLater(() -> new Application().setVisible(true));
+
+        // Nếu cần Spring Boot để xử lý backend API:
+        SpringApplication.run(Application.class, args);
     }
         private javax.swing.JLayeredPane bg;
 }

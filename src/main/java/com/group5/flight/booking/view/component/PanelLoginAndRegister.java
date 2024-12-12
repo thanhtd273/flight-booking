@@ -5,6 +5,7 @@ import com.group5.flight.booking.core.APIResponse;
 import com.group5.flight.booking.view.swing.Button;
 import com.group5.flight.booking.view.swing.MyPasswordField;
 import com.group5.flight.booking.view.swing.MyTextField;
+import net.miginfocom.swing.MigLayout;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -140,7 +141,7 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         }
     }
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    protected void initComponents() {
 
         login = new javax.swing.JPanel();
         register = new javax.swing.JPanel();
@@ -182,4 +183,17 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
     private javax.swing.JPanel login;
     private javax.swing.JPanel register;
     // End of variables declaration//GEN-END:variables
+
+    public void showRegister(boolean isLogin) {
+        if (isLogin) {
+            // Hiển thị màn hình đăng nhập, ẩn màn hình đăng ký
+            login.setVisible(false);
+            register.setVisible(true);
+        } else {
+            // Hiển thị màn hình đăng ký, ẩn màn hình đăng nhập
+            login.setVisible(true);
+            register.setVisible(false);
+        }
+    }
+
 }
