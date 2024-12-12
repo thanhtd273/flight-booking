@@ -98,21 +98,28 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
+<<<<<<< HEAD
 
 		<!-- Timing Framework for UI updates -->
+=======
+>>>>>>> 211113df2c574d9c6bc2e9847854e83783e20e4e
 		<dependency>
 			<groupId>org.jdesktop</groupId>
 			<artifactId>timingframework</artifactId>
 			<version>0.55</version>
 		</dependency>
+<<<<<<< HEAD
 
 		<!-- MigLayout for UI layout management -->
+=======
+>>>>>>> 211113df2c574d9c6bc2e9847854e83783e20e4e
 		<dependency>
 			<groupId>com.miglayout</groupId>
 			<artifactId>miglayout</artifactId>
 			<version>4.0</version>
 		</dependency>
 		<dependency>
+<<<<<<< HEAD
 			<groupId>javax.persistence</groupId>
 			<artifactId>javax.persistence-api</artifactId>
 			<version>2.2</version>  <!-- Or the version you need -->
@@ -121,6 +128,16 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 			<version>5.4.32.Final</version>  <!-- Or the version you need -->
+=======
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.23</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>javax.mail</artifactId>
+			<version>1.6.2</version>
+>>>>>>> 211113df2c574d9c6bc2e9847854e83783e20e4e
 		</dependency>
 	</dependencies>
 	<repositories>
