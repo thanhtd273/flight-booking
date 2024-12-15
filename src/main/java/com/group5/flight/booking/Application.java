@@ -2,6 +2,7 @@ package com.group5.flight.booking;
 import com.group5.flight.booking.view.component.*;
 
 import com.group5.flight.booking.service.FlightService;
+import com.group5.flight.booking.dto.FlightInfo;
 import com.group5.flight.booking.view.component.FindFlightBooking;
 import com.group5.flight.booking.view.model.ModelUser;
 import com.group5.flight.booking.view.swing.PanelRound;
@@ -12,6 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
+import com.group5.flight.booking.core.exception.LogicException;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -19,6 +21,9 @@ import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
+import java.util.Date;
+import java.util.List;
+import java.awt.BorderLayout;
 
 @SpringBootApplication
 public class Application extends JFrame {
@@ -34,6 +39,7 @@ public class Application extends JFrame {
     private final double coverSize = 40;
     private final double loginSize = 60;
     private FindFlightBooking findFlightBooking;
+    private FlightService flightService;
 
     @Autowired
     public Application(FlightService flightService) {
@@ -42,8 +48,10 @@ public class Application extends JFrame {
         };
         findFlightBooking = new FindFlightBooking(flightService);
         PanelLoginAndRegister panel = new PanelLoginAndRegister(eventRegister);
+        loginAndRegister = new PanelLoginAndRegister(e -> handleLogin());
         add(panel);
         init();
+        this.flightService = flightService;
     }
 
 
@@ -123,23 +131,82 @@ public class Application extends JFrame {
                 }
             }
         });
-        //loginAndRegister.addLoginSuccessListener(e -> showFindFlightBooking());
+    }
+    // Handle login and transition to flight booking screen
+    private void handleLogin() {
+        ModelUser user = loginAndRegister.getUser();  // Get user details from login form
+
+        // Simulating successful login, you can replace this with actual login logic
+        boolean loginSuccessful = true;  // Replace with actual validation logic
+
+        if (loginSuccessful) {
+            showFindFlightBooking();  // Show flight search screen if login is successful
+        } else {
+            // Handle login failure (e.g., show error message)
+            showMessage(Message.MessageType.ERROR, "Login failed! Please try again.");
+        }
     }
 
+    // Show the flight booking panel after login
+    private void showFindFlightBooking() {
+        // Remove current screen (login/register) and add the flight booking screen
+        this.getContentPane().removeAll();
+        this.add(findFlightBooking);
+        this.revalidate();
+        this.repaint();
+        findFlightBooking.setVisible(true);  // Ensure the flight booking panel is visible
+    }
+
+    public void showFlightList(Long fromAirportId, Long toAirportId, Date departureDate) {
+        try {
+            // Call the findFlight method on the instance of FlightService
+            List<FlightInfo> flights = flightService.findFlight(fromAirportId, toAirportId, departureDate);
+
+            // If no flights found, show a message
+            if (flights.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy chuyến bay nào phù hợp!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                // Create and display the flight list panel
+                JPanel flightListPanel = createFlightListPanel(flights);
+                this.getContentPane().removeAll();
+                this.add(flightListPanel);
+                this.revalidate();
+                this.repaint();
+            }
+        } catch (LogicException e) {
+            // Handle the exception here (e.g., show a dialog with the error message)
+            JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi khi tìm kiếm chuyến bay: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private JPanel createFlightListPanel(List<FlightInfo> flights) {
+        String[] columnNames = {"Mã chuyến bay", "Điểm đi", "Điểm đến", "Ngày khởi hành", "Giờ khởi hành", "Số ghế trống"};
+
+        // Tạo dữ liệu cho bảng từ danh sách chuyến bay
+        Object[][] data = flights.stream()
+                .map(flight -> new Object[]{
+                /*        flight.getFlightId(),
+                        flight.getFromAirportName(),
+                        flight.getToAirportName(),
+                        flight.getDepartureDate(),
+                        flight.getDepartureTime(),
+                        flight.getAvailableSeats()*/
+                }).toArray(Object[][]::new);
+
+        // Tạo bảng và cuộn cho danh sách chuyến bay
+        JTable table = new JTable(data, columnNames);
+        JScrollPane scrollPane = new JScrollPane(table);
+
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        return panel;
+    }
     private void register() {
         ModelUser user = loginAndRegister.getUser();
         //loading.setVisible(true);
         //System.out.println("Click register");
         verifyCode.setVisible(true);
-    }
-
-    private void showFindFlightBooking() {
-        // Ẩn giao diện đăng nhập
-        this.getContentPane().removeAll();
-        this.add(findFlightBooking);
-        this.revalidate();
-        this.repaint();
-        findFlightBooking.setVisible(true);
     }
 
     private void showMessage(Message.MessageType messageType, String message) {

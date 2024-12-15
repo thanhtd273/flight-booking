@@ -50,7 +50,6 @@ public class SeatServiceImpl implements SeatService {
 
         seat = seatDao.save(seat);
     }
-
     @Override
     public Seat update(Long id, SeatInfo seatInfo) throws LogicException {
         if (ObjectUtils.isEmpty(seatInfo)) {

@@ -16,14 +16,14 @@ import java.util.Date;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
-@Component  // Mark this as a Spring Bean to be autowired
+@Component
 public class FindFlightBooking extends JFrame {
 
     private JTextField fromField, toField, timeField;
     private JSpinner quantitySpinner;
     private JButton searchButton;
     private JTable resultTable;
-    private FlightService flightService;  // Service để tìm chuyến bay
+    private FlightService flightService;
 
     @Autowired
     public FindFlightBooking(FlightService flightService) {
@@ -90,8 +90,14 @@ public class FindFlightBooking extends JFrame {
             if (fromAirportId != null && toAirportId != null) {
                 // Gọi service để tìm kiếm chuyến bay
                 try {
-                    // Sử dụng FlightService để tìm kiếm chuyến bay
                     List<FlightInfo> flights = flightService.findFlight(fromAirportId, toAirportId, time);
+
+                    // Sắp xếp chuyến bay theo mức độ khớp (có thể dựa vào giờ bay, sân bay, v.v.)
+                    flights.sort((f1, f2) -> {
+                        int score1 = calculateMatchScore(f1, fromAirportId, toAirportId, time);
+                        int score2 = calculateMatchScore(f2, fromAirportId, toAirportId, time);
+                        return Integer.compare(score2, score1);  // Sắp xếp theo điểm số khớp, chuyến bay khớp nhiều nhất lên đầu
+                    });
 
                     // Hiển thị kết quả trong bảng
                     String[] columns = {"Mã chuyến bay", "Điểm bắt đầu", "Điểm đến", "Giờ bay", "Giá"};
@@ -110,6 +116,18 @@ public class FindFlightBooking extends JFrame {
                     }
 
                     resultTable.setModel(new DefaultTableModel(data, columns));
+
+                    // Thêm sự kiện chọn chuyến bay từ bảng
+                    resultTable.getSelectionModel().addListSelectionListener(e1 -> {
+                        int selectedRow = resultTable.getSelectedRow();
+                        if (selectedRow != -1) {
+                            // Lấy thông tin chuyến bay đã chọn
+                            FlightInfo selectedFlight = flights.get(selectedRow);
+                            // Tiến hành các bước tiếp theo (ví dụ: đặt vé, hiển thị chi tiết chuyến bay, ...)
+                            JOptionPane.showMessageDialog(this, "Bạn đã chọn chuyến bay: " + selectedFlight.getPlaneId());
+                        }
+                    });
+
                 } catch (LogicException e) {
                     // Xử lý ngoại lệ LogicException
                     JOptionPane.showMessageDialog(this, "Có lỗi xảy ra khi tìm kiếm chuyến bay: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -118,6 +136,35 @@ public class FindFlightBooking extends JFrame {
                 JOptionPane.showMessageDialog(this, "Không tìm thấy sân bay với tên đã nhập!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+
+    private int calculateMatchScore(FlightInfo flight, Long fromAirportId, Long toAirportId, Date departureTime) {
+        int score = 0;
+
+        // Kiểm tra khớp sân bay đi (departure airport)
+        if (flight.getFromAirportId().equals(fromAirportId)) {
+            score += 10; // Điểm cao nếu sân bay đi khớp hoàn toàn
+        }
+
+        // Kiểm tra khớp sân bay đến (arrival airport)
+        if (flight.getToAirportId().equals(toAirportId)) {
+            score += 10; // Điểm cao nếu sân bay đến khớp hoàn toàn
+        }
+
+        // Kiểm tra khớp ngày bay (departure date)
+        if (flight.getDepatureDate().equals(departureTime)) {
+            score += 15; // Điểm cao nếu ngày bay khớp hoàn toàn
+        } else {
+            // Nếu ngày bay không khớp chính xác, có thể tính điểm giảm
+            long diffInMillies = Math.abs(flight.getDepatureDate().getTime() - departureTime.getTime());
+            long diffDays = diffInMillies / (1000 * 60 * 60 * 24); // Số ngày chênh lệch
+
+            if (diffDays <= 7) { // Nếu trong vòng 1 tuần
+                score += 5; // Tăng điểm nhẹ nếu chênh lệch ngày ít
+            }
+        }
+
+        return score;
     }
 
     private Date parseDate(String dateStr) {
@@ -133,7 +180,6 @@ public class FindFlightBooking extends JFrame {
     // Phương thức giả lập để tìm ID của sân bay (có thể gọi service hoặc tìm trong cơ sở dữ liệu)
     private Long getAirportIdByName(String airportName) {
         // Tìm kiếm trong cơ sở dữ liệu hoặc sử dụng danh sách đã có
-        // Ví dụ đơn giản: tìm ID của sân bay theo tên
         if ("Sân bay Nội Bài".equalsIgnoreCase(airportName)) {
             return 1L;  // ID giả định
         } else if ("Sân bay Tân Sơn Nhất".equalsIgnoreCase(airportName)) {
