@@ -1,9 +1,7 @@
 package com.group5.flight.booking.view.component;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 
@@ -27,8 +25,6 @@ public class PanelVerifyCode extends javax.swing.JPanel {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         panelRound1 = new com.group5.flight.booking.view.swing.PanelRound();
@@ -38,9 +34,9 @@ public class PanelVerifyCode extends javax.swing.JPanel {
         cmdOK = new com.group5.flight.booking.view.swing.ButtonOutLine();
         cmdCancel = new com.group5.flight.booking.view.swing.ButtonOutLine();
 
-        txtCode.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtCode.setHorizontalAlignment(SwingConstants.CENTER);
 
-        jLabel1.setFont(new java.awt.Font("sansserif", 1, 24)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("sansserif", Font.BOLD, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(63, 63, 63));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Verify Code");
@@ -54,11 +50,7 @@ public class PanelVerifyCode extends javax.swing.JPanel {
 
         cmdCancel.setBackground(new java.awt.Color(192, 25, 25));
         cmdCancel.setText("Cancel");
-        cmdCancel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmdCancelActionPerformed(evt);
-            }
-        });
+        cmdCancel.addActionListener(this::cmdCancelActionPerformed);
 
         javax.swing.GroupLayout panelRound1Layout = new javax.swing.GroupLayout(panelRound1);
         panelRound1.setLayout(panelRound1Layout);
@@ -110,9 +102,9 @@ public class PanelVerifyCode extends javax.swing.JPanel {
                                 .addComponent(panelRound1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap(50, Short.MAX_VALUE))
         );
-    }// </editor-fold>//GEN-END:initComponents
+    }
 
-    private void cmdCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdCancelActionPerformed
+    private void cmdCancelActionPerformed(java.awt.event.ActionEvent evt) {
         setVisible(false);
     }//GEN-LAST:event_cmdCancelActionPerformed
 
@@ -134,12 +126,10 @@ public class PanelVerifyCode extends javax.swing.JPanel {
         cmdOK.addActionListener(event);
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.group5.flight.booking.view.swing.ButtonOutLine cmdCancel;
     private com.group5.flight.booking.view.swing.ButtonOutLine cmdOK;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private com.group5.flight.booking.view.swing.PanelRound panelRound1;
     private com.group5.flight.booking.view.swing.MyTextField txtCode;
-    // End of variables declaration//GEN-END:variables
 }

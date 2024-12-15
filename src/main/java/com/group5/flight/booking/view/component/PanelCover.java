@@ -6,7 +6,6 @@ import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -49,17 +48,11 @@ public class PanelCover extends javax.swing.JPanel {
         button.setBackground(new Color(255, 255, 255));
         button.setForeground(new Color(255, 255, 255));
         button.setText("SIGN IN");
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                event.actionPerformed(ae);
-            }
-        });
+        button.addActionListener(ae -> event.actionPerformed(ae));
         add(button, "w 60%, h 40");
     }
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -72,7 +65,7 @@ public class PanelCover extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 300, Short.MAX_VALUE)
         );
-    }// </editor-fold>//GEN-END:initComponents
+    }
 
     @Override
     protected void paintComponent(Graphics grphcs) {
@@ -96,7 +89,7 @@ public class PanelCover extends javax.swing.JPanel {
     }
 
     public void registerRight(double v) {
-        v = Double.valueOf(df.format(v));
+        v = Double.parseDouble(df.format(v));
         login(false);
         layout.setComponentConstraints(title, "pad 0 -" + v + "% 0 0");
         layout.setComponentConstraints(description, "pad 0 -" + v + "% 0 0");
@@ -104,7 +97,7 @@ public class PanelCover extends javax.swing.JPanel {
     }
 
     public void loginLeft(double v) {
-        v = Double.valueOf(df.format(v));
+        v = Double.parseDouble(df.format(v));
         login(true);
         layout.setComponentConstraints(title, "pad 0 " + v + "% 0 " + v + "%");
         layout.setComponentConstraints(description, "pad 0 " + v + "% 0 " + v + "%");
@@ -112,7 +105,7 @@ public class PanelCover extends javax.swing.JPanel {
     }
 
     public void loginRight(double v) {
-        v = Double.valueOf(df.format(v));
+        v = Double.parseDouble(df.format(v));
         login(true);
         layout.setComponentConstraints(title, "pad 0 " + v + "% 0 " + v + "%");
         layout.setComponentConstraints(description, "pad 0 " + v + "% 0 " + v + "%");
@@ -135,7 +128,4 @@ public class PanelCover extends javax.swing.JPanel {
             this.isLogin = login;
         }
     }
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    // End of variables declaration//GEN-END:variables
 }

@@ -6,16 +6,17 @@ import com.group5.flight.booking.view.model.ModelUser;
 import com.group5.flight.booking.view.swing.Button;
 import com.group5.flight.booking.view.swing.MyPasswordField;
 import com.group5.flight.booking.view.swing.MyTextField;
+import lombok.Getter;
 import net.miginfocom.swing.MigLayout;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
 
@@ -23,10 +24,7 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
 
-    public ModelUser getUser() {
-        return user;
-    }
-
+    @Getter
     private ModelUser user;
 
     public PanelLoginAndRegister(ActionListener eventRegister) {
@@ -45,17 +43,17 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         register.add(label);
 
         MyTextField txtUser = new MyTextField();
-        txtUser.setPrefixIcon(new ImageIcon(getClass().getResource("/com/group5/flight/booking/view/icon/user.png")));
+        txtUser.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/com/group5/flight/booking/view/icon/user.png"))));
         txtUser.setHint("Name");
         register.add(txtUser, "w 60%");
 
         MyTextField txtEmail = new MyTextField();
-        txtEmail.setPrefixIcon(new ImageIcon(getClass().getResource("/com/group5/flight/booking/view/icon/mail.png")));
+        txtEmail.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/com/group5/flight/booking/view/icon/mail.png"))));
         txtEmail.setHint("Email");
         register.add(txtEmail, "w 60%");
 
         MyPasswordField txtPass = new MyPasswordField();
-        txtPass.setPrefixIcon(new ImageIcon(getClass().getResource("/com/group5/flight/booking/view/icon/pass.png")));
+        txtPass.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/com/group5/flight/booking/view/icon/pass.png"))));
         txtPass.setHint("Password");
         register.add(txtPass, "w 60%");
 
@@ -72,14 +70,11 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         });
 
         register.add(cmd, "w 40%, h 40");
-        cmd.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae){
-                String userName = txtUser.getText().trim();
-                String email = txtEmail.getText().trim();
-                String password = String.valueOf(txtPass.getPassword());
-                user = new ModelUser(0, userName, email, password);
-            }
+        cmd.addActionListener(ae -> {
+            String userName = txtUser.getText().trim();
+            String email = txtEmail.getText().trim();
+            String password = String.valueOf(txtPass.getPassword());
+            user = new ModelUser(0, userName, email, password);
         });
     }
 
@@ -91,12 +86,12 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         login.add(label);
 
         MyTextField txtEmail = new MyTextField();
-        txtEmail.setPrefixIcon(new ImageIcon(getClass().getResource("/com/group5/flight/booking/view/icon/mail.png")));
+        txtEmail.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/com/group5/flight/booking/view/icon/mail.png"))));
         txtEmail.setHint("Email");
         login.add(txtEmail, "w 60%");
 
         MyPasswordField txtPass = new MyPasswordField();
-        txtPass.setPrefixIcon(new ImageIcon(getClass().getResource("/com/group5/flight/booking/view/icon/pass.png")));
+        txtPass.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/com/group5/flight/booking/view/icon/pass.png"))));
         txtPass.setHint("Password");
         login.add(txtPass, "w 60%");
 
@@ -160,7 +155,6 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
         }
     }
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
 
     private void initComponents() {
 
@@ -198,20 +192,16 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         );
 
         add(register, "card2");
-    }// </editor-fold>//GEN-END:initComponents
+    }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel login;
     private javax.swing.JPanel register;
-    // End of variables declaration//GEN-END:variables
 
     public void showRegister(boolean isLogin) {
         if (isLogin) {
-            // Hiển thị màn hình đăng nhập, ẩn màn hình đăng ký
             login.setVisible(false);
             register.setVisible(true);
         } else {
-            // Hiển thị màn hình đăng ký, ẩn màn hình đăng nhập
             login.setVisible(true);
             register.setVisible(false);
         }

@@ -5,7 +5,6 @@ import com.group5.flight.booking.service.FlightService;
 import com.group5.flight.booking.dto.FlightInfo;
 import com.group5.flight.booking.view.component.FindFlightBooking;
 import com.group5.flight.booking.view.model.ModelUser;
-import com.group5.flight.booking.view.swing.PanelRound;
 import net.miginfocom.swing.MigLayout;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -35,9 +34,9 @@ public class Application extends JFrame {
     private PanelLoading loading;
     private PanelVerifyCode verifyCode;
     private boolean isLogin = true;
-    private final double addSize = 30;
-    private final double coverSize = 40;
-    private final double loginSize = 60;
+    private static final double ADD_SIZE = 30;
+    private static final double COVER_SIZE = 40;
+    private static final double LOGIN_SIZE = 60;
     private FindFlightBooking findFlightBooking;
     private FlightService flightService;
 
@@ -60,23 +59,18 @@ public class Application extends JFrame {
         cover = new PanelCover();
         loading = new PanelLoading();
         verifyCode = new PanelVerifyCode();
-        ActionListener eventRegister = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                register();
-            }
-        };
+        ActionListener eventRegister = ae -> register();
         loginAndRegister = new PanelLoginAndRegister(eventRegister);
         TimingTarget target = new TimingTargetAdapter() {
             @Override
             public void timingEvent(float fraction) {
                 double fractionCover;
                 double fractionLogin;
-                double size = coverSize;
+                double size = COVER_SIZE;
                 if (fraction <= 0.5f) {
-                    size += fraction * addSize;
+                    size += fraction * ADD_SIZE;
                 } else {
-                    size += addSize - fraction * addSize;
+                    size += ADD_SIZE - fraction * ADD_SIZE;
                 }
                 if (isLogin) {
                     fractionCover = 1f - fraction;
@@ -101,7 +95,7 @@ public class Application extends JFrame {
                 fractionCover = Double.valueOf(df.format(fractionCover));
                 fractionLogin = Double.valueOf(df.format(fractionLogin));
                 layout.setComponentConstraints(cover, "width " + size + "%, pos " + fractionCover + "al 0 n 100%");
-                layout.setComponentConstraints(loginAndRegister, "width " + loginSize + "%, pos " + fractionLogin + "al 0 n 100%");
+                layout.setComponentConstraints(loginAndRegister, "width " + LOGIN_SIZE + "%, pos " + fractionLogin + "al 0 n 100%");
                 bg.revalidate();
             }
 
@@ -119,54 +113,44 @@ public class Application extends JFrame {
         bg.setLayer(verifyCode, JLayeredPane.POPUP_LAYER);
         bg.add(loading, "pos 0 0 100% 100%");
         bg.add(verifyCode, "pos 0 0 100% 100%");
-        bg.add(cover, "width " + coverSize + "%, pos " + (isLogin ? "1al" : "0al") + " 0 n 100%");
-        bg.add(loginAndRegister, "width " + loginSize + "%, pos " + (isLogin ? "0al" : "1al") + " 0 n 100%"); //  1al as 100%
+        bg.add(cover, "width " + COVER_SIZE + "%, pos " + (isLogin ? "1al" : "0al") + " 0 n 100%");
+        bg.add(loginAndRegister, "width " + LOGIN_SIZE + "%, pos " + (isLogin ? "0al" : "1al") + " 0 n 100%"); //  1al as 100%
         loginAndRegister.showRegister(!isLogin);
         cover.login(isLogin);
-        cover.addEvent(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                if (!animator.isRunning()) {
-                    animator.start();
-                }
+        cover.addEvent(ae -> {
+            if (!animator.isRunning()) {
+                animator.start();
             }
         });
     }
-    // Handle login and transition to flight booking screen
     private void handleLogin() {
-        ModelUser user = loginAndRegister.getUser();  // Get user details from login form
+        ModelUser user = loginAndRegister.getUser();
 
-        // Simulating successful login, you can replace this with actual login logic
-        boolean loginSuccessful = true;  // Replace with actual validation logic
+        boolean loginSuccessful = true;
 
         if (loginSuccessful) {
-            showFindFlightBooking();  // Show flight search screen if login is successful
+            showFindFlightBooking();
         } else {
-            // Handle login failure (e.g., show error message)
             showMessage(Message.MessageType.ERROR, "Login failed! Please try again.");
         }
     }
 
     // Show the flight booking panel after login
     private void showFindFlightBooking() {
-        // Remove current screen (login/register) and add the flight booking screen
         this.getContentPane().removeAll();
         this.add(findFlightBooking);
         this.revalidate();
         this.repaint();
-        findFlightBooking.setVisible(true);  // Ensure the flight booking panel is visible
+        findFlightBooking.setVisible(true);
     }
 
     public void showFlightList(Long fromAirportId, Long toAirportId, Date departureDate) {
         try {
-            // Call the findFlight method on the instance of FlightService
             List<FlightInfo> flights = flightService.findFlight(fromAirportId, toAirportId, departureDate);
 
-            // If no flights found, show a message
             if (flights.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Không tìm thấy chuyến bay nào phù hợp!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                // Create and display the flight list panel
                 JPanel flightListPanel = createFlightListPanel(flights);
                 this.getContentPane().removeAll();
                 this.add(flightListPanel);
@@ -174,7 +158,6 @@ public class Application extends JFrame {
                 this.repaint();
             }
         } catch (LogicException e) {
-            // Handle the exception here (e.g., show a dialog with the error message)
             JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi khi tìm kiếm chuyến bay: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -182,7 +165,6 @@ public class Application extends JFrame {
     private JPanel createFlightListPanel(List<FlightInfo> flights) {
         String[] columnNames = {"Mã chuyến bay", "Điểm đi", "Điểm đến", "Ngày khởi hành", "Giờ khởi hành", "Số ghế trống"};
 
-        // Tạo dữ liệu cho bảng từ danh sách chuyến bay
         Object[][] data = flights.stream()
                 .map(flight -> new Object[]{
                  //       flight.getFlightId(),
@@ -193,7 +175,6 @@ public class Application extends JFrame {
                    //     flight.getAvailableSeats()
                 }).toArray(Object[][]::new);
 
-        // Tạo bảng và cuộn cho danh sách chuyến bay
         JTable table = new JTable(data, columnNames);
         JScrollPane scrollPane = new JScrollPane(table);
 
@@ -251,15 +232,12 @@ public class Application extends JFrame {
         animator.setAcceleration(0.5f);
         animator.setDeceleration(0.5f);
         animator.start();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(2000);
-                    animator.start();
-                } catch (InterruptedException e) {
-                    System.err.println(e);
-                }
+        new Thread(() -> {
+            try {
+                Thread.sleep(2000);
+                animator.start();
+            } catch (InterruptedException e) {
+                System.err.println(e.getMessage());
             }
         }).start();
     }
