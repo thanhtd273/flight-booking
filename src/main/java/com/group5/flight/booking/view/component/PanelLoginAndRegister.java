@@ -160,23 +160,9 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
         }
     }
-<<<<<<< HEAD
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    protected void initComponents() {
-=======
 
-    public void showRegister(boolean show) {
-        if (show) {
-            register.setVisible(true);
-            login.setVisible(false);
-        } else {
-            register.setVisible(false);
-            login.setVisible(true);
-        }
-    }
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents//
     private void initComponents() {
->>>>>>> 211113df2c574d9c6bc2e9847854e83783e20e4e
 
         login = new javax.swing.JPanel();
         register = new javax.swing.JPanel();
@@ -188,12 +174,12 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         javax.swing.GroupLayout loginLayout = new javax.swing.GroupLayout(login);
         login.setLayout(loginLayout);
         loginLayout.setHorizontalGroup(
-            loginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 327, Short.MAX_VALUE)
+                loginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 327, Short.MAX_VALUE)
         );
         loginLayout.setVerticalGroup(
-            loginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+                loginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 300, Short.MAX_VALUE)
         );
 
         add(login, "card3");
@@ -203,12 +189,12 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         javax.swing.GroupLayout registerLayout = new javax.swing.GroupLayout(register);
         register.setLayout(registerLayout);
         registerLayout.setHorizontalGroup(
-            registerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 327, Short.MAX_VALUE)
+                registerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 327, Short.MAX_VALUE)
         );
         registerLayout.setVerticalGroup(
-            registerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+                registerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 300, Short.MAX_VALUE)
         );
 
         add(register, "card2");
@@ -230,5 +216,4 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
             register.setVisible(false);
         }
     }
-
 }
