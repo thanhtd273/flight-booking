@@ -35,33 +35,14 @@ public class Application extends JFrame {
     private final double loginSize = 60;
     private FindFlightBooking findFlightBooking;
 
-<<<<<<< HEAD
     @Autowired
     public Application(FlightService flightService) {
-=======
-    public Application() {
-<<<<<<< HEAD
-        bg = new javax.swing.JLayeredPane();
-        setContentPane(bg); // Đặt bg làm nội dung chính của JFrame
-
-        // Tạo các panel giao diện
-        cover = new PanelCover();
-        loginAndRegister = new PanelLoginAndRegister();
-
-        // Thêm giao diện vào JFrame
-        bg.add(cover);
-        bg.add(loginAndRegister);
-
-        // Gọi hàm init để thiết lập
-=======
->>>>>>> 2bfdae384b7f21060d8ed15bb5273a6c31e9c2d9
         ActionListener eventRegister = e -> {
             System.out.println("Register button clicked!");
         };
         findFlightBooking = new FindFlightBooking(flightService);
         PanelLoginAndRegister panel = new PanelLoginAndRegister(eventRegister);
         add(panel);
->>>>>>> 211113df2c574d9c6bc2e9847854e83783e20e4e
         init();
     }
 
@@ -145,22 +126,11 @@ public class Application extends JFrame {
         //loginAndRegister.addLoginSuccessListener(e -> showFindFlightBooking());
     }
 
-<<<<<<< HEAD
-    @SuppressWarnings("unchecked")
-
-	public static void main(String[] args) {
-        // Nếu không cần Spring Boot để chạy backend:
-        java.awt.EventQueue.invokeLater(() -> new Application().setVisible(true));
-
-        // Nếu cần Spring Boot để xử lý backend API:
-        SpringApplication.run(Application.class, args);
-=======
     private void register() {
         ModelUser user = loginAndRegister.getUser();
         //loading.setVisible(true);
         //System.out.println("Click register");
         verifyCode.setVisible(true);
->>>>>>> 211113df2c574d9c6bc2e9847854e83783e20e4e
     }
 
     private void showFindFlightBooking() {
