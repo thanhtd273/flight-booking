@@ -185,12 +185,12 @@ public class Application extends JFrame {
         // Tạo dữ liệu cho bảng từ danh sách chuyến bay
         Object[][] data = flights.stream()
                 .map(flight -> new Object[]{
-                /*        flight.getFlightId(),
-                        flight.getFromAirportName(),
-                        flight.getToAirportName(),
-                        flight.getDepartureDate(),
-                        flight.getDepartureTime(),
-                        flight.getAvailableSeats()*/
+                 //       flight.getFlightId(),
+                  //      flight.getFromAirportName(),
+                   //     flight.getToAirportName(),
+                  //      flight.getDepartureDate(),
+                  //      flight.getDepartureTime(),
+                   //     flight.getAvailableSeats()
                 }).toArray(Object[][]::new);
 
         // Tạo bảng và cuộn cho danh sách chuyến bay
