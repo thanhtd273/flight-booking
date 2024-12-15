@@ -160,6 +160,10 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
         }
     }
+<<<<<<< HEAD
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    protected void initComponents() {
+=======
 
     public void showRegister(boolean show) {
         if (show) {
@@ -172,6 +176,7 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
     }
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents//
     private void initComponents() {
+>>>>>>> 211113df2c574d9c6bc2e9847854e83783e20e4e
 
         login = new javax.swing.JPanel();
         register = new javax.swing.JPanel();
@@ -213,4 +218,17 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
     private javax.swing.JPanel login;
     private javax.swing.JPanel register;
     // End of variables declaration//GEN-END:variables
+
+    public void showRegister(boolean isLogin) {
+        if (isLogin) {
+            // Hiển thị màn hình đăng nhập, ẩn màn hình đăng ký
+            login.setVisible(false);
+            register.setVisible(true);
+        } else {
+            // Hiển thị màn hình đăng ký, ẩn màn hình đăng nhập
+            login.setVisible(true);
+            register.setVisible(false);
+        }
+    }
+
 }

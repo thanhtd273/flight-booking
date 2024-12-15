@@ -22,7 +22,12 @@ public class AirportInfo {
     public boolean isAllNotNull() {
         return ObjectUtils.isEmpty(name) && ObjectUtils.isEmpty(airportCode) && ObjectUtils.isEmpty(cityId);
     }
+<<<<<<< HEAD
     public String getAirportName(){
+=======
+    // Thêm phương thức getter cho tên sân bay
+    public String getAirportName() {
+>>>>>>> 2bfdae384b7f21060d8ed15bb5273a6c31e9c2d9
         return name;
     }
 }
