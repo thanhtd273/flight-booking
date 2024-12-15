@@ -22,4 +22,7 @@ public class AirportInfo {
     public boolean isAllNotNull() {
         return ObjectUtils.isEmpty(name) && ObjectUtils.isEmpty(airportCode) && ObjectUtils.isEmpty(cityId);
     }
+    public String getAirportName(){
+        return name;
+    }
 }
