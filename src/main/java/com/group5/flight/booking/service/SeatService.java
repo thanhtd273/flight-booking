@@ -9,11 +9,11 @@ import java.util.List;
 
 public interface SeatService {
     List<Seat> getAllSeats();
-    
+
     Seat findBySeatId(Long id) throws LogicException;
-    
+
     Seat create(SeatInfo seatInfo) throws LogicException;
-    
+
     Seat update(Long id, SeatInfo seatInfo) throws LogicException;
 
     ErrorCode delete(Long id) throws LogicException;
@@ -22,5 +22,5 @@ public interface SeatService {
 
     SeatInfo getSeatInfo(Long id) throws LogicException;
 
-    List<Object[]> countAvailableSeatsByClass() throws LogicException;
-} 
+    List<Object[]> countAvailableSeatsByClass(Long flightId) throws LogicException;
+}
