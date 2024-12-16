@@ -23,10 +23,6 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 272bb6feaf66f09d4a0a8c7d150ec89b3ecad36b
     @Getter
     private ModelUser user;
 
@@ -46,29 +42,17 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         register.add(label);
 
         MyTextField txtUser = new MyTextField();
-<<<<<<< HEAD
         txtUser.setPrefixIcon(new ImageIcon(getClass().getResource("/user.png")));
-=======
-        txtUser.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/com/group5/flight/booking/view/icon/user.png"))));
->>>>>>> 272bb6feaf66f09d4a0a8c7d150ec89b3ecad36b
         txtUser.setHint("Name");
         register.add(txtUser, "w 60%");
 
         MyTextField txtEmail = new MyTextField();
-<<<<<<< HEAD
         txtEmail.setPrefixIcon(new ImageIcon(getClass().getResource("/mail.png")));
-=======
-        txtEmail.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/com/group5/flight/booking/view/icon/mail.png"))));
->>>>>>> 272bb6feaf66f09d4a0a8c7d150ec89b3ecad36b
         txtEmail.setHint("Email");
         register.add(txtEmail, "w 60%");
 
         MyPasswordField txtPass = new MyPasswordField();
-<<<<<<< HEAD
         txtPass.setPrefixIcon(new ImageIcon(getClass().getResource("/pass.png")));
-=======
-        txtPass.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/com/group5/flight/booking/view/icon/pass.png"))));
->>>>>>> 272bb6feaf66f09d4a0a8c7d150ec89b3ecad36b
         txtPass.setHint("Password");
         register.add(txtPass, "w 60%");
 
@@ -101,20 +85,12 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         login.add(label);
 
         MyTextField txtEmail = new MyTextField();
-<<<<<<< HEAD
         txtEmail.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/mail.png"))));
-=======
-        txtEmail.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/com/group5/flight/booking/view/icon/mail.png"))));
->>>>>>> 272bb6feaf66f09d4a0a8c7d150ec89b3ecad36b
         txtEmail.setHint("Email");
         login.add(txtEmail, "w 60%");
 
         MyPasswordField txtPass = new MyPasswordField();
-<<<<<<< HEAD
         txtPass.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/pass.png"))));
-=======
-        txtPass.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/com/group5/flight/booking/view/icon/pass.png"))));
->>>>>>> 272bb6feaf66f09d4a0a8c7d150ec89b3ecad36b
         txtPass.setHint("Password");
         login.add(txtPass, "w 60%");
 
