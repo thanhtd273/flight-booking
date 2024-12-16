@@ -48,7 +48,7 @@ public class SeatServiceImpl implements SeatService {
         seat.setAvailable(seatInfo.getAvailable() != null ? seatInfo.getAvailable() : true);
         seat.setCreatedAt(new Date(System.currentTimeMillis()));
 
-        seat = seatDao.save(seat);
+        return seatDao.save(seat);
     }
     @Override
     public Seat update(Long id, SeatInfo seatInfo) throws LogicException {

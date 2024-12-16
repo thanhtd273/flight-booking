@@ -268,7 +268,7 @@ public class Application extends JFrame {
         SpringApplication.run(Application.class, args);
         java.awt.EventQueue.invokeLater(() -> {
             org.springframework.context.ApplicationContext context =
-                    new org.springframework.context.annotation.AnnotationConfigApplicationContext("com.group5.flight.booking");
+                    SpringApplication.run(Application.class, args);
 
             FlightService flightService = context.getBean(FlightService.class);
             new Application(flightService).setVisible(true);

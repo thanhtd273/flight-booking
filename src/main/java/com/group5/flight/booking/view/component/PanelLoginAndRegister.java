@@ -6,6 +6,7 @@ import com.group5.flight.booking.view.model.ModelUser;
 import com.group5.flight.booking.view.swing.Button;
 import com.group5.flight.booking.view.swing.MyPasswordField;
 import com.group5.flight.booking.view.swing.MyTextField;
+import lombok.Getter;
 import net.miginfocom.swing.MigLayout;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -16,17 +17,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-
-    public ModelUser getUser() {
-        return user;
-    }
-
+    @Getter
     private ModelUser user;
 
     public PanelLoginAndRegister(ActionListener eventRegister) {
@@ -45,17 +43,17 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         register.add(label);
 
         MyTextField txtUser = new MyTextField();
-        txtUser.setPrefixIcon(new ImageIcon(getClass().getResource("/com/group5/flight/booking/view/icon/user.png")));
+        txtUser.setPrefixIcon(new ImageIcon(getClass().getResource("/user.png")));
         txtUser.setHint("Name");
         register.add(txtUser, "w 60%");
 
         MyTextField txtEmail = new MyTextField();
-        txtEmail.setPrefixIcon(new ImageIcon(getClass().getResource("/com/group5/flight/booking/view/icon/mail.png")));
+        txtEmail.setPrefixIcon(new ImageIcon(getClass().getResource("/mail.png")));
         txtEmail.setHint("Email");
         register.add(txtEmail, "w 60%");
 
         MyPasswordField txtPass = new MyPasswordField();
-        txtPass.setPrefixIcon(new ImageIcon(getClass().getResource("/com/group5/flight/booking/view/icon/pass.png")));
+        txtPass.setPrefixIcon(new ImageIcon(getClass().getResource("/pass.png")));
         txtPass.setHint("Password");
         register.add(txtPass, "w 60%");
 
@@ -91,12 +89,12 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         login.add(label);
 
         MyTextField txtEmail = new MyTextField();
-        txtEmail.setPrefixIcon(new ImageIcon(getClass().getResource("/com/group5/flight/booking/view/icon/mail.png")));
+        txtEmail.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/mail.png"))));
         txtEmail.setHint("Email");
         login.add(txtEmail, "w 60%");
 
         MyPasswordField txtPass = new MyPasswordField();
-        txtPass.setPrefixIcon(new ImageIcon(getClass().getResource("/com/group5/flight/booking/view/icon/pass.png")));
+        txtPass.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/pass.png"))));
         txtPass.setHint("Password");
         login.add(txtPass, "w 60%");
 
