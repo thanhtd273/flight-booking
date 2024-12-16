@@ -6,7 +6,6 @@ import com.group5.flight.booking.dao.SeatDao;
 import com.group5.flight.booking.dao.FlightSeatPassengerDao;
 import com.group5.flight.booking.dto.SeatInfo;
 import com.group5.flight.booking.model.Seat;
-import com.group5.flight.booking.model.FlightSeatPassenger;
 import com.group5.flight.booking.service.SeatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,7 @@ public class SeatServiceImpl implements SeatService {
     @Override
     public Seat findBySeatId(Long id) throws LogicException {
         return seatDao.findBySeatId(id)
-                      .orElseThrow(() -> new LogicException(ErrorCode.DATA_NULL, "Seat not found"));
+                .orElseThrow(() -> new LogicException(ErrorCode.DATA_NULL, "Seat not found"));
     }
 
     @Override
@@ -104,8 +103,15 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
-    public List<Object[]> countAvailableSeatsByClass() throws LogicException {
-        return seatDao.countAvailableSeatsByClass();
+    public List<Object[]> countAvailableSeatsByClass(Long flightId) throws LogicException {
+        if (ObjectUtils.isEmpty(flightId)) {
+            throw new LogicException(ErrorCode.BLANK_FIELD, "Flight ID is required");
+        }
+        List<Object[]> result = seatDao.countAvailableSeatsByClass(flightId);
+        if (result.isEmpty()) {
+            throw new LogicException(ErrorCode.DATA_NULL, "No available seats found for this flight.");
+        }
+        return result;
     }
 
 }

@@ -1,37 +1,19 @@
 package com.group5.flight.booking.view.swing;
 
-import java.awt.Color;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.RenderingHints;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.awt.*;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JPasswordField;
 
+@Getter
 public class MyPasswordField extends JPasswordField {
-
-    public String getHint() {
-        return hint;
-    }
-
-    public void setHint(String hint) {
-        this.hint = hint;
-    }
-
-    public Icon getPrefixIcon() {
-        return prefixIcon;
-    }
 
     public void setPrefixIcon(Icon prefixIcon) {
         this.prefixIcon = prefixIcon;
         initBorder();
-    }
-
-    public Icon getSuffixIcon() {
-        return suffixIcon;
     }
 
     public void setSuffixIcon(Icon suffixIcon) {
@@ -41,13 +23,14 @@ public class MyPasswordField extends JPasswordField {
 
     private Icon prefixIcon;
     private Icon suffixIcon;
+    @Setter
     private String hint = "";
 
     public MyPasswordField() {
         setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setBackground(new Color(0, 0, 0, 0));
         setForeground(Color.decode("#7A8C8D"));
-        setFont(new java.awt.Font("sansserif", 0, 13));
+        setFont(new java.awt.Font("sansserif", Font.PLAIN, 13));
         setSelectionColor(new Color(75, 175, 152));
     }
 

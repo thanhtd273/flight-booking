@@ -96,14 +96,15 @@ public class SeatController {
         }
     }
 
-    @GetMapping(value = "/count-by-class")
-    public APIResponse countAvailableSeatsByClass(HttpServletResponse response) {
+    @GetMapping(value = "/count-by-class/{flightId}")
+    public APIResponse countAvailableSeatsByClass(@PathVariable(value = "flightId") Long flightId,
+                                                  HttpServletResponse response) {
         long start = System.currentTimeMillis();
         try {
-            List<Object[]> seatCounts = seatService.countAvailableSeatsByClass();
+            List<Object[]> seatCounts = seatService.countAvailableSeatsByClass(flightId);
             return new APIResponse(ErrorCode.SUCCESS, "", System.currentTimeMillis() - start, seatCounts);
         } catch (Exception e) {
-            logger.error("Call API GET /api/v1/flight-booking/seats/count-by-class failed, error: {}", e.getMessage());
+            logger.error("Call API GET /api/v1/flight-booking/seats/count-by-class/{} failed, error: {}", flightId, e.getMessage());
             return ExceptionHandler.handleException(response, e, start);
         }
     }

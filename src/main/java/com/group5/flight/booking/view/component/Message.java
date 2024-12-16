@@ -1,19 +1,18 @@
 package com.group5.flight.booking.view.component;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
 public class Message extends javax.swing.JPanel {
 
-    public boolean isShow() {
-        return show;
-    }
-
-    public void setShow(boolean show) {
-        this.show = show;
-    }
-
     private MessageType messageType = MessageType.SUCCESS;
+
+    @Setter
+    @Getter
     private boolean show;
 
     public Message() {
@@ -26,14 +25,12 @@ public class Message extends javax.swing.JPanel {
         this.messageType = messageType;
         lbMessage.setText(message);
         if (messageType == MessageType.SUCCESS) {
-            lbMessage.setIcon(new ImageIcon(getClass().getResource("/com/group5/flight/booking/view/icon/success.png")));
+            lbMessage.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/com/group5/flight/booking/view/icon/success.png"))));
         } else {
-            lbMessage.setIcon(new ImageIcon(getClass().getResource("/com/group5/flight/booking/view/icon/error.png")));
+            lbMessage.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/com/group5/flight/booking/view/icon/error.png"))));
         }
     }
 
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         lbMessage = new javax.swing.JLabel();
@@ -56,7 +53,7 @@ public class Message extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(lbMessage, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
         );
-    }// </editor-fold>//GEN-END:initComponents
+    }
 
     @Override
     protected void paintComponent(Graphics grphcs) {
@@ -74,11 +71,9 @@ public class Message extends javax.swing.JPanel {
         super.paintComponent(grphcs);
     }
 
-    public static enum MessageType {
+    public enum MessageType {
         SUCCESS, ERROR
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel lbMessage;
-    // End of variables declaration//GEN-END:variables
 }
