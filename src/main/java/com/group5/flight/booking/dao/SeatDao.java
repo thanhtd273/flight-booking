@@ -11,7 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface SeatDao extends JpaRepository<Seat, Long> {
-    List<Seat> findAllSeats();
 
     Optional<Seat> findBySeatId(Long seatId);
 
