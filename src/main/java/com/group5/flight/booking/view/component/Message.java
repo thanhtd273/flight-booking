@@ -35,7 +35,7 @@ public class Message extends javax.swing.JPanel {
 
         lbMessage = new javax.swing.JLabel();
 
-        lbMessage.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
+        lbMessage.setFont(new java.awt.Font("sansserif", 0, 14)); 
         lbMessage.setForeground(new Color(248, 248, 248));
         lbMessage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbMessage.setText("Message");
