@@ -74,9 +74,9 @@ public class FindFlightBooking extends JFrame {
     }
 
     private void searchFlights() {
-        String from = fromField.getText();  // Điểm đi
-        String to = toField.getText();      // Điểm đến
-        String timeStr = timeField.getText();  // Giờ bay
+        String from = fromField.getText();  
+        String to = toField.getText();      
+        String timeStr = timeField.getText();  
 
         Date time = parseDate(timeStr);
 
