@@ -24,13 +24,11 @@ public class SelectFlight extends JFrame {
         this.quantity = quantity;
         this.seatService = seatService;
 
-        // Thiết lập JFrame
         setTitle("Thông tin chuyến bay");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-
-        // Tạo giao diện hiển thị thông tin chuyến bay
+        
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(7, 2));
 
@@ -47,9 +45,8 @@ public class SelectFlight extends JFrame {
         panel.add(new JLabel("Số lượng vé:"));
         panel.add(new JLabel(String.valueOf(quantity)));
         panel.add(new JLabel("Ghế ngồi:"));
-        panel.add(new JLabel(selectedSeat));  // Hiển thị thông tin ghế ngồi
+        panel.add(new JLabel(selectedSeat));  
 
-        // Các nút
         JButton backButton = new JButton("Quay lại");
         JButton bookButton = new JButton("Đặt vé");
         JButton seatInfoButton = new JButton("Thông tin ghế ngồi");
@@ -58,27 +55,22 @@ public class SelectFlight extends JFrame {
         panel.add(bookButton);
         panel.add(seatInfoButton);
 
-        // Xử lý sự kiện khi nhấn nút
         backButton.addActionListener(e -> {
             dispose(); // Quay lại màn hình trước
-            new FindFlightBooking(flightService).setVisible(true); // Quay lại màn hình tìm chuyến bay
+            new FindFlightBooking(flightService).setVisible(true); 
         });
 
         bookButton.addActionListener(e -> {
-            // Xử lý đặt vé ở đây
             JOptionPane.showMessageDialog(this, "Bạn đã đặt vé thành công!");
             dispose();
         });
 
         seatInfoButton.addActionListener(e -> {
             try {
-                // Lấy danh sách ghế trống từ seatService
                 List<Seat> availableSeats = seatService.getAvailableSeatsByFlight(selectedFlight.getPlaneId());
-                // Chuyển sang giao diện chọn ghế
                 new SeatInfoUI(selectedFlight, availableSeats, quantity, seatService).setVisible(true);
-                this.setVisible(false);  // Ẩn cửa sổ hiện tại khi chuyển sang giao diện ghế ngồi
+                this.setVisible(false); 
             } catch (LogicException ex) {
-                // Xử lý ngoại lệ LogicException ở đây
                 JOptionPane.showMessageDialog(this, "Lỗi khi lấy danh sách ghế: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         });
