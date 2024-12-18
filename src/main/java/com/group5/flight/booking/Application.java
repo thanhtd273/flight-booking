@@ -47,7 +47,7 @@ public class Application extends JFrame {
         ActionListener eventRegister = e -> {
             System.out.println("Register button clicked!");
         };
-        findFlightBooking = new FindFlightBooking(flightService);  // Initialize FindFlightBooking
+        findFlightBooking = new FindFlightBooking(flightService);  
         PanelLoginAndRegister panel = new PanelLoginAndRegister(eventRegister);
         loginAndRegister = new PanelLoginAndRegister(e -> handleLogin());
         add(panel);
@@ -109,7 +109,7 @@ public class Application extends JFrame {
         Animator animator = new Animator(800, target);
         animator.setAcceleration(0.5f);
         animator.setDeceleration(0.5f);
-        animator.setResolution(0);  //  for smooth animation
+        animator.setResolution(0);
         bg.setLayout(layout);
         bg.setLayer(loading, JLayeredPane.POPUP_LAYER);
         bg.setLayer(verifyCode, JLayeredPane.POPUP_LAYER);
@@ -136,7 +136,6 @@ public class Application extends JFrame {
         }
     }
 
-    // Show the flight booking panel after login
     private void showFindFlightBooking() {
         this.getContentPane().removeAll();
         this.add(findFlightBooking);
@@ -205,7 +204,7 @@ public class Application extends JFrame {
             @Override
             public void begin() {
                 if (!ms.isShow()) {
-                    bg.add(ms, "pos 0.5al -30", 0); //  Insert to bg fist index 0
+                    bg.add(ms, "pos 0.5al -30", 0);
                     ms.setVisible(true);
                     bg.repaint();
                 }
