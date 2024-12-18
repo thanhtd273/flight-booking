@@ -106,7 +106,7 @@ public class PanelVerifyCode extends javax.swing.JPanel {
 
     private void cmdCancelActionPerformed(java.awt.event.ActionEvent evt) {
         setVisible(false);
-    }//GEN-LAST:event_cmdCancelActionPerformed
+    }
 
     @Override
     protected void paintComponent(Graphics grphcs) {
