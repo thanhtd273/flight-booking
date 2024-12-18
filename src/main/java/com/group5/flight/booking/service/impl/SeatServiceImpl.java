@@ -23,7 +23,7 @@ public class SeatServiceImpl implements SeatService {
 
     @Override
     public List<Seat> getAllSeats() {
-        return seatDao.findAllSeats();
+        return seatDao.findAll();
     }
 
     @Override

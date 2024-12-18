@@ -5,6 +5,7 @@ import com.group5.flight.booking.dto.FlightInfo;
 import com.group5.flight.booking.core.exception.LogicException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import com.group5.flight.booking.service.SeatService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,6 +25,7 @@ public class FindFlightBooking extends JFrame {
     private JButton searchButton;
     private JTable resultTable;
     private FlightService flightService;
+    private SeatService seatService;
 
     @Autowired
     public FindFlightBooking(FlightService flightService) {
@@ -74,6 +76,10 @@ public class FindFlightBooking extends JFrame {
         });
     }
 
+    public JSpinner getQuantitySpinner() {
+        return quantitySpinner;
+    }
+
     private void searchFlights() {
         String from = fromField.getText();  // Điểm đi
         String to = toField.getText();      // Điểm đến
@@ -117,14 +123,17 @@ public class FindFlightBooking extends JFrame {
 
                     resultTable.setModel(new DefaultTableModel(data, columns));
 
-                    // Thêm sự kiện chọn chuyến bay từ bảng
                     resultTable.getSelectionModel().addListSelectionListener(e1 -> {
                         int selectedRow = resultTable.getSelectedRow();
                         if (selectedRow != -1) {
                             // Lấy thông tin chuyến bay đã chọn
                             FlightInfo selectedFlight = flights.get(selectedRow);
-                            // Tiến hành các bước tiếp theo (ví dụ: đặt vé, hiển thị chi tiết chuyến bay, ...)
-                            JOptionPane.showMessageDialog(this, "Bạn đã chọn chuyến bay: " + selectedFlight.getPlaneId());
+
+                            // Lấy giá trị số lượng vé từ Spinner và ép kiểu về Integer rồi chuyển thành int
+                            int quantity = (Integer) quantitySpinner.getValue();
+
+                            // Chuyển đến giao diện chi tiết chuyến bay
+                            new SelectFlight(selectedFlight, quantity, seatService).setVisible(true);
                         }
                     });
 

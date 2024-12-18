@@ -1,6 +1,6 @@
 package com.group5.flight.booking;
-import com.group5.flight.booking.view.component.*;
 
+import com.group5.flight.booking.view.component.*;
 import com.group5.flight.booking.service.FlightService;
 import com.group5.flight.booking.dto.FlightInfo;
 import com.group5.flight.booking.view.component.FindFlightBooking;
@@ -13,6 +13,7 @@ import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
 import com.group5.flight.booking.core.exception.LogicException;
+import com.group5.flight.booking.service.SeatService;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -39,13 +40,14 @@ public class Application extends JFrame {
     private static final double LOGIN_SIZE = 60;
     private FindFlightBooking findFlightBooking;
     private FlightService flightService;
+    private SeatService seatService;
 
     @Autowired
     public Application(FlightService flightService) {
         ActionListener eventRegister = e -> {
             System.out.println("Register button clicked!");
         };
-        findFlightBooking = new FindFlightBooking(flightService);
+        findFlightBooking = new FindFlightBooking(flightService);  // Initialize FindFlightBooking
         PanelLoginAndRegister panel = new PanelLoginAndRegister(eventRegister);
         loginAndRegister = new PanelLoginAndRegister(e -> handleLogin());
         add(panel);
@@ -53,8 +55,8 @@ public class Application extends JFrame {
         this.flightService = flightService;
     }
 
-
     private void init() {
+        bg = new JLayeredPane();
         layout = new MigLayout("fill, insets 0");
         cover = new PanelCover();
         loading = new PanelLoading();
@@ -114,7 +116,7 @@ public class Application extends JFrame {
         bg.add(loading, "pos 0 0 100% 100%");
         bg.add(verifyCode, "pos 0 0 100% 100%");
         bg.add(cover, "width " + COVER_SIZE + "%, pos " + (isLogin ? "1al" : "0al") + " 0 n 100%");
-        bg.add(loginAndRegister, "width " + LOGIN_SIZE + "%, pos " + (isLogin ? "0al" : "1al") + " 0 n 100%"); //  1al as 100%
+        bg.add(loginAndRegister, "width " + LOGIN_SIZE + "%, pos " + (isLogin ? "0al" : "1al") + " 0 n 100%");
         loginAndRegister.showRegister(!isLogin);
         cover.login(isLogin);
         cover.addEvent(ae -> {
@@ -123,11 +125,10 @@ public class Application extends JFrame {
             }
         });
     }
+
     private void handleLogin() {
         ModelUser user = loginAndRegister.getUser();
-
         boolean loginSuccessful = true;
-
         if (loginSuccessful) {
             showFindFlightBooking();
         } else {
@@ -147,7 +148,6 @@ public class Application extends JFrame {
     public void showFlightList(Long fromAirportId, Long toAirportId, Date departureDate) {
         try {
             List<FlightInfo> flights = flightService.findFlight(fromAirportId, toAirportId, departureDate);
-
             if (flights.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Không tìm thấy chuyến bay nào phù hợp!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             } else {
@@ -163,16 +163,16 @@ public class Application extends JFrame {
     }
 
     private JPanel createFlightListPanel(List<FlightInfo> flights) {
-        String[] columnNames = {"Mã chuyến bay", "Điểm đi", "Điểm đến", "Ngày khởi hành", "Giờ khởi hành", "Số ghế trống"};
+        String[] columnNames = {"Mã chuyến bay", "Điểm đi", "Điểm đến", "Ngày khởi hành", "Ngày trở về", "Giá vé"};
 
         Object[][] data = flights.stream()
                 .map(flight -> new Object[]{
-                 //       flight.getFlightId(),
-                  //      flight.getFromAirportName(),
-                   //     flight.getToAirportName(),
-                  //      flight.getDepartureDate(),
-                  //      flight.getDepartureTime(),
-                   //     flight.getAvailableSeats()
+                        flight.getPlaneId(),
+                        flight.getFromAirport(),
+                        flight.getToAirport(),
+                        flight.getDepatureDate(),
+                        flight.getReturnDate(),
+                        flight.getBasePrice()
                 }).toArray(Object[][]::new);
 
         JTable table = new JTable(data, columnNames);
@@ -181,12 +181,20 @@ public class Application extends JFrame {
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(scrollPane, BorderLayout.CENTER);
 
+        table.getSelectionModel().addListSelectionListener(e1 -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow != -1) {
+                FlightInfo selectedFlight = flights.get(selectedRow);
+                int quantity = (Integer) findFlightBooking.getQuantitySpinner().getValue();
+                new SelectFlight(selectedFlight, quantity, seatService).setVisible(true);
+            }
+        });
+
         return panel;
     }
+
     private void register() {
         ModelUser user = loginAndRegister.getUser();
-        //loading.setVisible(true);
-        //System.out.println("Click register");
         verifyCode.setVisible(true);
     }
 
@@ -245,9 +253,7 @@ public class Application extends JFrame {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
         java.awt.EventQueue.invokeLater(() -> {
-            org.springframework.context.ApplicationContext context =
-                    SpringApplication.run(Application.class, args);
-
+            org.springframework.context.ApplicationContext context = SpringApplication.run(Application.class, args);
             FlightService flightService = context.getBean(FlightService.class);
             new Application(flightService).setVisible(true);
         });
