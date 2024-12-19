@@ -1,76 +1,47 @@
 package com.group5.flight.booking;
-import com.group5.flight.booking.view.component.*;
 
-import com.group5.flight.booking.service.FlightService;
-import com.group5.flight.booking.dto.FlightInfo;
-import com.group5.flight.booking.view.component.FindFlightBooking;
-import com.group5.flight.booking.view.model.ModelUser;
-import net.miginfocom.swing.MigLayout;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.jdesktop.animation.timing.Animator;
-import org.jdesktop.animation.timing.TimingTarget;
-import org.jdesktop.animation.timing.TimingTargetAdapter;
-import com.group5.flight.booking.core.exception.LogicException;
-
-import javax.swing.*;
+import com.group5.flight.booking.view.component.PanelCover;
+import com.group5.flight.booking.view.component.PanelLoginAndRegister;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
-import java.util.Date;
-import java.util.List;
-import java.awt.BorderLayout;
+import net.miginfocom.swing.MigLayout;
+import org.jdesktop.animation.timing.Animator;
+import org.jdesktop.animation.timing.TimingTarget;
+import org.jdesktop.animation.timing.TimingTargetAdapter;
 
-@SpringBootApplication
-public class Application extends JFrame {
+public class Application extends javax.swing.JFrame {
 
     private final DecimalFormat df = new DecimalFormat("##0.###", DecimalFormatSymbols.getInstance(Locale.US));
     private MigLayout layout;
     private PanelCover cover;
     private PanelLoginAndRegister loginAndRegister;
-    private PanelLoading loading;
-    private PanelVerifyCode verifyCode;
     private boolean isLogin = true;
-    private static final double ADD_SIZE = 30;
-    private static final double COVER_SIZE = 40;
-    private static final double LOGIN_SIZE = 60;
-    private FindFlightBooking findFlightBooking;
-    private FlightService flightService;
+    private final double addSize = 30;
+    private final double coverSize = 40;
+    private final double loginSize = 60;
 
-    @Autowired
-    public Application(FlightService flightService) {
-        ActionListener eventRegister = e -> {
-            System.out.println("Register button clicked!");
-        };
-        findFlightBooking = new FindFlightBooking(flightService);
-        PanelLoginAndRegister panel = new PanelLoginAndRegister(eventRegister);
-        loginAndRegister = new PanelLoginAndRegister(e -> handleLogin());
-        add(panel);
+    public Application() {
+        initComponents();
         init();
-        this.flightService = flightService;
     }
-
 
     private void init() {
         layout = new MigLayout("fill, insets 0");
         cover = new PanelCover();
-        loading = new PanelLoading();
-        verifyCode = new PanelVerifyCode();
-        ActionListener eventRegister = ae -> register();
-        loginAndRegister = new PanelLoginAndRegister(eventRegister);
+        loginAndRegister = new PanelLoginAndRegister();
         TimingTarget target = new TimingTargetAdapter() {
             @Override
             public void timingEvent(float fraction) {
                 double fractionCover;
                 double fractionLogin;
-                double size = COVER_SIZE;
+                double size = coverSize;
                 if (fraction <= 0.5f) {
-                    size += fraction * ADD_SIZE;
+                    size += fraction * addSize;
                 } else {
-                    size += ADD_SIZE - fraction * ADD_SIZE;
+                    size += addSize - fraction * addSize;
                 }
                 if (isLogin) {
                     fractionCover = 1f - fraction;
@@ -95,7 +66,7 @@ public class Application extends JFrame {
                 fractionCover = Double.valueOf(df.format(fractionCover));
                 fractionLogin = Double.valueOf(df.format(fractionLogin));
                 layout.setComponentConstraints(cover, "width " + size + "%, pos " + fractionCover + "al 0 n 100%");
-                layout.setComponentConstraints(loginAndRegister, "width " + LOGIN_SIZE + "%, pos " + fractionLogin + "al 0 n 100%");
+                layout.setComponentConstraints(loginAndRegister, "width " + loginSize + "%, pos " + fractionLogin + "al 0 n 100%");
                 bg.revalidate();
             }
 
@@ -109,147 +80,63 @@ public class Application extends JFrame {
         animator.setDeceleration(0.5f);
         animator.setResolution(0);  //  for smooth animation
         bg.setLayout(layout);
-        bg.setLayer(loading, JLayeredPane.POPUP_LAYER);
-        bg.setLayer(verifyCode, JLayeredPane.POPUP_LAYER);
-        bg.add(loading, "pos 0 0 100% 100%");
-        bg.add(verifyCode, "pos 0 0 100% 100%");
-        bg.add(cover, "width " + COVER_SIZE + "%, pos " + (isLogin ? "1al" : "0al") + " 0 n 100%");
-        bg.add(loginAndRegister, "width " + LOGIN_SIZE + "%, pos " + (isLogin ? "0al" : "1al") + " 0 n 100%"); //  1al as 100%
+        bg.add(cover, "width " + coverSize + "%, pos " + (isLogin ? "1al" : "0al") + " 0 n 100%");
+        bg.add(loginAndRegister, "width " + loginSize + "%, pos " + (isLogin ? "0al" : "1al") + " 0 n 100%"); //  1al as 100%
         loginAndRegister.showRegister(!isLogin);
         cover.login(isLogin);
-        cover.addEvent(ae -> {
-            if (!animator.isRunning()) {
-                animator.start();
+        cover.addEvent(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                if (!animator.isRunning()) {
+                    animator.start();
+                }
             }
         });
     }
-    private void handleLogin() {
-        ModelUser user = loginAndRegister.getUser();
 
-        boolean loginSuccessful = true;
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
 
-        if (loginSuccessful) {
-            showFindFlightBooking();
-        } else {
-            showMessage(Message.MessageType.ERROR, "Login failed! Please try again.");
-        }
-    }
+        bg = new javax.swing.JLayeredPane();
 
-    // Show the flight booking panel after login
-    private void showFindFlightBooking() {
-        this.getContentPane().removeAll();
-        this.add(findFlightBooking);
-        this.revalidate();
-        this.repaint();
-        findFlightBooking.setVisible(true);
-    }
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
 
-    public void showFlightList(Long fromAirportId, Long toAirportId, Date departureDate) {
-        try {
-            List<FlightInfo> flights = flightService.findFlight(fromAirportId, toAirportId, departureDate);
+        bg.setBackground(new java.awt.Color(255, 255, 255));
+        bg.setOpaque(true);
 
-            if (flights.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Không tìm thấy chuyến bay nào phù hợp!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JPanel flightListPanel = createFlightListPanel(flights);
-                this.getContentPane().removeAll();
-                this.add(flightListPanel);
-                this.revalidate();
-                this.repaint();
+        javax.swing.GroupLayout bgLayout = new javax.swing.GroupLayout(bg);
+        bg.setLayout(bgLayout);
+        bgLayout.setHorizontalGroup(
+                bgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 933, Short.MAX_VALUE)
+        );
+        bgLayout.setVerticalGroup(
+                bgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 537, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(bg, javax.swing.GroupLayout.Alignment.TRAILING)
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(bg)
+        );
+
+        pack();
+        setLocationRelativeTo(null);
+    }// </editor-fold>//GEN-END:initComponents
+
+    public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new Application().setVisible(true);
             }
-        } catch (LogicException e) {
-            JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi khi tìm kiếm chuyến bay: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private JPanel createFlightListPanel(List<FlightInfo> flights) {
-        String[] columnNames = {"Mã chuyến bay", "Điểm đi", "Điểm đến", "Ngày khởi hành", "Giờ khởi hành", "Số ghế trống"};
-
-        Object[][] data = flights.stream()
-                .map(flight -> new Object[]{
-                 //       flight.getFlightId(),
-                  //      flight.getFromAirportName(),
-                   //     flight.getToAirportName(),
-                  //      flight.getDepartureDate(),
-                  //      flight.getDepartureTime(),
-                   //     flight.getAvailableSeats()
-                }).toArray(Object[][]::new);
-
-        JTable table = new JTable(data, columnNames);
-        JScrollPane scrollPane = new JScrollPane(table);
-
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(scrollPane, BorderLayout.CENTER);
-
-        return panel;
-    }
-    private void register() {
-        ModelUser user = loginAndRegister.getUser();
-        //loading.setVisible(true);
-        //System.out.println("Click register");
-        verifyCode.setVisible(true);
-    }
-
-    private void showMessage(Message.MessageType messageType, String message) {
-        Message ms = new Message();
-        ms.showMessage(messageType, message);
-        TimingTarget target = new TimingTargetAdapter() {
-            @Override
-            public void begin() {
-                if (!ms.isShow()) {
-                    bg.add(ms, "pos 0.5al -30", 0); //  Insert to bg fist index 0
-                    ms.setVisible(true);
-                    bg.repaint();
-                }
-            }
-
-            @Override
-            public void timingEvent(float fraction) {
-                float f;
-                if (ms.isShow()) {
-                    f = 40 * (1f - fraction);
-                } else {
-                    f = 40 * fraction;
-                }
-                layout.setComponentConstraints(ms, "pos 0.5al " + (int) (f - 30));
-                bg.repaint();
-                bg.revalidate();
-            }
-
-            @Override
-            public void end() {
-                if (ms.isShow()) {
-                    bg.remove(ms);
-                    bg.repaint();
-                    bg.revalidate();
-                } else {
-                    ms.setShow(true);
-                }
-            }
-        };
-        Animator animator = new Animator(300, target);
-        animator.setResolution(0);
-        animator.setAcceleration(0.5f);
-        animator.setDeceleration(0.5f);
-        animator.start();
-        new Thread(() -> {
-            try {
-                Thread.sleep(2000);
-                animator.start();
-            } catch (InterruptedException e) {
-                System.err.println(e.getMessage());
-            }
-        }).start();
-    }
-
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-        java.awt.EventQueue.invokeLater(() -> {
-            org.springframework.context.ApplicationContext context =
-                    SpringApplication.run(Application.class, args);
-
-            FlightService flightService = context.getBean(FlightService.class);
-            new Application(flightService).setVisible(true);
         });
     }
 
