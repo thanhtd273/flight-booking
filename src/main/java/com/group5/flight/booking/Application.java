@@ -64,8 +64,8 @@ public class Application extends javax.swing.JFrame {
                 if (fraction >= 0.5f) {
                     loginAndRegister.showRegister(isLogin);
                 }
-                fractionCover = Double.valueOf(df.format(fractionCover));
-                fractionLogin = Double.valueOf(df.format(fractionLogin));
+                fractionCover = Double.parseDouble(df.format(fractionCover));
+                fractionLogin = Double.parseDouble(df.format(fractionLogin));
                 layout.setComponentConstraints(cover, "width " + size + "%, pos " + fractionCover + "al 0 n 100%");
                 layout.setComponentConstraints(loginAndRegister, "width " + loginSize + "%, pos " + fractionLogin + "al 0 n 100%");
                 bg.revalidate();
@@ -97,8 +97,7 @@ public class Application extends javax.swing.JFrame {
     private void register() {
 
     }
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    
     private void initComponents() {
 
         bg = new javax.swing.JLayeredPane();
@@ -133,9 +132,9 @@ public class Application extends javax.swing.JFrame {
 
         pack();
         setLocationRelativeTo(null);
-    }// </editor-fold>//GEN-END:initComponents
+    }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Application().setVisible(true);
