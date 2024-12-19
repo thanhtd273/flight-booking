@@ -1,15 +1,11 @@
 package com.group5.flight.booking;
 
+import com.group5.flight.booking.core.exception.LogicException;
 import com.group5.flight.booking.dto.FlightInfo;
 import com.group5.flight.booking.model.User;
 import com.group5.flight.booking.service.FlightService;
 import com.group5.flight.booking.service.SeatService;
-import com.group5.flight.booking.view.component.FindFlightBooking;
-import com.group5.flight.booking.view.component.Message;
-import com.group5.flight.booking.view.component.PanelCover;
-import com.group5.flight.booking.view.component.PanelLoading;
-import com.group5.flight.booking.view.component.PanelLoginAndRegister;
-import com.group5.flight.booking.view.component.PanelVerifyCode;
+import com.group5.flight.booking.view.component.*;
 import net.miginfocom.swing.MigLayout;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;
@@ -22,7 +18,6 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -58,7 +53,7 @@ public class Application extends JFrame {
         bg = new JLayeredPane();
         layout = new MigLayout("fill, insets 0");
         cover = new PanelCover();
-        loading = new PanelLoading();
+        PanelLoading loading = new PanelLoading();
         verifyCode = new PanelVerifyCode();
         ActionListener eventRegister = ae -> register();
         loginAndRegister = new PanelLoginAndRegister(eventRegister);
@@ -94,8 +89,8 @@ public class Application extends JFrame {
                 if (fraction >= 0.5f) {
                     loginAndRegister.showRegister(isLogin);
                 }
-                fractionCover = Double.valueOf(df.format(fractionCover));
-                fractionLogin = Double.valueOf(df.format(fractionLogin));
+                fractionCover = Double.parseDouble(df.format(fractionCover));
+                fractionLogin = Double.parseDouble(df.format(fractionLogin));
                 layout.setComponentConstraints(cover, "width " + size + "%, pos " + fractionCover + "al 0 n 100%");
                 layout.setComponentConstraints(loginAndRegister, "width " + LOGIN_SIZE + "%, pos " + fractionLogin + "al 0 n 100%");
                 bg.revalidate();
@@ -127,9 +122,127 @@ public class Application extends JFrame {
 
         add(bg);
         setTitle("Flight Booking Application - Group5");
-        setSize(1000, 600);
+        setSize(900, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+
+    private void handleLogin() {
+        User user = loginAndRegister.getUser();
+        boolean loginSuccessful = true;
+        if (loginSuccessful) {
+            showFindFlightBooking();
+        } else {
+            showMessage();
+        }
+    }
+
+    private void showFindFlightBooking() {
+        this.getContentPane().removeAll();
+        this.add(findFlightBooking);
+        this.revalidate();
+        this.repaint();
+        findFlightBooking.setVisible(true);
+    }
+
+    public void showFlightList(Long fromAirportId, Long toAirportId, Date departureDate) {
+        try {
+            List<FlightInfo> flights = flightService.findFlight(fromAirportId, toAirportId, departureDate);
+            if (flights.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy chuyến bay nào phù hợp!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JPanel flightListPanel = createFlightListPanel(flights);
+                this.getContentPane().removeAll();
+                this.add(flightListPanel);
+                this.revalidate();
+                this.repaint();
+            }
+        } catch (LogicException e) {
+            JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi khi tìm kiếm chuyến bay: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private JPanel createFlightListPanel(List<FlightInfo> flights) {
+        String[] columnNames = {"Mã chuyến bay", "Điểm đi", "Điểm đến", "Ngày khởi hành", "Ngày trở về", "Giá vé"};
+
+        Object[][] data = flights.stream()
+                .map(flight -> new Object[]{
+                        flight.getPlaneId(),
+                        flight.getFromAirport(),
+                        flight.getToAirport(),
+                        flight.getDepatureDate(),
+                        flight.getReturnDate(),
+                        flight.getBasePrice()
+                }).toArray(Object[][]::new);
+
+        JTable table = new JTable(data, columnNames);
+        JScrollPane scrollPane = new JScrollPane(table);
+
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        table.getSelectionModel().addListSelectionListener(e1 -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow != -1) {
+                FlightInfo selectedFlight = flights.get(selectedRow);
+                int quantity = (Integer) findFlightBooking.getQuantitySpinner().getValue();
+                new SelectFlight(selectedFlight, quantity, seatService).setVisible(true);
+            }
+        });
+
+        return panel;
+    }
+
+    private void showMessage() {
+        Message ms = new Message();
+        ms.showMessage(Message.MessageType.ERROR, "Login failed! Please try again.");
+        TimingTarget target = new TimingTargetAdapter() {
+            @Override
+            public void begin() {
+                if (!ms.isShow()) {
+                    bg.add(ms, "pos 0.5al -30", 0);
+                    ms.setVisible(true);
+                    bg.repaint();
+                }
+            }
+
+            @Override
+            public void timingEvent(float fraction) {
+                float f;
+                if (ms.isShow()) {
+                    f = 40 * (1f - fraction);
+                } else {
+                    f = 40 * fraction;
+                }
+                layout.setComponentConstraints(ms, "pos 0.5al " + (int) (f - 30));
+                bg.repaint();
+                bg.revalidate();
+            }
+
+            @Override
+            public void end() {
+                if (ms.isShow()) {
+                    bg.remove(ms);
+                    bg.repaint();
+                    bg.revalidate();
+                } else {
+                    ms.setShow(true);
+                }
+            }
+        };
+        Animator animator = new Animator(300, target);
+        animator.setResolution(0);
+        animator.setAcceleration(0.5f);
+        animator.setDeceleration(0.5f);
+        animator.start();
+        new Thread(() -> {
+            try {
+                Thread.sleep(2000);
+                animator.start();
+            } catch (InterruptedException e) {
+                System.err.println(e.getMessage());
+            }
+        }).start();
     }
 
     private void register() {
