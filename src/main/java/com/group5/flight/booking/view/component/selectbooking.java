@@ -3,14 +3,14 @@ package com.group5.flight.booking.view.component;
 import javax.swing.*;
 import java.awt.*;
 
-public class selectbooking extends JFrame {
+public class PaymentInformation extends JFrame {
 
     private JLabel paymentStatusLabel;
     private JLabel totalAmountLabel;
     private JButton payButton;
     private JButton backButton;
 
-    public PaymentInformation(String bankName, String cardNumber, double ticketPrice, int ticketQuantity) {
+    public PaymentInformation(String bankName, String cardNumber, double ticketPrice, int ticketQuantity, Runnable onBackAction) {
         setTitle("Thông tin thanh toán");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -40,7 +40,7 @@ public class selectbooking extends JFrame {
         // Buttons
         payButton = new JButton("Thanh toán");
         backButton = new JButton("Quay lại");
-        
+
         JPanel buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.add(backButton);
         buttonPanel.add(payButton);
@@ -49,7 +49,7 @@ public class selectbooking extends JFrame {
         add(mainPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
-        // Action Listeners (to be implemented when integrating APIs)
+        // Action Listeners
         payButton.addActionListener(e -> {
             // Simulate payment success for now
             paymentStatusLabel.setText("Thanh toán thành công");
@@ -59,12 +59,9 @@ public class selectbooking extends JFrame {
         backButton.addActionListener(e -> {
             // Close current window and go back
             dispose();
-        });
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new selectbooking("Ngân hàng ABC", "1234 5678 9012 3456", 500000, 2).setVisible(true);
+            if (onBackAction != null) {
+                onBackAction.run();
+            }
         });
     }
 }
