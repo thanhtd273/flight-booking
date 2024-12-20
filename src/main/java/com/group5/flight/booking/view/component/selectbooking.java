@@ -3,14 +3,14 @@ package com.group5.flight.booking.view.component;
 import javax.swing.*;
 import java.awt.*;
 
-public class PaymentInformation extends JFrame {
+public class selectbooking extends JFrame {
 
     private JLabel paymentStatusLabel;
     private JLabel totalAmountLabel;
     private JButton payButton;
     private JButton backButton;
 
-    public PaymentInformation(String bankName, String cardNumber, double ticketPrice, int ticketQuantity, Runnable onBackAction) {
+    public selectbooking(String bankName, String cardNumber, double ticketPrice, int ticketQuantity, Runnable onBackAction) {
         setTitle("Thông tin thanh toán");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
