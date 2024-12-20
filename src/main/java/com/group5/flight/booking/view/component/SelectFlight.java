@@ -62,6 +62,7 @@ public class SelectFlight extends JFrame {
         bookButton.addActionListener(e -> {
             JOptionPane.showMessageDialog(this, "Bạn đã đặt vé thành công!");
             dispose();
+            new selectbooking("Ngân hàng ABC", "1234 5678 9012 3456", selectedFlight.getBasePrice(), quantity).setVisible(true);
         });
 
         seatInfoButton.addActionListener(e -> {
