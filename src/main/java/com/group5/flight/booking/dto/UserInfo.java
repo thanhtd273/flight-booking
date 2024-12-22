@@ -21,4 +21,18 @@ public class UserInfo implements Serializable {
     private String roles;
 
     private Integer status;
+
+    @Override
+    public String toString() {
+        return "UserInfo{" +
+                "userId=" + userId +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", confirmPassword='" + confirmPassword + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", roles='" + roles + '\'' +
+                ", status=" + status +
+                '}';
+    }
 }

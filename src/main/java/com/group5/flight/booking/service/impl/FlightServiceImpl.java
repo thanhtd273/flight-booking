@@ -21,11 +21,10 @@ import org.apache.commons.lang3.Range;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -184,6 +183,20 @@ public class FlightServiceImpl implements FlightService {
         return getFlightInfo(flight);
     }
 
+    @Override
+    public List<FlightDisplayInfo> getFlightsDisplay(List<FlightInfo> flightInfos) {
+        List<FlightDisplayInfo> flightDisplayInfos = new LinkedList<>();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        for (FlightInfo flightInfo: flightInfos) {
+
+            flightDisplayInfos.add(new FlightDisplayInfo(flightInfo.getFlightId(), flightInfo.getFromAirport().getName(),
+                    flightInfo.getToAirport().getName(), dateFormat.format(flightInfo.getDepatureDate()),
+                    dateFormat.format(flightInfo.getReturnDate()), flightInfo.getBasePrice()));
+        }
+        return flightDisplayInfos;
+    }
+
     private FlightInfo getFlightInfo(Flight flight) {
         if (ObjectUtils.isEmpty(flight)) return null;
 
@@ -196,7 +209,7 @@ public class FlightServiceImpl implements FlightService {
         Long toAirportId = flight.getToAirportId();
         AirportInfo toAirport = airportService.getAirportInfo(toAirportId);
 
-        return new FlightInfo(planeId, planeInfo, airlineId, airlineInfo, fromAirportId, fromAirport, toAirportId, toAirport,
+        return new FlightInfo(flight.getFlightId(), planeId, planeInfo, airlineId, airlineInfo, fromAirportId, fromAirport, toAirportId, toAirport,
                 flight.getDepartureDate(), flight.getReturnDate(), flight.getBasePrice(), flight.getNumOfPassengers());
     }
 

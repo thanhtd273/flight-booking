@@ -4,11 +4,11 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class AppUtils {
-    private static final String EMAIL_REGEXP = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
     private AppUtils() {
         throw new IllegalStateException("Utility class");
@@ -36,5 +36,13 @@ public final class AppUtils {
 
     public static Long[] parseIdsFromStr(String str) {
         return (Long[]) Arrays.stream(str.split("-")).filter(NumberUtils::isCreatable).map(Long::parseLong).toArray();
+    }
+
+    public static String[] list2Array(List<String> list) {
+        String[] arr = new String[list.size()];
+        for (int i = 0; i < list.size(); i ++) {
+            arr[i] = list.get(i);
+        }
+        return arr;
     }
 }

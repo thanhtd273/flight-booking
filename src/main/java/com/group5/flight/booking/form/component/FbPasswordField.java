@@ -1,5 +1,6 @@
-package com.group5.flight.booking.view.swing;
+package com.group5.flight.booking.form.component;
 
+import com.group5.flight.booking.core.Constants;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +10,14 @@ import javax.swing.ImageIcon;
 import javax.swing.JPasswordField;
 
 @Getter
-public class MyPasswordField extends JPasswordField {
+public class FbPasswordField extends JPasswordField {
+
+    private Icon prefixIcon;
+
+    private Icon suffixIcon;
+
+    @Setter
+    private String hint = "";
 
     public void setPrefixIcon(Icon prefixIcon) {
         this.prefixIcon = prefixIcon;
@@ -21,16 +29,11 @@ public class MyPasswordField extends JPasswordField {
         initBorder();
     }
 
-    private Icon prefixIcon;
-    private Icon suffixIcon;
-    @Setter
-    private String hint = "";
-
-    public MyPasswordField() {
+    public FbPasswordField() {
         setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setBackground(new Color(0, 0, 0, 0));
         setForeground(Color.decode("#7A8C8D"));
-        setFont(new java.awt.Font("sansserif", Font.PLAIN, 13));
+        setFont(new Font(Constants.FB_FONT, Font.PLAIN, 13));
         setSelectionColor(new Color(75, 175, 152));
     }
 
@@ -74,10 +77,13 @@ public class MyPasswordField extends JPasswordField {
     private void initBorder() {
         int left = 15;
         int right = 15;
+        //  5 is default
         if (prefixIcon != null) {
+            //  prefix is left
             left = prefixIcon.getIconWidth() + 15;
         }
         if (suffixIcon != null) {
+            //  suffix is right
             right = suffixIcon.getIconWidth() + 15;
         }
         setBorder(javax.swing.BorderFactory.createEmptyBorder(10, left, 10, right));

@@ -13,6 +13,9 @@ import java.util.Date;
 @Getter
 @Setter
 public class FlightInfo {
+
+    private Long flightId;
+
     private Long planeId;
 
     private PlaneInfo plane;

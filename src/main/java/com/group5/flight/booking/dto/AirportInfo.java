@@ -11,6 +11,8 @@ import org.springframework.util.ObjectUtils;
 @Getter
 @Setter
 public class AirportInfo {
+    private Long airportId;
+
     private String name;
 
     private String airportCode;

@@ -1,4 +1,4 @@
-package com.group5.flight.booking.view.swing;
+package com.group5.flight.booking.form.component;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -12,28 +12,26 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import javax.swing.JButton;
 import javax.swing.border.EmptyBorder;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
 
-public class Button extends JButton {
-
-    public Color getEffectColor() {
-        return effectColor;
-    }
-
-    public void setEffectColor(Color effectColor) {
-        this.effectColor = effectColor;
-    }
+public class FbButton extends JButton {
 
     private Animator animator;
     private int targetSize;
-    private float animatSize;
+    private float animateSize;
     private Point pressedPoint;
     private float alpha;
+
+    @Getter
+    @Setter
     private Color effectColor = new Color(255, 255, 255);
 
-    public Button() {
+    public FbButton() {
         setContentAreaFilled(false);
         setBorder(new EmptyBorder(5, 0, 5, 0));
         setBackground(Color.WHITE);
@@ -42,7 +40,7 @@ public class Button extends JButton {
             @Override
             public void mousePressed(MouseEvent me) {
                 targetSize = Math.max(getWidth(), getHeight()) * 2;
-                animatSize = 0;
+                animateSize = 0;
                 pressedPoint = me.getPoint();
                 alpha = 0.5f;
                 if (animator.isRunning()) {
@@ -57,7 +55,7 @@ public class Button extends JButton {
                 if (fraction > 0.5f) {
                     alpha = 1 - fraction;
                 }
-                animatSize = fraction * targetSize;
+                animateSize = fraction * targetSize;
                 repaint();
             }
         };
@@ -79,7 +77,7 @@ public class Button extends JButton {
         if (pressedPoint != null) {
             g2.setColor(effectColor);
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, alpha));
-            g2.fillOval((int) (pressedPoint.x - animatSize / 2), (int) (pressedPoint.y - animatSize / 2), (int) animatSize, (int) animatSize);
+            g2.fillOval((int) (pressedPoint.x - animateSize / 2), (int) (pressedPoint.y - animateSize / 2), (int) animateSize, (int) animateSize);
         }
         g2.dispose();
         grphcs.drawImage(img, 0, 0, null);

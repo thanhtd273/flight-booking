@@ -1,6 +1,7 @@
 package com.group5.flight.booking.service;
 
 import com.group5.flight.booking.core.exception.LogicException;
+import com.group5.flight.booking.dto.FlightDisplayInfo;
 import com.group5.flight.booking.dto.FlightInfo;
 import com.group5.flight.booking.dto.SearchCriteria;
 import com.group5.flight.booking.model.Flight;
@@ -21,4 +22,6 @@ public interface FlightService {
     List<FlightInfo> filter(SearchCriteria searchCriteria) throws LogicException;
 
     FlightInfo getFlightInfo(Long flightId);
+
+    List<FlightDisplayInfo> getFlightsDisplay(List<FlightInfo> flightInfos);
 }

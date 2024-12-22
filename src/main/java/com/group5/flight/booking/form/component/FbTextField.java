@@ -1,5 +1,7 @@
-package com.group5.flight.booking.view.swing;
+package com.group5.flight.booking.form.component;
 
+import com.group5.flight.booking.core.Constants;
+import lombok.Getter;
 import lombok.Setter;
 
 import java.awt.*;
@@ -7,23 +9,19 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JTextField;
 
-public class MyTextField extends JTextField {
+@Getter
+public class FbTextField extends JTextField {
 
-    public String getHint() {
-        return hint;
-    }
+    private Icon prefixIcon;
 
-    public Icon getPrefixIcon() {
-        return prefixIcon;
-    }
+    private Icon suffixIcon;
+
+    @Setter
+    private String hint = "";
 
     public void setPrefixIcon(Icon prefixIcon) {
         this.prefixIcon = prefixIcon;
         initBorder();
-    }
-
-    public Icon getSuffixIcon() {
-        return suffixIcon;
     }
 
     public void setSuffixIcon(Icon suffixIcon) {
@@ -31,16 +29,13 @@ public class MyTextField extends JTextField {
         initBorder();
     }
 
-    private Icon prefixIcon;
-    private Icon suffixIcon;
-    @Setter
-    private String hint = "";
 
-    public MyTextField() {
+
+    public FbTextField() {
         setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setBackground(new Color(0, 0, 0, 0));
         setForeground(Color.decode("#7A8C8D"));
-        setFont(new java.awt.Font("sansserif", Font.PLAIN, 13));
+        setFont(new java.awt.Font(Constants.FB_FONT, Font.PLAIN, 13));
         setSelectionColor(new Color(75, 175, 152));
     }
 

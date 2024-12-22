@@ -19,4 +19,9 @@ public interface AirportService {
     ErrorCode delete(Long airportId);
 
     AirportInfo getAirportInfo(Long airportId);
+
+    List<AirportInfo> getAllAirportInfos();
+
+
+    String[] getLocationOfAllAirport();
 }

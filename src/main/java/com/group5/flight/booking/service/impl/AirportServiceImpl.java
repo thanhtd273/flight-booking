@@ -7,13 +7,16 @@ import com.group5.flight.booking.dto.AirportInfo;
 import com.group5.flight.booking.dto.CityInfo;
 import com.group5.flight.booking.model.Airport;
 import com.group5.flight.booking.model.City;
+import com.group5.flight.booking.model.Nation;
 import com.group5.flight.booking.service.AirportService;
 import com.group5.flight.booking.service.CityService;
+import com.group5.flight.booking.service.NationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -23,6 +26,8 @@ public class AirportServiceImpl implements AirportService {
     private final AirportDao airportDao;
 
     private final CityService cityService;
+
+    private final NationService nationService;
 
     @Override
     public List<Airport> getAllAirports() {
@@ -99,6 +104,32 @@ public class AirportServiceImpl implements AirportService {
         if (ObjectUtils.isEmpty(airport)) return null;
 
         CityInfo cityInfo = cityService.getCityInfo(airport.getCityId());
-        return new AirportInfo(airport.getName(), airport.getAirportCode(), airport.getCityId(), cityInfo);
+        return new AirportInfo(airport.getAirportId(), airport.getName(), airport.getAirportCode(), airport.getCityId(), cityInfo);
+    }
+
+    @Override
+    public List<AirportInfo> getAllAirportInfos() {
+        List<Airport> airports = getAllAirports();
+        List<AirportInfo> airportInfos = new LinkedList<>();
+        for (Airport airport: airports) {
+            CityInfo cityInfo = cityService.getCityInfo(airport.getCityId());
+            AirportInfo airportInfo = new AirportInfo(airport.getAirportId(), airport.getName(), airport.getAirportCode(), airport.getCityId(), cityInfo);
+            airportInfos.add(airportInfo);
+        }
+        return airportInfos;
+    }
+
+    @Override
+    public String[] getLocationOfAllAirport() {
+        List<Airport> airports = getAllAirports();
+        String[] locations = new String[airports.size()];
+        for (int i = 0; i < locations.length; i ++) {
+            City city = cityService.findByCityId(airports.get(i).getCityId());
+            Nation nation = nationService.findByNationId(city.getNationId());
+            String location = String.format("%s, %s, %s", airports.get(i).getName(), city.getName(), nation.getName());
+            locations[i] = location;
+        }
+
+        return locations;
     }
 }

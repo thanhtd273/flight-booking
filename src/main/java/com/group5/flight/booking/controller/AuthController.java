@@ -43,7 +43,7 @@ public class AuthController {
     public APIResponse login(HttpServletRequest request, HttpServletResponse response, @RequestBody Credential credential) {
         long start = System.currentTimeMillis();
         try {
-            LoginSessionInfo loginSessionInfo = authService.login(request, credential);
+            LoginSessionInfo loginSessionInfo = authService.login(credential);
             logger.info("Call API /api/v1/flight-booking/login success");
             return new APIResponse(ErrorCode.SUCCESS, "", System.currentTimeMillis() - start, loginSessionInfo);
         } catch (Exception e) {
