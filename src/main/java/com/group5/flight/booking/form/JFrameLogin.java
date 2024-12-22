@@ -72,10 +72,10 @@ public class JFrameLogin extends JFrame {
         add(mainPanel);
 
         // Show the sign-up panel initially
-        cardLayout.show(mainPanel, FLIGHT_LIST_SCREEN);
+        cardLayout.show(mainPanel, SIGNUP_SCREEN);
     }
 
-    private JPanel createLoginPanel() throws LogicException {
+    private JPanel createLoginPanel() {
         JPanel loginPanel = new JPanel();
         loginPanel.setLayout(null);
 
@@ -151,8 +151,6 @@ public class JFrameLogin extends JFrame {
         btnSignIn.setBorderPainted(false);
         rightPanel.add(btnSignIn);
 
-//        LoginSessionInfo loginSessionInfo = authService.login(new Credential("dinhthanha12703@gmail.com", "123456"));
-//        logger.debug("Login Info: {}", loginSessionInfo);
         btnSignIn.addActionListener(e -> {
             String email = txtEmail.getText();
             String password = new String(txtPassword.getPassword());
