@@ -22,8 +22,6 @@ import org.apache.commons.lang3.Range;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.*;
 
@@ -97,18 +95,18 @@ public class FlightServiceImpl implements FlightService {
     }
 
     @Override
-    public List<FlightInfo> filter(SearchCriteria searchCriteria)
+    public List<FlightInfo> filter(FilterCriteria filterCriteria)
             throws LogicException {
-        Long fromAirportId = searchCriteria.getFromAirportId();
-        Long toAirportId = searchCriteria.getToAirportId();
-        Date departureDate = searchCriteria.getDepartureDate();
+        Long fromAirportId = filterCriteria.getFromAirportId();
+        Long toAirportId = filterCriteria.getToAirportId();
+        Date departureDate = filterCriteria.getDepartureDate();
 
-        if (ObjectUtils.isEmpty(searchCriteria.getFromAirportId())
-                || ObjectUtils.isEmpty(searchCriteria.getToAirportId())
-                || ObjectUtils.isEmpty(searchCriteria.getDepartureDate())) {
+        if (ObjectUtils.isEmpty(filterCriteria.getFromAirportId())
+                || ObjectUtils.isEmpty(filterCriteria.getToAirportId())
+                || ObjectUtils.isEmpty(filterCriteria.getDepartureDate())) {
             throw new LogicException(ErrorCode.BLANK_FIELD);
         }
-        if (ObjectUtils.isEmpty(searchCriteria)) {
+        if (ObjectUtils.isEmpty(filterCriteria)) {
             return findFlight(fromAirportId, toAirportId, departureDate);
         }
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -126,16 +124,16 @@ public class FlightServiceImpl implements FlightService {
         predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(DEPARTURE_DATE), startOfDay));
         predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get(DEPARTURE_DATE), endOfDay));
         
-        Float minPrice = searchCriteria.getMinPrice();
+        Float minPrice = filterCriteria.getMinPrice();
         if (!ObjectUtils.isEmpty(minPrice))
             predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("basePrice"), minPrice));
 
 
-        Float maxPrice = searchCriteria.getMaxPrice();
+        Float maxPrice = filterCriteria.getMaxPrice();
         if (!ObjectUtils.isEmpty(maxPrice))
             predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("basePrice"), maxPrice));
 
-        List<Range<LocalTime>> departureTimes = searchCriteria.getDepartureTimes();
+        List<Range<LocalTime>> departureTimes = filterCriteria.getDepartureTimes();
         if (!ObjectUtils.isEmpty(departureTimes)) {
             departureTimes.forEach(range -> {
                         if (!ObjectUtils.isEmpty(range.getMinimum())) {
@@ -150,7 +148,7 @@ public class FlightServiceImpl implements FlightService {
             );
         }
 
-        List<Range<LocalTime>> arrivalTimes = searchCriteria.getArrivalTimes();
+        List<Range<LocalTime>> arrivalTimes = filterCriteria.getArrivalTimes();
         if (!ObjectUtils.isEmpty(arrivalTimes)) {
             arrivalTimes.forEach(range -> {
                         if (!ObjectUtils.isEmpty(range.getMinimum())) {
@@ -166,7 +164,7 @@ public class FlightServiceImpl implements FlightService {
         }
 
 
-        List<Long> airlineIds = searchCriteria.getAirlineIds();
+        List<Long> airlineIds = filterCriteria.getAirlineIds();
         if (!ObjectUtils.isEmpty(airlineIds)) {
             predicates.add(root.get("airlineId").in(airlineIds));
         }

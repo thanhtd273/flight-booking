@@ -1,9 +1,6 @@
 package com.group5.flight.booking.form;
 
-import com.group5.flight.booking.service.AirportService;
-import com.group5.flight.booking.service.AuthService;
-import com.group5.flight.booking.service.FlightService;
-import com.group5.flight.booking.service.UserService;
+import com.group5.flight.booking.service.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,15 +16,19 @@ public class MainFrame extends JFrame {
 
     private final UserService userService;
 
+    private final AirlineService airlineService;
+
     private final CardLayout cardLayout;
 
     private final JPanel mainPanel;
 
-    public MainFrame(AuthService authService, AirportService airportService, FlightService flightService, UserService userService) {
+    public MainFrame(AuthService authService, AirportService airportService, FlightService flightService,
+                     UserService userService, AirlineService airlineService) {
         this.authService = authService;
         this.airportService = airportService;
         this.flightService = flightService;
         this.userService = userService;
+        this.airlineService = airlineService;
 
         // Initialize CardLayout and main panel
         cardLayout = new CardLayout();
@@ -39,26 +40,26 @@ public class MainFrame extends JFrame {
         // Set the frame properties
         setTitle("Flight Booking Application");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(800, 600);
+        setSize(1000, 800);
         setLocationRelativeTo(null);
 
         // Add the sign-up panel, login panel, and flight searcher panel
         CodeVerifierPanel codeVerifierPanel = new CodeVerifierPanel(mainPanel, cardLayout, userService);
         SignUpPanel signUpPanel = new SignUpPanel(mainPanel, cardLayout, codeVerifierPanel, authService);
         LoginPanel loginPanel = new LoginPanel(mainPanel, cardLayout, authService);
-        FlightSearchPanel flightSearchPanel = new FlightSearchPanel(mainPanel, cardLayout, airportService, flightService);
-        FlightListPanel flightListPanel = new FlightListPanel();
+        FlightSearchPanel flightSearchPanel = new FlightSearchPanel(mainPanel, cardLayout, airportService, flightService, airlineService);
+//        FlightListPanel flightListPanel = new FlightListPanel();
 
         mainPanel.add(signUpPanel, SIGNUP_SCREEN);
         mainPanel.add(loginPanel, LOGIN_SCREEN);
         mainPanel.add(flightSearchPanel, FLIGHT_SEARCHER_SCREEN);
-        mainPanel.add(flightListPanel, FLIGHT_LIST_SCREEN);
+//        mainPanel.add(flightListPanel, FLIGHT_LIST_SCREEN);
 
         mainPanel.add(codeVerifierPanel, CODE_VERIFIER);
         // Add the main panel to the frame
         add(mainPanel);
 
         // Show the sign-up panel initially
-        cardLayout.show(mainPanel, FLIGHT_SEARCHER_SCREEN);
+        cardLayout.show(mainPanel, LOGIN_SCREEN);
     }
 }

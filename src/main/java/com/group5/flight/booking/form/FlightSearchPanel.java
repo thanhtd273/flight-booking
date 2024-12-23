@@ -1,21 +1,17 @@
 package com.group5.flight.booking.form;
 
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 
 import com.group5.flight.booking.core.AppUtils;
-import com.group5.flight.booking.core.Constants;
 import com.group5.flight.booking.core.exception.LogicException;
 import com.group5.flight.booking.dto.AirportInfo;
-import com.group5.flight.booking.dto.FlightDisplayInfo;
 import com.group5.flight.booking.dto.FlightInfo;
 import com.group5.flight.booking.dto.NationInfo;
 import com.group5.flight.booking.form.component.FbButton;
+import com.group5.flight.booking.service.AirlineService;
 import com.group5.flight.booking.service.AirportService;
 import com.group5.flight.booking.service.FlightService;
 import com.toedter.calendar.JDateChooser;
@@ -24,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
 
-import static com.group5.flight.booking.core.Constants.FLIGHT_DETAIL_SCREEN;
+import static com.group5.flight.booking.core.Constants.FLIGHT_LIST_SCREEN;
 
 public class FlightSearchPanel extends JPanel {
 
@@ -34,18 +30,19 @@ public class FlightSearchPanel extends JPanel {
 
     private final CardLayout cardLayout;
 
-    private JTable flightTable;
-
     private final AirportService airportService;
 
     private final FlightService flightService;
 
+    private final AirlineService airlineService;
+
     public FlightSearchPanel(JPanel mainPanel, CardLayout cardLayout,
-                             AirportService airportService, FlightService flightService) {
+                             AirportService airportService, FlightService flightService, AirlineService airlineService) {
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
         this.airportService = airportService;
         this.flightService = flightService;
+        this.airlineService = airlineService;
         initComponents();
         setOpaque(false);
     }
@@ -120,8 +117,11 @@ public class FlightSearchPanel extends JPanel {
                 try {
                     flightInfoList.addAll(flightService.findFlight(departureId[0], destinationId[0], departureDate[0])) ;
                     logger.debug("Flight list: {}", flightInfoList);
-                    updateFlightTable(flightTable, flightInfoList);
-
+                    FlightListPanel flightListPanel = new FlightListPanel(departureId[0], destinationId[0], departureDate[0],
+                            airlineService, flightService);
+                    flightListPanel.setFlightInfoList(flightInfoList);
+                    mainPanel.add(flightListPanel, FLIGHT_LIST_SCREEN);
+                    cardLayout.show(mainPanel, FLIGHT_LIST_SCREEN);
                 } catch (LogicException ex) {
                     JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -130,38 +130,6 @@ public class FlightSearchPanel extends JPanel {
         flightSearcherPanel.add(btnSearch, "span, align center, w 50%, h 40");
 
         add(flightSearcherPanel, "growx");
-
-        // Bottom section for table
-        JPanel tablePanel = new JPanel(new MigLayout("fill"));
-        tablePanel.setOpaque(false);
-
-        flightTable = new JTable();
-        flightTable.setModel(new DefaultTableModel(
-                new Object[][]{},
-                new String[]{"Flight Code", "Departure", "Destination", "Departure Date", "Return Date", "Price"}
-        ));
-        flightTable.setFillsViewportHeight(true);
-        flightTable.setRowHeight(30);
-        flightTable.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 14));
-        flightTable.getTableHeader().setFont(new Font(Constants.FB_FONT, Font.BOLD, 14));
-
-        JScrollPane scrollPane = new JScrollPane(flightTable);
-        flightTable.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent evt) {
-                int row = flightTable.rowAtPoint(evt.getPoint());
-                if (row >= 0) {
-                    FlightInfo flightInfo = flightInfoList.get(row);
-                    logger.debug("Flight info: {}", flightInfo);
-                    FlightDetailPanel flightDetailPanel = new FlightDetailPanel(mainPanel, cardLayout, flightInfo);
-                    mainPanel.add(flightDetailPanel, FLIGHT_DETAIL_SCREEN);
-                    cardLayout.show(mainPanel, FLIGHT_DETAIL_SCREEN);
-                }
-            }
-        });
-        tablePanel.add(scrollPane, "grow");
-
-        add(tablePanel, "grow");
     }
 
     private Map<String, Long> generateMenuData(List<AirportInfo> airportInfos) {
@@ -172,21 +140,5 @@ public class FlightSearchPanel extends JPanel {
             map.put(key, airportInfo.getAirportId());
         }
         return map;
-    }
-
-    private void updateFlightTable(JTable flightTable, List<FlightInfo> flightInfoList) {
-        DefaultTableModel model = (DefaultTableModel) flightTable.getModel();
-        model.setRowCount(0); // Clear existing data
-        List<FlightDisplayInfo> flightDisplayInfos = flightService.getFlightsDisplay(flightInfoList);
-        for (FlightDisplayInfo flightDisplayInfo : flightDisplayInfos) {
-            model.addRow(new Object[]{
-                    flightDisplayInfo.getFlightCode(),
-                    flightDisplayInfo.getDeparture(),
-                    flightDisplayInfo.getDestination(),
-                    flightDisplayInfo.getDepartureDate(),
-                    flightDisplayInfo.getReturnDate(),
-                    flightDisplayInfo.getPrice()
-            });
-        }
     }
 }

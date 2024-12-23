@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.apache.commons.lang3.Range;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class SearchCriteria {
+public class FilterCriteria {
     private Long fromAirportId;
 
     private Long toAirportId;
@@ -25,9 +26,9 @@ public class SearchCriteria {
 
     private Float maxPrice;
 
-    private List<Range<LocalTime>> departureTimes;
+    private List<Range<LocalTime>> departureTimes = new ArrayList<>();
 
-    private List<Range<LocalTime>> arrivalTimes;
+    private List<Range<LocalTime>> arrivalTimes = new ArrayList<>();
 
-    private List<Long> airlineIds;
+    private List<Long> airlineIds = new ArrayList<>();
 }

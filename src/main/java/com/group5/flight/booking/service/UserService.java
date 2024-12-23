@@ -23,7 +23,7 @@ public interface UserService {
 
     User updateUser(Long userId, UserInfo userInfo) throws LogicException;
 
-    ErrorCode activateUser(OTPInfo activationInfo) throws LogicException;
+    ErrorCode activateUser(String email, Integer code) throws LogicException;
 
     ErrorCode deactivateUser(Long userId) throws LogicException;
 

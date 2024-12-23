@@ -76,26 +76,6 @@ public class UserController {
         }
     }
 
-    @PostMapping("/users/active")
-    public APIResponse activateUser(HttpServletResponse response, @RequestBody OTPInfo activationInfo) {
-        long start = System.currentTimeMillis();
-        try {
-            ErrorCode errorCode = userService.activateUser(activationInfo);
-            if (errorCode == ErrorCode.SUCCESS) {
-                logger.info("Call API POST /api/v1/flight-booking/users/activate success, email: {}", activationInfo.getEmail());
-            } else {
-                logger.error("Call API POST /api/v1/flight-booking/users/activate failed, email: {}, error: {}",
-                        activationInfo.getEmail(), errorCode.getMessage());
-            }
-            response.setStatus(errorCode.getValue());
-            return new APIResponse(errorCode, "", System.currentTimeMillis() - start, errorCode.getMessage());
-        } catch (Exception e) {
-            logger.error("Call API POST /api/v1/flight-booking/users/active failed, user email: {}, error: {}",
-                    activationInfo.getEmail(), e.getMessage());
-            return ExceptionHandler.handleException(response, e, start);
-        }
-    }
-
     @PostMapping("/users/change-password")
     public APIResponse changePassword(HttpServletResponse response, @RequestBody UpdatePasswordInfo updatePasswordInfo) {
         long start = System.currentTimeMillis();

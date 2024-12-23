@@ -2,10 +2,7 @@ package com.group5.flight.booking.config;
 
 import com.group5.flight.booking.core.exception.LogicException;
 import com.group5.flight.booking.form.MainFrame;
-import com.group5.flight.booking.service.AirportService;
-import com.group5.flight.booking.service.AuthService;
-import com.group5.flight.booking.service.FlightService;
-import com.group5.flight.booking.service.UserService;
+import com.group5.flight.booking.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,8 +18,10 @@ public class AppConfig {
 
     private final UserService userService;
 
+    private final AirlineService airlineService;
+
     @Bean
-    public MainFrame jFrameLogin() throws LogicException {
-        return new MainFrame(authService, airportService, flightService, userService);
+    public MainFrame jFrameLogin() {
+        return new MainFrame(authService, airportService, flightService, userService, airlineService);
     }
 }

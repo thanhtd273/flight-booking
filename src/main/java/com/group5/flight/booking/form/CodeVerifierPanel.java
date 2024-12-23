@@ -64,7 +64,7 @@ public class CodeVerifierPanel extends JPanel {
 
         txtCode.setHorizontalAlignment(SwingConstants.CENTER);
 
-        titleLabel.setFont(new Font("sansserif", Font.BOLD, 24)); // NOI18N
+        titleLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 24)); // NOI18N
         titleLabel.setForeground(new Color(63, 63, 63));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titleLabel.setText("Verify Code");
@@ -76,11 +76,12 @@ public class CodeVerifierPanel extends JPanel {
         okBtn.setBackground(new Color(18, 138, 62));
         okBtn.addActionListener(e -> {
             try {
+                logger.debug("OTP code: email = {}, code = {}", email, txtCode.getText());
                 if (!NumberUtils.isCreatable(txtCode.getText())) {
                     throw new LogicException(ErrorCode.INVALID_CODE);
                 }
-                logger.debug("OTP code: email = {}, code = {}", email, txtCode.getText());
-                ErrorCode errorCode = userService.verifyPasswordResetCode(email, Integer.valueOf(txtCode.getText()));
+
+                ErrorCode errorCode = userService.activateUser(email, Integer.valueOf(txtCode.getText()));
                 if (errorCode != ErrorCode.SUCCESS) {
                     throw new LogicException(errorCode);
                 }

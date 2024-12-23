@@ -175,11 +175,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ErrorCode activateUser(OTPInfo activationInfo) throws LogicException {
-        ErrorCode verifyResult = verifyOTP(activationInfo);
+    public ErrorCode activateUser(String email, Integer code) throws LogicException {
+        ErrorCode verifyResult = verifyOTP(new OTPInfo(code, email));
         if (verifyResult != ErrorCode.SUCCESS) return verifyResult;
 
-        User user = findByEmail(activationInfo.getEmail());
+        User user = findByEmail(email);
         user.setOtpCode(null);
         user.setOtpExpirationTime(null);
         user.setStatus(DataStatus.ACTIVE);

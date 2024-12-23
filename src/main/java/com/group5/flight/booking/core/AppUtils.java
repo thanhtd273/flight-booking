@@ -3,6 +3,7 @@ package com.group5.flight.booking.core;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.util.ObjectUtils;
 
+import javax.swing.*;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -46,6 +47,15 @@ public final class AppUtils {
     public static String formatDate(Date date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd MMM yyyy");
         return dateFormat.format(date);
+    }
+
+    public static String formatTime(Date date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+        return dateFormat.format(date);
+    }
+
+    public static void showErrorDialog(String message) {
+        JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
     public static String[] list2Array(List<String> list) {

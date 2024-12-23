@@ -4,7 +4,7 @@ import com.group5.flight.booking.core.APIResponse;
 import com.group5.flight.booking.core.ErrorCode;
 import com.group5.flight.booking.core.exception.ExceptionHandler;
 import com.group5.flight.booking.dto.FlightInfo;
-import com.group5.flight.booking.dto.SearchCriteria;
+import com.group5.flight.booking.dto.FilterCriteria;
 import com.group5.flight.booking.model.Flight;
 import com.group5.flight.booking.service.FlightService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -84,11 +84,11 @@ public class FlightController {
     }
 
     @GetMapping(value = "/filter")
-    public APIResponse filterFlight(@RequestBody SearchCriteria searchCriteria, HttpServletResponse response) {
+    public APIResponse filterFlight(@RequestBody FilterCriteria filterCriteria, HttpServletResponse response) {
         long start = System.currentTimeMillis();
 
         try {
-            List<FlightInfo> flightInfoList = flightService.filter(searchCriteria);
+            List<FlightInfo> flightInfoList = flightService.filter(filterCriteria);
             logger.debug("GET /api/v1/flight-booking/flights/filter success, count = {}", flightInfoList.size());
             return new APIResponse(ErrorCode.SUCCESS, "", System.currentTimeMillis() - start, flightInfoList);
         } catch (Exception e) {
