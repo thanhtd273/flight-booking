@@ -21,7 +21,7 @@ public class FlightListPanel extends JPanel {
         filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.Y_AXIS));
         filterPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         filterPanel.setBackground(Color.WHITE);
-        filterPanel.setPreferredSize(new Dimension(300, 700));
+        filterPanel.setPreferredSize(new Dimension(300, 700)); // You can adjust this value as needed
 
         // Header panel with "Bộ lọc" on the top left and "Đặt lại" on the top right
         JPanel headerPanel = new JPanel();
@@ -47,35 +47,42 @@ public class FlightListPanel extends JPanel {
         airlineFilterPanel.setLayout(new BoxLayout(airlineFilterPanel, BoxLayout.Y_AXIS));
         airlineFilterPanel.setBackground(Color.WHITE);
         airlineFilterPanel.setBorder(BorderFactory.createTitledBorder("Hãng hàng không"));
+        airlineFilterPanel.setAlignmentX(Component.CENTER_ALIGNMENT); // Align to the left
 
-        airlineFilterPanel.setAlignmentX(Component.CENTER_ALIGNMENT); // Center alignment
+        // Set maximum width for the airline filter panel
+        airlineFilterPanel.setMaximumSize(new Dimension(filterPanel.getPreferredSize().width, Integer.MAX_VALUE));
 
-        JCheckBox airline1 = new JCheckBox("Malaysia Airlines - 12.350.857 VND");
-        JCheckBox airline2 = new JCheckBox("VietJet Air - 5.595.711 VND");
-        JCheckBox airline3 = new JCheckBox("Vietnam Airlines - 2.422.825 VND");
-        JCheckBox airline4 = new JCheckBox("Vietravel Airlines - 2.335.563 VND");
 
-        styleCheckbox(airline1);
-        styleCheckbox(airline2);
-        styleCheckbox(airline3);
-        styleCheckbox(airline4);
+        // Airline 1
+        JPanel airline1Panel = createAirlineCheckbox("Malaysia Airlines", "12.350.857 VND", "/Malaysia.png");
+        airlineFilterPanel.add(airline1Panel);
 
-        airlineFilterPanel.add(Box.createVerticalGlue());
-        airlineFilterPanel.add(airline1);
-        airlineFilterPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        airlineFilterPanel.add(airline2);
-        airlineFilterPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        airlineFilterPanel.add(airline3);
-        airlineFilterPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        airlineFilterPanel.add(airline4);
-        airlineFilterPanel.add(Box.createVerticalGlue());
+        // Airline 2
+        JPanel airline2Panel = createAirlineCheckbox("VietJet Air", "5.595.711 VND", "/VietJet.png");
+        airlineFilterPanel.add(airline2Panel);
+
+        // Airline 3
+        JPanel airline3Panel = createAirlineCheckbox("Vietnam Airlines", "2.422.825 VND", "/Vietnam.png");
+        airlineFilterPanel.add(airline3Panel);
+
+        // Airline 4
+        JPanel airline4Panel = createAirlineCheckbox("Vietravel Airlines", "2.335.563 VND", "/Vietravel.png");
+        airlineFilterPanel.add(airline4Panel);
+
+        // Add sections to the main panel
+        filterPanel.add(headerPanel);
+        filterPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        filterPanel.add(airlineFilterPanel);
 
         // Flight time filter section
         JPanel timeFilterPanel = new JPanel();
         timeFilterPanel.setLayout(new BoxLayout(timeFilterPanel, BoxLayout.Y_AXIS));
         timeFilterPanel.setBackground(Color.WHITE);
         timeFilterPanel.setBorder(BorderFactory.createTitledBorder("Thời gian bay"));
-        timeFilterPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        timeFilterPanel.setAlignmentX(Component.CENTER_ALIGNMENT); // Align to the left
+
+        // Set maximum width for the time filter panel
+        timeFilterPanel.setMaximumSize(new Dimension(filterPanel.getPreferredSize().width, Integer.MAX_VALUE));
 
         JLabel departureTimeLabel = new JLabel("Giờ cất cánh");
         departureTimeLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -171,14 +178,12 @@ public class FlightListPanel extends JPanel {
         cardPanel.setLayout(new BorderLayout());
         cardPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         cardPanel.setBackground(Color.WHITE);
-        cardPanel.setPreferredSize(new Dimension(600, 140)); // Tăng chiều cao để chứa thêm thông tin
+        cardPanel.setPreferredSize(new Dimension(600, 160)); // Tăng chiều cao để có thêm khoảng cách
 
-        // Panel chứa thông tin chính (hàng ngang)
         JPanel mainInfoPanel = new JPanel();
         mainInfoPanel.setLayout(new BoxLayout(mainInfoPanel, BoxLayout.X_AXIS));
         mainInfoPanel.setBackground(Color.WHITE);
 
-        // Hãng bay
         JPanel airlinePanel = new JPanel();
         airlinePanel.setLayout(new BoxLayout(airlinePanel, BoxLayout.Y_AXIS));
         airlinePanel.setBackground(Color.WHITE);
@@ -186,7 +191,6 @@ public class FlightListPanel extends JPanel {
         airlineLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
         airlinePanel.add(airlineLabel);
 
-        // Thời gian và sân bay
         JPanel flightInfoPanel = new JPanel();
         flightInfoPanel.setLayout(new BoxLayout(flightInfoPanel, BoxLayout.Y_AXIS));
         flightInfoPanel.setBackground(Color.WHITE);
@@ -194,47 +198,141 @@ public class FlightListPanel extends JPanel {
         timeLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
         JLabel airportLabel = new JLabel("Sân bay: " + from + " → " + to);
         airportLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        airportLabel.setForeground(new Color(100, 100, 100)); // Màu xám cho thông tin phụ
+        airportLabel.setForeground(new Color(100, 100, 100));
         flightInfoPanel.add(timeLabel);
         flightInfoPanel.add(airportLabel);
 
-        // Giá vé
         JPanel pricePanel = new JPanel();
         pricePanel.setLayout(new BoxLayout(pricePanel, BoxLayout.Y_AXIS));
         pricePanel.setBackground(Color.WHITE);
         JLabel priceLabel = new JLabel(price);
         priceLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
-        priceLabel.setForeground(new Color(255, 69, 0)); // Màu giá vé đỏ
+        priceLabel.setForeground(new Color(255, 69, 0));
         pricePanel.add(priceLabel);
 
-        // Thêm các phần tử vào hàng ngang
-        mainInfoPanel.add(Box.createRigidArea(new Dimension(10, 0))); // Khoảng cách trái
+        mainInfoPanel.add(Box.createRigidArea(new Dimension(10, 0)));
         mainInfoPanel.add(airlinePanel);
         mainInfoPanel.add(Box.createHorizontalGlue());
         mainInfoPanel.add(flightInfoPanel);
         mainInfoPanel.add(Box.createHorizontalGlue());
         mainInfoPanel.add(pricePanel);
-        mainInfoPanel.add(Box.createRigidArea(new Dimension(10, 0))); // Khoảng cách phải
+        mainInfoPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 
-        // Panel chứa các nút "Chi tiết" và "Chọn"
         JPanel actionPanel = new JPanel();
-        actionPanel.setLayout(new BorderLayout()); // Sử dụng BorderLayout để căn hai nút
+        actionPanel.setLayout(new BorderLayout());
         actionPanel.setBackground(Color.WHITE);
+        actionPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 10, 10)); // Thêm khoảng cách dưới và hai bên
 
+        // Nút "Chi tiết"
+        JPanel detailsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        detailsPanel.setBackground(Color.WHITE);
         JButton detailsButton = new JButton("Chi tiết");
-        JButton selectButton = new JButton("Chọn");
+        detailsButton.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        detailsButton.setForeground(new Color(0, 123, 255));
+        detailsButton.setContentAreaFilled(false);
+        detailsButton.setBorder(null);
+        detailsPanel.add(detailsButton);
 
-        styleActionButton(detailsButton);
-        styleActionButton(selectButton);
+        // Nút "Chọn"
+        JPanel selectPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        selectPanel.setBackground(Color.WHITE);
+        JButton selectButton = new JButton("Chọn") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        actionPanel.add(detailsButton, BorderLayout.WEST); // Nút "Chi tiết" bên trái
-        actionPanel.add(selectButton, BorderLayout.EAST); // Nút "Chọn" bên phải
+                g2.setColor(getBackground());
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
 
-        // Thêm các phần tử vào cardPanel
-        cardPanel.add(mainInfoPanel, BorderLayout.CENTER);  // Thông tin chính ở giữa
-        cardPanel.add(actionPanel, BorderLayout.SOUTH);     // Các nút ở dưới
+                g2.setColor(new Color(0, 123, 255));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
+
+                g2.dispose();
+
+                super.paintComponent(g);
+            }
+        };
+
+        selectButton.setPreferredSize(new Dimension(100, 30));
+        selectButton.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        selectButton.setBackground(new Color(0, 123, 255));
+        selectButton.setForeground(Color.WHITE);
+        selectButton.setContentAreaFilled(false);
+        selectButton.setOpaque(false);
+        selectButton.setFocusPainted(false);
+        selectButton.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        selectPanel.add(selectButton);
+
+        actionPanel.add(detailsPanel, BorderLayout.WEST); // Đặt nút "Chi tiết" ở lề trái
+        actionPanel.add(selectPanel, BorderLayout.EAST);  // Đặt nút "Chọn" ở lề phải
+
+        cardPanel.add(mainInfoPanel, BorderLayout.CENTER);
+        cardPanel.add(actionPanel, BorderLayout.SOUTH);
 
         return cardPanel;
+    }
+
+
+    private ImageIcon resizeIcon(String resourcePath, int width, int height) {
+        try {
+            ImageIcon icon = new ImageIcon(getClass().getResource(resourcePath));
+            return new ImageIcon(icon.getImage().getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH));
+        } catch (Exception e) {
+            System.err.println("Failed to load image: " + resourcePath);
+            return null;
+        }
+    }
+
+    private JPanel createAirlineCheckbox(String airlineName, String price, String iconPath) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS)); // Sắp xếp theo chiều ngang
+        panel.setBackground(Color.WHITE);
+        panel.setAlignmentX(Component.LEFT_ALIGNMENT); // Căn lề trái cho toàn bộ panel
+
+        // Tạo checkbox
+        JCheckBox airlineCheckbox = new JCheckBox();
+        airlineCheckbox.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        airlineCheckbox.setBackground(Color.WHITE);
+        airlineCheckbox.setFocusPainted(false);
+        airlineCheckbox.setAlignmentY(Component.CENTER_ALIGNMENT); // Giữ checkbox thẳng hàng theo chiều dọc
+
+        // Tạo icon hãng hàng không
+        JLabel airlineIcon = new JLabel();
+        airlineIcon.setIcon(resizeIcon(iconPath, 20, 20)); // Icon kích thước 20x20
+        airlineIcon.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10)); // Khoảng cách xung quanh icon
+        airlineIcon.setAlignmentY(Component.CENTER_ALIGNMENT); // Giữ icon thẳng hàng theo chiều dọc
+
+        // Panel chứa tên hãng và giá (theo chiều dọc)
+        JPanel verticalPanel = new JPanel();
+        verticalPanel.setLayout(new BoxLayout(verticalPanel, BoxLayout.Y_AXIS)); // Sắp xếp dọc
+        verticalPanel.setBackground(Color.WHITE);
+        verticalPanel.setAlignmentY(Component.CENTER_ALIGNMENT); // Giữ cả tên và giá thẳng hàng theo chiều dọc
+
+        // Tạo nhãn tên hãng
+        JLabel airlineNameLabel = new JLabel(airlineName);
+        airlineNameLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        airlineNameLabel.setForeground(Color.BLACK);
+        airlineNameLabel.setAlignmentX(Component.LEFT_ALIGNMENT); // Căn trái
+
+        // Tạo nhãn giá
+        JLabel priceLabel = new JLabel(price);
+        priceLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        priceLabel.setForeground(new Color(255, 69, 0)); // Màu cam cho giá
+        priceLabel.setAlignmentX(Component.LEFT_ALIGNMENT); // Căn trái
+
+        // Thêm tên hãng và giá vào verticalPanel
+        verticalPanel.add(airlineNameLabel);
+        verticalPanel.add(Box.createRigidArea(new Dimension(0, 5))); // Khoảng cách giữa tên và giá
+        verticalPanel.add(priceLabel);
+
+        // Thêm checkbox, icon, và verticalPanel vào panel chính
+        panel.add(airlineCheckbox);
+        panel.add(airlineIcon);
+        panel.add(Box.createRigidArea(new Dimension(10, 0))); // Khoảng cách giữa icon và tên
+        panel.add(verticalPanel);
+
+        return panel;
     }
 
     private void styleActionButton(JButton button) {
@@ -257,5 +355,7 @@ public class FlightListPanel extends JPanel {
         checkBox.setFont(new Font("SansSerif", Font.PLAIN, 14));
         checkBox.setBackground(Color.WHITE);
         checkBox.setFocusPainted(false);
+        checkBox.setAlignmentX(Component.LEFT_ALIGNMENT); // Đảm bảo checkbox căn trái
     }
+
 }
