@@ -5,7 +5,9 @@ import com.group5.flight.booking.core.exception.LogicException;
 import com.group5.flight.booking.dao.SeatDao;
 import com.group5.flight.booking.dao.FlightSeatPassengerDao;
 import com.group5.flight.booking.dto.SeatInfo;
+import com.group5.flight.booking.model.FlightSeatPassenger;
 import com.group5.flight.booking.model.Seat;
+import com.group5.flight.booking.service.PlaneService;
 import com.group5.flight.booking.service.SeatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +21,10 @@ import java.util.List;
 public class SeatServiceImpl implements SeatService {
 
     private final SeatDao seatDao;
+
     private final FlightSeatPassengerDao flightSeatPassengerDao;
+
+    private final PlaneService planeService;
 
     @Override
     public List<Seat> getAllSeats() {
@@ -27,9 +32,14 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
-    public Seat findBySeatId(Long id) throws LogicException {
-        return seatDao.findBySeatId(id)
+    public Seat findBySeatId(Long seatId) throws LogicException {
+        return seatDao.findBySeatId(seatId)
                 .orElseThrow(() -> new LogicException(ErrorCode.DATA_NULL, "Seat not found"));
+    }
+
+    @Override
+    public List<Seat> findByPlaneId(Long planeId) throws LogicException {
+        return seatDao.findByPlaneId(planeId);
     }
 
     @Override
@@ -44,17 +54,17 @@ public class SeatServiceImpl implements SeatService {
         Seat seat = new Seat();
         seat.setClassLevel(seatInfo.getClassLevel());
         seat.setSeatCode(seatInfo.getSeatCode());
-        seat.setAvailable(seatInfo.getAvailable() != null ? seatInfo.getAvailable() : true);
+        seat.setPlaneId(seatInfo.getPlaneId());
         seat.setCreatedAt(new Date(System.currentTimeMillis()));
 
         return seatDao.save(seat);
     }
     @Override
-    public Seat update(Long id, SeatInfo seatInfo) throws LogicException {
+    public Seat update(Long seatId, SeatInfo seatInfo) throws LogicException {
         if (ObjectUtils.isEmpty(seatInfo)) {
             throw new LogicException(ErrorCode.DATA_NULL, "Seat info is null");
         }
-        Seat seat = findBySeatId(id);
+        Seat seat = findBySeatId(seatId);
         if (ObjectUtils.isEmpty(seat)) {
             throw new LogicException(ErrorCode.DATA_NULL, "Seat does not exist");
         }
@@ -64,17 +74,14 @@ public class SeatServiceImpl implements SeatService {
         if (!ObjectUtils.isEmpty(seatInfo.getSeatCode())) {
             seat.setSeatCode(seatInfo.getSeatCode());
         }
-        if (seatInfo.getAvailable() != null) {
-            seat.setAvailable(seatInfo.getAvailable());
-        }
 
         seat.setUpdatedAt(new Date(System.currentTimeMillis()));
         return seatDao.save(seat);
     }
 
     @Override
-    public ErrorCode delete(Long id) throws LogicException {
-        Seat seat = findBySeatId(id);
+    public ErrorCode delete(Long seatId) throws LogicException {
+        Seat seat = findBySeatId(seatId);
         if (ObjectUtils.isEmpty(seat))
             return ErrorCode.DATA_NULL;
         seat.setUpdatedAt(new Date(System.currentTimeMillis()));
@@ -83,12 +90,7 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
-    public List<Seat> getAvailableSeatsByFlight(Long flightId) throws LogicException {
-        return flightSeatPassengerDao.findAvailableSeatsByFlightId(flightId);
-    }
-
-    @Override
-    public SeatInfo getSeatInfo(Long seatId) throws LogicException {
+    public SeatInfo getSeatInfo(Long seatId, Long flightId) throws LogicException {
         Seat seat = findBySeatId(seatId);
         if (ObjectUtils.isEmpty(seat)) {
             throw new LogicException(ErrorCode.DATA_NULL, "Seat not found");
@@ -97,21 +99,11 @@ public class SeatServiceImpl implements SeatService {
         SeatInfo seatInfo = new SeatInfo();
         seatInfo.setClassLevel(seat.getClassLevel());
         seatInfo.setSeatCode(seat.getSeatCode());
-        seatInfo.setAvailable(seat.getAvailable());
+        FlightSeatPassenger flightSeatPassenger = flightSeatPassengerDao.findByFlightIdAndSeatId(flightId, seatId);
+        seatInfo.setAvailable(ObjectUtils.isEmpty(flightSeatPassenger));
+        seatInfo.setPlane(planeService.getPlaneInfo(seat.getPlaneId()));
 
         return seatInfo;
-    }
-
-    @Override
-    public List<Object[]> countAvailableSeatsByClass(Long flightId) throws LogicException {
-        if (ObjectUtils.isEmpty(flightId)) {
-            throw new LogicException(ErrorCode.BLANK_FIELD, "Flight ID is required");
-        }
-        List<Object[]> result = seatDao.countAvailableSeatsByClass(flightId);
-        if (result.isEmpty()) {
-            throw new LogicException(ErrorCode.DATA_NULL, "No available seats found for this flight.");
-        }
-        return result;
     }
 
 }

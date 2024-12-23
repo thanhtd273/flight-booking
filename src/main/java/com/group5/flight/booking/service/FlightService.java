@@ -4,6 +4,7 @@ import com.group5.flight.booking.core.exception.LogicException;
 import com.group5.flight.booking.dto.FlightDisplayInfo;
 import com.group5.flight.booking.dto.FlightInfo;
 import com.group5.flight.booking.dto.FilterCriteria;
+import com.group5.flight.booking.dto.SeatInfo;
 import com.group5.flight.booking.model.Flight;
 
 import java.util.Date;
@@ -24,4 +25,6 @@ public interface FlightService {
     FlightInfo getFlightInfo(Long flightId);
 
     List<FlightDisplayInfo> getFlightsDisplay(List<FlightInfo> flightInfos);
+
+    List<SeatInfo> getFlightSeats(Long flightId) throws LogicException;
 }

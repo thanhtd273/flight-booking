@@ -7,6 +7,7 @@ import com.group5.flight.booking.dto.FilterCriteria;
 import com.group5.flight.booking.model.Airline;
 import com.group5.flight.booking.service.AirlineService;
 import com.group5.flight.booking.service.FlightService;
+import com.group5.flight.booking.service.PlaneService;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,10 @@ public class FlightListPanel extends JPanel {
 
     private final Date departureDate;
 
+    private final JPanel mainPanel;
+
+    private final CardLayout cardLayout;
+
     @Setter
     private List<FlightInfo> flightInfoList;
 
@@ -35,13 +40,22 @@ public class FlightListPanel extends JPanel {
 
     private final FlightService flightService;
 
-    public FlightListPanel(Long fromAirportId, Long toAirportId, Date departureDate, AirlineService airlineService, FlightService flightService) {
+    private final PlaneService planeService;
+
+
+    public FlightListPanel(JPanel mainPanel, CardLayout cardLayout, Long fromAirportId,
+                           Long toAirportId, Date departureDate, List<FlightInfo> flightInfoList,
+                           AirlineService airlineService, FlightService flightService, PlaneService planeService) {
+        this.mainPanel = mainPanel;
+        this.cardLayout = cardLayout;
         this.airlineService = airlineService;
         this.flightService = flightService;
+        this.planeService = planeService;
         setBaseFilterCriteria(fromAirportId, toAirportId, departureDate);
         this.fromAirportId = fromAirportId;
         this.toAirportId = toAirportId;
         this.departureDate = departureDate;
+        this.flightInfoList = flightInfoList;
 
         initComponent();
     }
@@ -173,14 +187,7 @@ public class FlightListPanel extends JPanel {
         listPanel.setBackground(Color.WHITE);
 
         for (FlightInfo flightInfo: flightInfoList) {
-            listPanel.add(createFlightCard(
-                    flightInfo.getAirline().getName(),
-                    AppUtils.formatTime(flightInfo.getDepatureDate()),
-                    AppUtils.formatTime(flightInfo.getReturnDate()),
-                    flightInfo.getFromAirport().getAirportCode(),
-                    flightInfo.getToAirport().getAirportCode(),
-                    String.valueOf(flightInfo.getBasePrice())
-            ));
+            listPanel.add(createFlightCard(flightInfo));
             listPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         }
 
@@ -192,32 +199,30 @@ public class FlightListPanel extends JPanel {
     }
 
 
-    private JPanel createFlightCard(String airline, String departure, String arrival, String from, String to, String price) {
-        JPanel cardPanel = new JPanel();
-        cardPanel.setLayout(new BorderLayout());
-        cardPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-        cardPanel.setBackground(Color.WHITE);
-        cardPanel.setPreferredSize(new Dimension(600, 140));
+    private JPanel createFlightCard(FlightInfo flightInfo) {
+        JPanel flightCardPanel = new JPanel();
+        flightCardPanel.setLayout(new BorderLayout());
+        flightCardPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+        flightCardPanel.setBackground(Color.WHITE);
+        flightCardPanel.setPreferredSize(new Dimension(600, 140));
 
-        // Panel chứa thông tin chính (hàng ngang)
-        JPanel mainInfoPanel = new JPanel();
-        mainInfoPanel.setLayout(new BoxLayout(mainInfoPanel, BoxLayout.X_AXIS));
-        mainInfoPanel.setBackground(Color.WHITE);
+        JPanel bodyPanel = new JPanel();
+        bodyPanel.setLayout(new BoxLayout(bodyPanel, BoxLayout.X_AXIS));
+        bodyPanel.setBackground(Color.WHITE);
 
-        // Hãng bay
         JPanel airlinePanel = new JPanel();
         airlinePanel.setLayout(new BoxLayout(airlinePanel, BoxLayout.Y_AXIS));
         airlinePanel.setBackground(Color.WHITE);
-        JLabel airlineLabel = new JLabel(airline);
+        JLabel airlineLabel = new JLabel(flightInfo.getAirline().getName());
         airlineLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 14));
         airlinePanel.add(airlineLabel);
 
         JPanel flightInfoPanel = new JPanel();
         flightInfoPanel.setLayout(new BoxLayout(flightInfoPanel, BoxLayout.Y_AXIS));
         flightInfoPanel.setBackground(Color.WHITE);
-        JLabel timeLabel = new JLabel(departure + " → " + arrival);
+        JLabel timeLabel = new JLabel(AppUtils.formatTime(flightInfo.getDepatureDate()) + " → " + AppUtils.formatTime(flightInfo.getReturnDate()));
         timeLabel.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 14));
-        JLabel airportLabel = new JLabel(from + " → " + to);
+        JLabel airportLabel = new JLabel(flightInfo.getFromAirport().getAirportCode() + " → " + flightInfo.getToAirport().getAirportCode());
         airportLabel.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 14));
         airportLabel.setForeground(new Color(100, 100, 100));
         flightInfoPanel.add(timeLabel);
@@ -226,18 +231,18 @@ public class FlightListPanel extends JPanel {
         JPanel pricePanel = new JPanel();
         pricePanel.setLayout(new BoxLayout(pricePanel, BoxLayout.Y_AXIS));
         pricePanel.setBackground(Color.WHITE);
-        JLabel priceLabel = new JLabel(price);
+        JLabel priceLabel = new JLabel(String.valueOf(flightInfo.getBasePrice()));
         priceLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        priceLabel.setForeground(new Color(255, 69, 0)); // Màu giá vé đỏ
+        priceLabel.setForeground(new Color(255, 69, 0));
         pricePanel.add(priceLabel);
 
-        mainInfoPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-        mainInfoPanel.add(airlinePanel);
-        mainInfoPanel.add(Box.createHorizontalGlue());
-        mainInfoPanel.add(flightInfoPanel);
-        mainInfoPanel.add(Box.createHorizontalGlue());
-        mainInfoPanel.add(pricePanel);
-        mainInfoPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+        bodyPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+        bodyPanel.add(airlinePanel);
+        bodyPanel.add(Box.createHorizontalGlue());
+        bodyPanel.add(flightInfoPanel);
+        bodyPanel.add(Box.createHorizontalGlue());
+        bodyPanel.add(pricePanel);
+        bodyPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 
         JPanel actionPanel = new JPanel();
         actionPanel.setLayout(new BorderLayout()); // Sử dụng BorderLayout để căn hai nút
@@ -245,17 +250,22 @@ public class FlightListPanel extends JPanel {
 
         JButton detailsButton = new JButton("Detail");
         JButton selectButton = new JButton("Select");
-
+        selectButton.addActionListener(e -> {
+            FlightDetailPanel detailPanel = new FlightDetailPanel(mainPanel, cardLayout, flightInfo,
+                    planeService, flightService);
+            mainPanel.add(detailPanel, Constants.FLIGHT_DETAIL_SCREEN);
+            cardLayout.show(mainPanel, Constants.FLIGHT_DETAIL_SCREEN);
+        });
         styleActionButton(detailsButton);
         styleActionButton(selectButton);
 
         actionPanel.add(detailsButton, BorderLayout.WEST);
         actionPanel.add(selectButton, BorderLayout.EAST);
 
-        cardPanel.add(mainInfoPanel, BorderLayout.CENTER);
-        cardPanel.add(actionPanel, BorderLayout.SOUTH);
+        flightCardPanel.add(bodyPanel, BorderLayout.CENTER);
+        flightCardPanel.add(actionPanel, BorderLayout.SOUTH);
 
-        return cardPanel;
+        return flightCardPanel;
     }
 
     private void updateFilterResult() {

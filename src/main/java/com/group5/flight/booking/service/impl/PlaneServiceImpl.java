@@ -42,6 +42,7 @@ public class PlaneServiceImpl implements PlaneService {
         Plane plane = new Plane();
         plane.setCode(code);
         plane.setName(planeInfo.getName());
+        plane.setNumOfSeats(planeInfo.getNumOfSeats());
         plane.setCreatedAt(new Date(System.currentTimeMillis()));
         plane.setDeleted(false);
 
@@ -63,6 +64,9 @@ public class PlaneServiceImpl implements PlaneService {
         if (!ObjectUtils.isEmpty(planeInfo.getCode())) {
             plane.setCode(planeInfo.getCode());
         }
+        if (!ObjectUtils.isEmpty(planeInfo.getNumOfSeats())) {
+            plane.setNumOfSeats(planeInfo.getNumOfSeats());
+        }
         plane.setUpdatedAt(new Date(System.currentTimeMillis()));
         return planeDao.save(plane);
     }
@@ -82,9 +86,6 @@ public class PlaneServiceImpl implements PlaneService {
         Plane plane = findByPlaneId(planeId);
         if (ObjectUtils.isEmpty(plane)) return null;
 
-        PlaneInfo planeInfo = new PlaneInfo();
-        planeInfo.setName(plane.getName());
-        planeInfo.setCode(plane.getCode());
-        return planeInfo;
+        return new PlaneInfo(planeId, plane.getName(), plane.getCode(), plane.getNumOfSeats());
     }
 }

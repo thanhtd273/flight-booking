@@ -8,10 +8,8 @@ import com.group5.flight.booking.dao.FlightDao;
 import com.group5.flight.booking.dto.*;
 import com.group5.flight.booking.model.Airport;
 import com.group5.flight.booking.model.Flight;
-import com.group5.flight.booking.service.AirlineService;
-import com.group5.flight.booking.service.AirportService;
-import com.group5.flight.booking.service.FlightService;
-import com.group5.flight.booking.service.PlaneService;
+import com.group5.flight.booking.model.Seat;
+import com.group5.flight.booking.service.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -36,6 +34,8 @@ public class FlightServiceImpl implements FlightService {
     private final AirportService airportService;
 
     private final AirlineService airlineService;
+
+    private final SeatService seatService;
 
     private final EntityManager entityManager;
 
@@ -193,6 +193,21 @@ public class FlightServiceImpl implements FlightService {
                     AppUtils.formatDate(flightInfo.getReturnDate()), flightInfo.getBasePrice()));
         }
         return flightDisplayInfos;
+    }
+
+    @Override
+    public List<SeatInfo> getFlightSeats(Long flightId) throws LogicException {
+        Flight flight = findByFlightId(flightId);
+        if (ObjectUtils.isEmpty(flight)) {
+            throw new LogicException("Not found flight");
+        }
+        List<SeatInfo> seatInfoList = new LinkedList<>();
+        List<Seat> seats = seatService.findByPlaneId(flight.getPlaneId());
+        for (Seat seat: seats) {
+            SeatInfo seatInfo = seatService.getSeatInfo(seat.getPlaneId(), flightId);
+            seatInfoList.add(seatInfo);
+        }
+        return seatInfoList;
     }
 
     private FlightInfo getFlightInfo(Flight flight) {

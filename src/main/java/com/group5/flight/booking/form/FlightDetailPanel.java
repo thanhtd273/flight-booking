@@ -6,26 +6,33 @@ import java.awt.*;
 import com.group5.flight.booking.core.AppUtils;
 import com.group5.flight.booking.core.Constants;
 import com.group5.flight.booking.dto.FlightInfo;
-import com.group5.flight.booking.form.component.FlightPayPanel;
+import com.group5.flight.booking.service.FlightService;
+import com.group5.flight.booking.service.PlaneService;
 import net.miginfocom.swing.MigLayout;
 
 import static com.group5.flight.booking.core.Constants.*;
 
 public class FlightDetailPanel extends JPanel {
 
+    private static final String GAP_RIGHT = "gapright 10";
+
     private final FlightInfo flightInfo;
 
-    private static final String GAP_RIGHT = "gapright 10";
+    private final PlaneService planeService;
+
+    private final FlightService flightService;
 
     private final JPanel mainPanel;
 
     private final CardLayout cardLayout;
 
-    public FlightDetailPanel(JPanel mainPanel, CardLayout cardLayout, FlightInfo flightInfo) {
+    public FlightDetailPanel(JPanel mainPanel, CardLayout cardLayout, FlightInfo flightInfo,
+                             PlaneService planeService, FlightService flightService) {
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
         this.flightInfo = flightInfo;
-        
+        this.planeService = planeService;
+        this.flightService = flightService;
         initComponents();
     }
 
@@ -89,7 +96,7 @@ public class FlightDetailPanel extends JPanel {
 
         JButton btnSelectSeat = createButton("Select Seat");
         btnSelectSeat.addActionListener(e -> {
-            FlightSeatPanel seatPanel = new FlightSeatPanel(mainPanel, cardLayout);
+            FlightSeatPanel seatPanel = new FlightSeatPanel(mainPanel, cardLayout, flightInfo, planeService, flightService);
             mainPanel.add(seatPanel, FLIGHT_SEAT_SCREEN);
             cardLayout.show(mainPanel, FLIGHT_SEAT_SCREEN);
         });

@@ -65,7 +65,7 @@ create table plane (
 	plane_id BIGSERIAL primary key,
 	name VARCHAR(75) not null,
 	code VARCHAR(10) not null,
-	
+	num_of_seats INTEGER,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
     deleted BOOLEAN DEFAULT FALSE
@@ -102,12 +102,13 @@ CREATE TABLE flight (
 
 CREATE TABLE seat (
     seat_id BIGSERIAL PRIMARY key,
+    plane_id BIGINT,
 	class_level VARCHAR(15) not null,
 	seat_code VARCHAR(10),
-	available BOOLEAN default true,
 
 	created_at TIMESTAMP default current_timestamp,
-	updated_at timestamp
+	updated_at timestamp,
+    constraint seat_plane_fk foreign key (plane_id) references plane(plane_id)
 );
 
 CREATE TABLE passenger (

@@ -14,6 +14,7 @@ import com.group5.flight.booking.form.component.FbButton;
 import com.group5.flight.booking.service.AirlineService;
 import com.group5.flight.booking.service.AirportService;
 import com.group5.flight.booking.service.FlightService;
+import com.group5.flight.booking.service.PlaneService;
 import com.toedter.calendar.JDateChooser;
 import net.miginfocom.swing.MigLayout;
 import org.slf4j.Logger;
@@ -36,13 +37,18 @@ public class FlightSearchPanel extends JPanel {
 
     private final AirlineService airlineService;
 
+    private final PlaneService planeService;
+
+
     public FlightSearchPanel(JPanel mainPanel, CardLayout cardLayout,
-                             AirportService airportService, FlightService flightService, AirlineService airlineService) {
+                             AirportService airportService, FlightService flightService, AirlineService airlineService,
+                             PlaneService planeService) {
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
         this.airportService = airportService;
         this.flightService = flightService;
         this.airlineService = airlineService;
+        this.planeService = planeService;
         initComponents();
         setOpaque(false);
     }
@@ -103,11 +109,15 @@ public class FlightSearchPanel extends JPanel {
             logger.debug("Selected Departure Date: {}", departureDate[0]);
         });
         flightSearcherPanel.add(dateChooser);
+        add(flightSearcherPanel, "wrap, grow");
 
+        JPanel bottomPanel = new JPanel(new MigLayout("align center"));
+        bottomPanel.setOpaque(false);
         FbButton btnSearch = new FbButton();
         btnSearch.setText("Search");
         btnSearch.setBackground(new Color(7, 164, 121));
         btnSearch.setForeground(new Color(255, 255, 255));
+        btnSearch.setPreferredSize(new Dimension(200, 50));
         btnSearch.addActionListener(e -> {
             logger.debug("Find flight by departureId = {}, destinationId =  {}, departureDate = {}",
                     departureId[0], destinationId[0], departureDate[0]);
@@ -117,9 +127,8 @@ public class FlightSearchPanel extends JPanel {
                 try {
                     flightInfoList.addAll(flightService.findFlight(departureId[0], destinationId[0], departureDate[0])) ;
                     logger.debug("Flight list: {}", flightInfoList);
-                    FlightListPanel flightListPanel = new FlightListPanel(departureId[0], destinationId[0], departureDate[0],
-                            airlineService, flightService);
-                    flightListPanel.setFlightInfoList(flightInfoList);
+                    FlightListPanel flightListPanel = new FlightListPanel(mainPanel, cardLayout, departureId[0],
+                            destinationId[0], departureDate[0], flightInfoList, airlineService, flightService, planeService);
                     mainPanel.add(flightListPanel, FLIGHT_LIST_SCREEN);
                     cardLayout.show(mainPanel, FLIGHT_LIST_SCREEN);
                 } catch (LogicException ex) {
@@ -127,9 +136,9 @@ public class FlightSearchPanel extends JPanel {
                 }
             }
         });
-        flightSearcherPanel.add(btnSearch, "span, align center, w 50%, h 40");
+        bottomPanel.add(btnSearch);
 
-        add(flightSearcherPanel, "growx");
+        add(bottomPanel, "dock south");
     }
 
     private Map<String, Long> generateMenuData(List<AirportInfo> airportInfos) {

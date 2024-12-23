@@ -25,6 +25,9 @@ public class Plane {
     @Column(name = "code")
     private String code;
 
+    @Column(name = "num_of_seats")
+    private Integer numOfSeats;
+
     @Column(name = "created_at")
     private Date createdAt;
 

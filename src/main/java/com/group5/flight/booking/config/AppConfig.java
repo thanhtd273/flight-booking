@@ -20,8 +20,10 @@ public class AppConfig {
 
     private final AirlineService airlineService;
 
+    private final PlaneService planeService;
+
     @Bean
     public MainFrame jFrameLogin() {
-        return new MainFrame(authService, airportService, flightService, userService, airlineService);
+        return new MainFrame(authService, airportService, flightService, userService, airlineService, planeService);
     }
 }

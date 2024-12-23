@@ -11,8 +11,8 @@ import java.util.List;
 
 @Repository
 public interface FlightDao extends JpaRepository<Flight, Long> {
-    @Query("SELECT u FROM Flight u WHERE u.status <> 0")
-    Flight findByFlightId(Long flightId);
+    @Query("SELECT u FROM Flight u WHERE u.status <> 0 AND u.flightId = :flightId")
+    Flight findByFlightId(@Param("flightId") Long flightId);
 
     @Query("SELECT u FROM Flight u " +
             "WHERE u.fromAirportId = :fromAirportId " +

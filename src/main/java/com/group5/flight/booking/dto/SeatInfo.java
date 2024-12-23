@@ -11,14 +11,21 @@ import org.springframework.util.ObjectUtils;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SeatInfo {
-    private String classLevel;
-    private String seatCode;
-    private Boolean available;
+    private Long seatId;
 
+    private Long planeId;
+
+    private PlaneInfo plane;
+
+    private String classLevel;
+
+    private String seatCode;
+
+    private Boolean available;
 
     public boolean isAllNotNull() {
         return !ObjectUtils.isEmpty(classLevel) && 
                !ObjectUtils.isEmpty(seatCode) && 
-               !ObjectUtils.isEmpty(available);
+               !ObjectUtils.isEmpty(planeId);
     }
 }

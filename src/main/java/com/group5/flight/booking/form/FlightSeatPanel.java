@@ -2,25 +2,46 @@ package com.group5.flight.booking.form;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 import com.group5.flight.booking.core.Constants;
+import com.group5.flight.booking.dto.FlightInfo;
+import com.group5.flight.booking.dto.SeatInfo;
 import com.group5.flight.booking.form.component.FlightPayPanel;
+import com.group5.flight.booking.model.Plane;
+import com.group5.flight.booking.service.FlightService;
+import com.group5.flight.booking.service.PlaneService;
 import net.miginfocom.swing.MigLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FlightSeatPanel extends JPanel {
+
+    private static final Logger logger = LoggerFactory.getLogger(FlightSeatPanel.class);
 
     private JTextField txtSeat;
 
     private boolean[] seats;
-    private static final int NUM_OF_COLUMN = 4;
+
+    private static final int NUM_OF_COLUMN = 6;
+
+    private final FlightInfo flightInfo;
+
+    private final PlaneService planeService;
+
+    private final FlightService flightService;
 
     private final JPanel mainPanel;
 
     private final CardLayout cardLayout;
 
-    public FlightSeatPanel(JPanel mainPanel, CardLayout cardLayout) {
+    public FlightSeatPanel(JPanel mainPanel, CardLayout cardLayout, FlightInfo flightInfo,
+                           PlaneService planeService, FlightService flightService) {
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
+        this.flightInfo = flightInfo;
+        this.planeService = planeService;
+        this.flightService = flightService;
 
         initSeatData();
         initComponents();
@@ -93,10 +114,18 @@ public class FlightSeatPanel extends JPanel {
     }
 
     private void initSeatData() {
-        int rows = 5;
-        seats = new boolean[rows * NUM_OF_COLUMN];
-        for (int i = 0; i < seats.length; i++) {
-            seats[i] = (i % 3 != 0);
+        try {
+            Plane plane = planeService.findByPlaneId(flightInfo.getPlane().getPlaneId());
+            List<SeatInfo> seatInfoList = flightService.getFlightSeats(flightInfo.getFlightId());
+            logger.debug("Search Info list: {}", seatInfoList);
+
+            seats = new boolean[plane.getNumOfSeats()];
+            for (int i = 0; i < seats.length; i++) {
+                seats[i] = (i % 3 != 0);
+            }
+        } catch (Exception e) {
+            logger.error("Get flight's seats failed, error: {}", e.getMessage());
         }
+
     }
 }

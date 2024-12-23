@@ -11,11 +11,15 @@ import org.springframework.util.ObjectUtils;
 @Getter
 @Setter
 public class PlaneInfo {
+    private Long planeId;
+
     private String name;
 
     private String code;
 
+    private Integer numOfSeats;
+
     public boolean isAllNotNull() {
-        return ObjectUtils.isEmpty(name) && ObjectUtils.isEmpty(code);
+        return ObjectUtils.isEmpty(name) && ObjectUtils.isEmpty(code) && ObjectUtils.isEmpty(numOfSeats);
     }
 }
