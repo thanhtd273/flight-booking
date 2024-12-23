@@ -12,7 +12,6 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 import javax.swing.JLabel;
 
-import com.group5.flight.booking.form.swing.ButtonOutLine;
 import net.miginfocom.swing.MigLayout;
 
 public class CoverPanel extends javax.swing.JPanel {

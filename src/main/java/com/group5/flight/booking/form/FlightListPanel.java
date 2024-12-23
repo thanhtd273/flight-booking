@@ -1,5 +1,7 @@
 package com.group5.flight.booking.form;
 
+import com.group5.flight.booking.core.Constants;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -28,10 +30,10 @@ public class FlightListPanel extends JPanel {
         headerPanel.setBackground(new Color(245, 245, 245));
 
         JLabel headerLabel = new JLabel("Bộ lọc");
-        headerLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
+        headerLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 20));
 
         JButton resetButton = new JButton("Đặt lại");
-        resetButton.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        resetButton.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 14));
         resetButton.setForeground(new Color(0, 123, 255));
         resetButton.setContentAreaFilled(false);
         resetButton.setBorder(null);
@@ -44,7 +46,7 @@ public class FlightListPanel extends JPanel {
         airlineFilterPanel.setLayout(new BoxLayout(airlineFilterPanel, BoxLayout.Y_AXIS));
         airlineFilterPanel.setBackground(new Color(245, 245, 245));
         airlineFilterPanel.setBorder(BorderFactory.createTitledBorder(null, "Hãng hàng không",
-                0, 0, new Font("SansSerif", Font.BOLD, 16)));
+                0, 0, new Font(Constants.FB_FONT, Font.BOLD, 16)));
 
         JCheckBox airline1 = new JCheckBox("Malaysia Airlines - 12.350.857 VND");
         JCheckBox airline2 = new JCheckBox("VietJet Air - 5.595.711 VND");
@@ -66,10 +68,10 @@ public class FlightListPanel extends JPanel {
         timeFilterPanel.setLayout(new BoxLayout(timeFilterPanel, BoxLayout.Y_AXIS));
         timeFilterPanel.setBackground(new Color(245, 245, 245));
         timeFilterPanel.setBorder(BorderFactory.createTitledBorder(null, "Thời gian bay",
-                0, 0, new Font("SansSerif", Font.BOLD, 16)));
+                0, 0, new Font(Constants.FB_FONT, Font.BOLD, 16)));
 
         JLabel departureTimeLabel = new JLabel("Giờ cất cánh");
-        departureTimeLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        departureTimeLabel.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 14));
 
         JPanel departureTimePanel = new JPanel(new GridLayout(2, 2, 10, 10));
         departureTimePanel.setBackground(new Color(245, 245, 245));
@@ -90,7 +92,7 @@ public class FlightListPanel extends JPanel {
         departureTimePanel.add(btnEveningToMidnight);
 
         JLabel arrivalTimeLabel = new JLabel("Giờ hạ cánh");
-        arrivalTimeLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        arrivalTimeLabel.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 14));
 
         JPanel arrivalTimePanel = new JPanel(new GridLayout(2, 2, 10, 10));
         arrivalTimePanel.setBackground(new Color(245, 245, 245));
@@ -150,16 +152,16 @@ public class FlightListPanel extends JPanel {
         cardPanel.setPreferredSize(new Dimension(500, 100));
 
         JLabel airlineLabel = new JLabel(airline);
-        airlineLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
+        airlineLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 14));
 
         JLabel timeLabel = new JLabel(departure + " - " + arrival);
-        timeLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        timeLabel.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 14));
 
         JLabel routeLabel = new JLabel(from + " → " + to);
-        routeLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        routeLabel.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 14));
 
         JLabel priceLabel = new JLabel(price);
-        priceLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+        priceLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
         priceLabel.setForeground(new Color(255, 69, 0));
 
         JPanel textPanel = new JPanel();
@@ -177,14 +179,14 @@ public class FlightListPanel extends JPanel {
     }
 
     private void styleTimeButton(JButton button) {
-        button.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        button.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 14));
         button.setBackground(Color.WHITE);
         button.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         button.setFocusPainted(false);
     }
 
     private void styleCheckbox(JCheckBox checkBox) {
-        checkBox.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        checkBox.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 14));
         checkBox.setBackground(new Color(245, 245, 245));
         checkBox.setFocusPainted(false);
     }

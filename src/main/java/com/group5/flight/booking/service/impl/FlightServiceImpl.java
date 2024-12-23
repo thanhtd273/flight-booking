@@ -1,5 +1,6 @@
 package com.group5.flight.booking.service.impl;
 
+import com.group5.flight.booking.core.AppUtils;
 import com.group5.flight.booking.core.DataStatus;
 import com.group5.flight.booking.core.ErrorCode;
 import com.group5.flight.booking.core.exception.LogicException;
@@ -187,12 +188,11 @@ public class FlightServiceImpl implements FlightService {
     public List<FlightDisplayInfo> getFlightsDisplay(List<FlightInfo> flightInfos) {
         List<FlightDisplayInfo> flightDisplayInfos = new LinkedList<>();
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         for (FlightInfo flightInfo: flightInfos) {
 
             flightDisplayInfos.add(new FlightDisplayInfo(flightInfo.getFlightId(), flightInfo.getFromAirport().getName(),
-                    flightInfo.getToAirport().getName(), dateFormat.format(flightInfo.getDepatureDate()),
-                    dateFormat.format(flightInfo.getReturnDate()), flightInfo.getBasePrice()));
+                    flightInfo.getToAirport().getName(), AppUtils.formatDate(flightInfo.getDepatureDate()),
+                    AppUtils.formatDate(flightInfo.getReturnDate()), flightInfo.getBasePrice()));
         }
         return flightDisplayInfos;
     }

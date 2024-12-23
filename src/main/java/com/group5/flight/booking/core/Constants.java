@@ -22,4 +22,6 @@ public final class Constants {
     public static final String FLIGHT_SEAT_SCREEN = "FlightSeat";
 
     public static final String CODE_VERIFIER = "CodeVerifier";
+
+    public static final String FLIGHT_PAYER = "FlightPayer";
 }

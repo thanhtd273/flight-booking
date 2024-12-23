@@ -1,10 +1,10 @@
-package com.group5.flight.booking.form.component;
+package com.group5.flight.booking.form;
 
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -15,7 +15,7 @@ import com.group5.flight.booking.dto.AirportInfo;
 import com.group5.flight.booking.dto.FlightDisplayInfo;
 import com.group5.flight.booking.dto.FlightInfo;
 import com.group5.flight.booking.dto.NationInfo;
-import com.group5.flight.booking.form.FlightSeatPanel;
+import com.group5.flight.booking.form.component.FbButton;
 import com.group5.flight.booking.service.AirportService;
 import com.group5.flight.booking.service.FlightService;
 import com.toedter.calendar.JDateChooser;
@@ -24,21 +24,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
 
+import static com.group5.flight.booking.core.Constants.FLIGHT_DETAIL_SCREEN;
+
 public class FlightSearchPanel extends JPanel {
 
     private static final Logger logger = LoggerFactory.getLogger(FlightSearchPanel.class);
 
-    private JComboBox<String> cbDeparture;
-    private JComboBox<String> cbDestination;
-    private JDateChooser dateChooser;
-    private FbButton btnSearch;
+    private final JPanel mainPanel;
+
+    private final CardLayout cardLayout;
+
     private JTable flightTable;
 
     private final AirportService airportService;
 
     private final FlightService flightService;
 
-    public FlightSearchPanel(AirportService airportService, FlightService flightService) {
+    public FlightSearchPanel(JPanel mainPanel, CardLayout cardLayout,
+                             AirportService airportService, FlightService flightService) {
+        this.mainPanel = mainPanel;
+        this.cardLayout = cardLayout;
         this.airportService = airportService;
         this.flightService = flightService;
         initComponents();
@@ -46,6 +51,8 @@ public class FlightSearchPanel extends JPanel {
     }
 
     private void initComponents() {
+        JComboBox<String> cbDestination;
+        JComboBox<String> cbDeparture;
         final Long[] departureId = new Long[1];
         final Long[] destinationId = new Long[1];
         final Date[] departureDate = new Date[1];
@@ -91,7 +98,7 @@ public class FlightSearchPanel extends JPanel {
         });
         flightSearcherPanel.add(cbDestination);
 
-        dateChooser = new JDateChooser();
+        JDateChooser dateChooser = new JDateChooser();
         dateChooser.setBorder(BorderFactory.createTitledBorder("Departure Date"));
         dateChooser.setBounds(300, 240, 400, 50);
         dateChooser.addPropertyChangeListener("date", evt -> {
@@ -100,7 +107,7 @@ public class FlightSearchPanel extends JPanel {
         });
         flightSearcherPanel.add(dateChooser);
 
-        btnSearch = new FbButton();
+        FbButton btnSearch = new FbButton();
         btnSearch.setText("Search");
         btnSearch.setBackground(new Color(7, 164, 121));
         btnSearch.setForeground(new Color(255, 255, 255));
@@ -135,8 +142,8 @@ public class FlightSearchPanel extends JPanel {
         ));
         flightTable.setFillsViewportHeight(true);
         flightTable.setRowHeight(30);
-        flightTable.setFont(new Font("sansserif", Font.PLAIN, 14));
-        flightTable.getTableHeader().setFont(new Font("sansserif", Font.BOLD, 14));
+        flightTable.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 14));
+        flightTable.getTableHeader().setFont(new Font(Constants.FB_FONT, Font.BOLD, 14));
 
         JScrollPane scrollPane = new JScrollPane(flightTable);
         flightTable.addMouseListener(new MouseAdapter() {
@@ -146,12 +153,9 @@ public class FlightSearchPanel extends JPanel {
                 if (row >= 0) {
                     FlightInfo flightInfo = flightInfoList.get(row);
                     logger.debug("Flight info: {}", flightInfo);
-                    FlightSeatPanel flightSeatPanel = new FlightSeatPanel();
-                    add(flightSeatPanel, Constants.FLIGHT_SEAT_SCREEN);
-                    show();
-//                    JPanel flightDetailPanel = createFlightDetailPanel(flightInfo);
-//                    mainPanel.add(flightDetailPanel, FLIGHT_DETAIL_SCREEN);
-//                    cardLayout.show(mainPanel, FLIGHT_DETAIL_SCREEN);
+                    FlightDetailPanel flightDetailPanel = new FlightDetailPanel(mainPanel, cardLayout, flightInfo);
+                    mainPanel.add(flightDetailPanel, FLIGHT_DETAIL_SCREEN);
+                    cardLayout.show(mainPanel, FLIGHT_DETAIL_SCREEN);
                 }
             }
         });
