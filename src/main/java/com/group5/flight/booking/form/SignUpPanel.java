@@ -2,6 +2,10 @@ package com.group5.flight.booking.form;
 
 import com.group5.flight.booking.core.exception.LogicException;
 import com.group5.flight.booking.dto.UserInfo;
+import com.group5.flight.booking.form.swing.Button;
+import com.group5.flight.booking.form.swing.ButtonOutLine;
+import com.group5.flight.booking.form.swing.MyPasswordField;
+import com.group5.flight.booking.form.swing.MyTextField;
 import com.group5.flight.booking.model.User;
 import com.group5.flight.booking.service.AuthService;
 import org.slf4j.Logger;
@@ -9,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
 import static com.group5.flight.booking.core.Constants.*;
 
@@ -24,6 +29,14 @@ public class SignUpPanel extends JPanel {
 
     private final AuthService authService;
 
+    // Size frame
+    int panelWidth = 900;
+    int panelHeight = 600;
+
+    // Size panel
+    int leftPanelWidth = (int) (panelWidth * 0.6);
+    int rightPanelWidth = (int) (panelWidth * 0.4);
+
     public SignUpPanel(JPanel mainPanel, CardLayout cardLayout, CodeVerifierPanel codeVerifierPanel, AuthService authService) {
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
@@ -36,72 +49,93 @@ public class SignUpPanel extends JPanel {
     private void initComponent() {
         setLayout(null);
 
-        // Left panel
-        JPanel leftPanel = new JPanel();
-        leftPanel.setBackground(new Color(34, 177, 76));
-        leftPanel.setBounds(0, 0, 500, 600);
-        leftPanel.setLayout(null);
-
-        JLabel lblWelcome = new JLabel("Welcome Back!");
-        lblWelcome.setFont(new Font(FONT_NAME, Font.BOLD, 28));
-        lblWelcome.setForeground(Color.WHITE);
-        lblWelcome.setBounds(150, 150, 300, 50);
-        leftPanel.add(lblWelcome);
-
-        JLabel lblConnect = new JLabel("To keep connected with us please");
-        lblConnect.setFont(new Font(FONT_NAME, Font.PLAIN, 16));
-        lblConnect.setForeground(Color.WHITE);
-        lblConnect.setBounds(130, 200, 300, 20);
-        leftPanel.add(lblConnect);
-
-        JLabel lblLoginInfo = new JLabel("login with your personal info");
-        lblLoginInfo.setFont(new Font(FONT_NAME, Font.PLAIN, 16));
-        lblLoginInfo.setForeground(Color.WHITE);
-        lblLoginInfo.setBounds(130, 220, 300, 20);
-        leftPanel.add(lblLoginInfo);
-
-        JButton btnSignIn = new JButton("SIGN IN");
-        btnSignIn.setFont(new Font(FONT_NAME, Font.BOLD, 16));
-        btnSignIn.setForeground(new Color(34, 177, 76));
-        btnSignIn.setBackground(Color.WHITE);
-        btnSignIn.setBounds(180, 300, 140, 40);
-        btnSignIn.setFocusPainted(false);
-        btnSignIn.setBorder(BorderFactory.createLineBorder(new Color(34, 177, 76), 2));
-        btnSignIn.addActionListener(e -> cardLayout.show(mainPanel, LOGIN_SCREEN));
-        leftPanel.add(btnSignIn);
-
         // Right panel
         JPanel rightPanel = new JPanel();
+        rightPanel.setBackground(new Color(34, 177, 76));
+        rightPanel.setBounds(leftPanelWidth, 0, rightPanelWidth, panelHeight);
         rightPanel.setLayout(null);
-        rightPanel.setBackground(Color.WHITE);
-        rightPanel.setBounds(500, 0, 500, 600);
+
+        JLabel lblWelcome = new JLabel("Hello, Friend!");
+        lblWelcome.setFont(new Font(FONT_NAME, Font.BOLD, 28));
+        lblWelcome.setForeground(new Color(245, 245, 245));
+        lblWelcome.setHorizontalAlignment(SwingConstants.CENTER);
+        lblWelcome.setVerticalAlignment(SwingConstants.CENTER);
+        lblWelcome.setBounds(0, 180, rightPanelWidth, 50);
+        rightPanel.add(lblWelcome);
+
+        JLabel lblConnect = new JLabel("Enter your personal details");
+        lblConnect.setFont(new Font(FONT_NAME, Font.BOLD, 13));
+        lblConnect.setForeground(new Color(245, 245, 245));
+        lblConnect.setHorizontalAlignment(SwingConstants.CENTER);
+        lblConnect.setVerticalAlignment(SwingConstants.CENTER);
+        lblConnect.setBounds(0, 250, rightPanelWidth, 20);
+        rightPanel.add(lblConnect);
+
+        JLabel lblLoginInfo = new JLabel("and start journey with us");
+        lblLoginInfo.setFont(new Font(FONT_NAME, Font.BOLD, 13));
+        lblLoginInfo.setForeground(new Color(245, 245, 245));
+        lblLoginInfo.setHorizontalAlignment(SwingConstants.CENTER);
+        lblLoginInfo.setVerticalAlignment(SwingConstants.CENTER);
+        lblLoginInfo.setBounds(0, 278, rightPanelWidth, 20);
+        rightPanel.add(lblLoginInfo);
+
+        ButtonOutLine btnSignIn = new ButtonOutLine();
+        btnSignIn.setText("SIGN IN");
+        btnSignIn.setFont(new Font(FONT_NAME, Font.BOLD, 14));
+        btnSignIn.setForeground(new Color(245, 245, 245));
+        btnSignIn.setBackground(new Color(245, 245, 245));
+        btnSignIn.setBounds((rightPanelWidth-200)/2, 320, 200, 40);
+        btnSignIn.setFocusPainted(false);
+        btnSignIn.setBorderPainted(false);
+        rightPanel.add(btnSignIn);
+
+        btnSignIn.addActionListener(e -> cardLayout.show(mainPanel, LOGIN_SCREEN));
+
+        // Left panel
+        JPanel leftPanel = new JPanel();
+        leftPanel.setLayout(null);
+        leftPanel.setBackground(Color.WHITE);
+        leftPanel.setBounds(0, 0, leftPanelWidth, panelHeight);
 
         JLabel lblCreateAccount = new JLabel("Create Account");
-        lblCreateAccount.setFont(new Font(FONT_NAME, Font.BOLD, 28));
+        lblCreateAccount.setFont(new Font(FONT_NAME, Font.BOLD, 30));
         lblCreateAccount.setForeground(new Color(34, 177, 76));
-        lblCreateAccount.setBounds(170, 50, 200, 50);
-        rightPanel.add(lblCreateAccount);
+        lblCreateAccount.setHorizontalAlignment(SwingConstants.CENTER);
+        lblCreateAccount.setVerticalAlignment(SwingConstants.CENTER);
+        lblCreateAccount.setBounds(0, 135, leftPanelWidth, 40);
+        leftPanel.add(lblCreateAccount);
 
-        JTextField txtEmail = new JTextField();
-        txtEmail.setBorder(BorderFactory.createTitledBorder("Email"));
-        txtEmail.setBounds(150, 220, 200, 50);
-        rightPanel.add(txtEmail);
+        MyTextField txtName = new MyTextField();
+        txtName.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/user.png"))));
+        txtName.setBounds((leftPanelWidth-300)/2, 195, 300, 40);
+        txtName.setHint("Name");
+        leftPanel.add(txtName);
 
-        JPasswordField txtPassword = new JPasswordField();
-        txtPassword.setBorder(BorderFactory.createTitledBorder("Password"));
-        txtPassword.setBounds(150, 290, 200, 50);
-        rightPanel.add(txtPassword);
+        MyTextField txtEmail = new MyTextField();
+        txtEmail.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/mail.png"))));
+        txtEmail.setBounds((leftPanelWidth-300)/2, 245, 300, 40);
+        txtEmail.setHint("Email");
+        leftPanel.add(txtEmail);
 
-        JPasswordField confirmPasswordField = new JPasswordField();
-        confirmPasswordField.setBorder(BorderFactory.createTitledBorder("Confirm Password"));
-        confirmPasswordField.setBounds(150, 360, 200, 50);
-        rightPanel.add(confirmPasswordField);
+        MyPasswordField txtPassword = new MyPasswordField();
+        txtPassword.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/pass.png"))));
+        txtPassword.setBounds((leftPanelWidth-300)/2, 295, 300, 40);
+        txtPassword.setHint("Password");
+        leftPanel.add(txtPassword);
 
-        JButton btnSignUp = new JButton("SIGN UP");
-        btnSignUp.setFont(new Font(FONT_NAME, Font.BOLD, 16));
+        MyPasswordField confirmPasswordField = new MyPasswordField();
+        //confirmPasswordField.setBorder(BorderFactory.createTitledBorder("Confirm Password"));
+        confirmPasswordField.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/pass.png"))));
+        confirmPasswordField.setBounds((leftPanelWidth-300)/2, 345, 300, 40);
+        confirmPasswordField.setHint("Confirm Password");
+        leftPanel.add(confirmPasswordField);
+
+        Button btnSignUp = new Button();
+        btnSignUp.setText("SIGN UP");
+        btnSignUp.setFont(new Font(FONT_NAME, Font.BOLD, 14));
         btnSignUp.setForeground(Color.WHITE);
         btnSignUp.setBackground(new Color(34, 177, 76));
-        btnSignUp.setBounds(180, 440, 140, 40);
+        btnSignUp.setBounds((leftPanelWidth-200)/2, 405, 200, 40);
         btnSignUp.setFocusPainted(false);
         btnSignUp.setBorderPainted(false);
         btnSignUp.addActionListener(e -> {
@@ -118,7 +152,7 @@ public class SignUpPanel extends JPanel {
                 JOptionPane.showMessageDialog(null, ex.getMessage(), "Sign Up Fail", JOptionPane.ERROR_MESSAGE);
             }
         });
-        rightPanel.add(btnSignUp);
+        leftPanel.add(btnSignUp);
 
         add(leftPanel);
         add(rightPanel);

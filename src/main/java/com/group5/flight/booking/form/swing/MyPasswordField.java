@@ -25,7 +25,7 @@ public class MyPasswordField extends JPasswordField {
     private String hint = "";
 
     public MyPasswordField() {
-        setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setBackground(new Color(0, 0, 0, 0));
         setForeground(Color.decode("#7A8C8D"));
         setFont(new Font("sanserif", Font.PLAIN, 13));
@@ -81,6 +81,6 @@ public class MyPasswordField extends JPasswordField {
             //  suffix is right
             right = suffixIcon.getIconWidth() + 15;
         }
-        setBorder(javax.swing.BorderFactory.createEmptyBorder(10, left, 10, right));
+        setBorder(BorderFactory.createEmptyBorder(10, left, 10, right));
     }
 }

@@ -1,6 +1,8 @@
 package com.group5.flight.booking;
 
+import com.group5.flight.booking.form.LoginPanel;
 import com.group5.flight.booking.form.MainFrame;
+import com.group5.flight.booking.form.SignUpPanel;
 import org.springframework.boot.Banner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,10 +23,8 @@ public class Application {
                 .run(args);
 
         EventQueue.invokeLater(() -> {
-
             MainFrame ex = ctx.getBean(MainFrame.class);
             ex.setVisible(true);
         });
     }
-
 }

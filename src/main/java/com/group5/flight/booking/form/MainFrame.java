@@ -23,6 +23,10 @@ public class MainFrame extends JFrame {
 
     private final JPanel mainPanel;
 
+    // Size frame
+    int panelWidth = 900;
+    int panelHeight = 600;
+
     public MainFrame(AuthService authService, AirportService airportService, FlightService flightService, UserService userService) {
         this.authService = authService;
         this.airportService = airportService;
@@ -39,7 +43,7 @@ public class MainFrame extends JFrame {
         // Set the frame properties
         setTitle("Flight Booking Application");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(800, 600);
+        setSize(panelWidth, panelHeight);
         setLocationRelativeTo(null);
 
         // Add the sign-up panel, login panel, and flight searcher panel
@@ -53,12 +57,12 @@ public class MainFrame extends JFrame {
         mainPanel.add(loginPanel, LOGIN_SCREEN);
         mainPanel.add(flightSearchPanel, FLIGHT_SEARCHER_SCREEN);
         mainPanel.add(flightListPanel, FLIGHT_LIST_SCREEN);
-
         mainPanel.add(codeVerifierPanel, CODE_VERIFIER);
+
         // Add the main panel to the frame
         add(mainPanel);
 
         // Show the sign-up panel initially
-        cardLayout.show(mainPanel, FLIGHT_SEARCHER_SCREEN);
+        cardLayout.show(mainPanel, SIGNUP_SCREEN);
     }
 }
