@@ -136,25 +136,5 @@ public class UserController {
         }
     }
 
-    @PostMapping("/users/verify-password-reset-code")
-    public APIResponse verifyPasswordResetCode(HttpServletResponse response, @RequestBody OTPInfo passwordResetInfo) {
-        long start = System.currentTimeMillis();
-        try {
-            ErrorCode errorCode = userService.verifyPasswordResetCode(passwordResetInfo);
-            if (errorCode == ErrorCode.SUCCESS) {
-                logger.info("Call API POST /api/v1/flight-booking/users/verify-password-reset-code success, user email: {}", passwordResetInfo.getEmail());
-            } else {
-                logger.error("Call API POST /api/v1/flight-booking/users/verify-password-reset-code failed, user email: {}, error: {}",
-                        passwordResetInfo.getEmail(), errorCode.getMessage());
-            }
-
-            response.setStatus(errorCode.getValue());
-            return new APIResponse(errorCode, "", System.currentTimeMillis() - start, errorCode.getMessage());
-        } catch (Exception e) {
-            logger.error("Call API POST /api/v1/flight-booking/users/verify-password-reset-code failed, error: {}", e.getMessage());
-            return ExceptionHandler.handleException(response, e, start);
-        }
-    }
-
 
 }

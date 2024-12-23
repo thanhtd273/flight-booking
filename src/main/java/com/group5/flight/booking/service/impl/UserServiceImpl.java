@@ -236,8 +236,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ErrorCode verifyPasswordResetCode(OTPInfo passwordResetInfo) throws LogicException {
-        return verifyOTP(passwordResetInfo);
+    public ErrorCode verifyPasswordResetCode(String email, Integer code) throws LogicException {
+        return verifyOTP(new OTPInfo(code, email));
     }
 
     @Override

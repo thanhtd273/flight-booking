@@ -9,7 +9,7 @@ import com.group5.flight.booking.model.User;
 public interface AuthService {
     UserInfo verifyToken(String token) throws LogicException;
 
-    LoginSessionInfo login(Credential credential) throws LogicException;
+    LoginSessionInfo login(String email, String password) throws LogicException;
 
     User signUp(UserInfo userInfo) throws LogicException;
 }

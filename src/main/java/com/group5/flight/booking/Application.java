@@ -1,6 +1,6 @@
 package com.group5.flight.booking;
 
-import com.group5.flight.booking.form.JFrameLogin;
+import com.group5.flight.booking.form.MainFrame;
 import org.springframework.boot.Banner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -22,7 +22,7 @@ public class Application {
 
         EventQueue.invokeLater(() -> {
 
-            JFrameLogin ex = ctx.getBean(JFrameLogin.class);
+            MainFrame ex = ctx.getBean(MainFrame.class);
             ex.setVisible(true);
         });
     }

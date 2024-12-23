@@ -39,19 +39,6 @@ public class AuthController {
         }
     }
 
-    @PostMapping(value = "/login")
-    public APIResponse login(HttpServletRequest request, HttpServletResponse response, @RequestBody Credential credential) {
-        long start = System.currentTimeMillis();
-        try {
-            LoginSessionInfo loginSessionInfo = authService.login(credential);
-            logger.info("Call API /api/v1/flight-booking/login success");
-            return new APIResponse(ErrorCode.SUCCESS, "", System.currentTimeMillis() - start, loginSessionInfo);
-        } catch (Exception e) {
-            logger.error("Call API POST /api/v1/flight-booking/login fail, error: {}", e.getMessage());
-            return ExceptionHandler.handleException(response, e, start);
-        }
-    }
-
     @PostMapping("/sign-up")
     public APIResponse createUser(HttpServletResponse response, @RequestBody UserInfo userInfo) {
         long start = System.currentTimeMillis();
