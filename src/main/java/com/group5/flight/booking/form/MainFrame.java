@@ -40,7 +40,7 @@ public class MainFrame extends JFrame {
         // Set the frame properties
         setTitle("Flight Booking Application");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(1000, 800);
+        setSize(900, 600);
         setLocationRelativeTo(null);
 
         // Add the sign-up panel, login panel, and flight searcher panel
