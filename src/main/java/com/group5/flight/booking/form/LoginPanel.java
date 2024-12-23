@@ -100,7 +100,7 @@ public class LoginPanel extends JPanel{
         // Label Sign in
         JLabel lblSignIn = new JLabel("Sign In");
         lblSignIn.setFont(new Font("sanserif", Font.BOLD, 30));
-        lblSignIn.setForeground(new Color(34, 177, 76));
+        lblSignIn.setForeground(new Color(7, 164, 121));
         lblSignIn.setHorizontalAlignment(SwingConstants.CENTER);
         lblSignIn.setVerticalAlignment(SwingConstants.CENTER);
         lblSignIn.setBounds(0, 140, rightPanelWidth, 40);
@@ -133,7 +133,7 @@ public class LoginPanel extends JPanel{
         // Button signin
         com.group5.flight.booking.form.swing.Button btnSignIn = new Button();
         btnSignIn.setText("SIGN IN");
-        btnSignIn.setBackground(new Color(34, 177, 76));
+        btnSignIn.setBackground(new Color(7, 164, 121));
         btnSignIn.setForeground(Color.WHITE);
         btnSignIn.setFont(new Font(FONT_NAME, Font.BOLD, 16));
         btnSignIn.setBounds((rightPanelWidth-200)/2, 350, 200, 40);

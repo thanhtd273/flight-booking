@@ -7,7 +7,7 @@ public final class Constants {
         throw new IllegalAccessException();
     }
 
-    public static final String FB_FONT = "sansserif";
+    public static final String FB_FONT = "sanserif";
 
     public static final String FONT_NAME = "sanserif";
 

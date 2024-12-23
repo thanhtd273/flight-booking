@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -88,21 +88,28 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
+
+		<!-- Timed Task Library -->
 		<dependency>
 			<groupId>org.jdesktop</groupId>
 			<artifactId>timingframework</artifactId>
 			<version>0.55</version>
 		</dependency>
+
+		<!-- MIG Layout -->
 		<dependency>
 			<groupId>com.miglayout</groupId>
 			<artifactId>miglayout</artifactId>
 			<version>4.0</version>
 		</dependency>
+
+		<!-- JavaMail API -->
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>javax.mail</artifactId>
 			<version>1.6.2</version>
 		</dependency>
+<<<<<<< HEAD
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -113,12 +120,23 @@
 			<version>1.4</version>
 		</dependency>
     </dependencies>
+=======
+
+		<!-- Spring Boot Starter Actuator -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+	</dependencies>
+
+>>>>>>> 5a70b592649b98a04414a7a57327e2ecbb75e89e
 	<repositories>
 		<repository>
 			<id>central</id>
 			<url>https://repo.maven.apache.org/maven2</url>
 		</repository>
 	</repositories>
+
 	<build>
 		<plugins>
 			<plugin>
