@@ -14,6 +14,7 @@ import com.group5.flight.booking.service.PlaneService;
 import net.miginfocom.swing.MigLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.group5.flight.booking.form.swing.Button;
 
 public class FlightSeatPanel extends JPanel {
 
@@ -56,13 +57,24 @@ public class FlightSeatPanel extends JPanel {
         lblTitle.setForeground(new Color(7, 164, 121));
         add(lblTitle, "span, center, gapbottom 20");
 
-        JPanel seatPanel = new JPanel(new MigLayout("wrap " + NUM_OF_COLUMN, "[grow, center]5".repeat(NUM_OF_COLUMN), "[]10[]"));
+        // Sử dụng GridBagLayout để tạo khoảng cách giữa 3 cột trái và 3 cột phải
+        JPanel seatPanel = new JPanel(new GridBagLayout());
         seatPanel.setOpaque(false);
 
+        Dimension fixedSize = new Dimension(350, 300); // Kích thước cố định cho khung chứa
+        int buttonWidth = fixedSize.width / NUM_OF_COLUMN - 15; // Chiều rộng mỗi nút ghế
+        int buttonHeight = fixedSize.height / (seats.length / NUM_OF_COLUMN + 1) - 10; // Chiều cao mỗi nút ghế
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+
         for (int i = 0; i < seats.length; i++) {
-            JButton seatButton = new JButton(String.valueOf(i + 1));
+            Button seatButton = new Button();
+            seatButton.setText(String.valueOf(i + 1));
             seatButton.setFont(new Font(Constants.FB_FONT, Font.BOLD, 14));
-            seatButton.setPreferredSize(new Dimension(50, 50));
+            seatButton.setPreferredSize(new Dimension(20, 50));
 
             if (seats[i]) {
                 seatButton.setBackground(new Color(7, 164, 121));
@@ -73,23 +85,31 @@ public class FlightSeatPanel extends JPanel {
                 seatButton.setEnabled(false);
             }
 
-            seatButton.addActionListener(e -> txtSeat.setText(seatButton.getText()));
-            seatPanel.add(seatButton);
+            // Tính toán vị trí hàng và cột
+            int row = i / NUM_OF_COLUMN; // Số hàng
+            int col = i % NUM_OF_COLUMN; // Số cột
+
+            // Thêm khoảng cách lớn hơn giữa cột 3 và cột 4
+            if (col == 3) {
+                gbc.insets = new Insets(10, 80, 10, 10); // Khoảng cách lớn hơn giữa cột 3 và 4
+            } else {
+                gbc.insets = new Insets(10, 10, 10, 10); // Khoảng cách chuẩn giữa các nút
+            }
+
+            gbc.gridx = col; // Cột hiện tại
+            gbc.gridy = row; // Hàng hiện tại
+
+            seatPanel.add(seatButton, gbc);
         }
 
-        add(seatPanel, "grow");
+        // Thêm thanh cuộn
+        JScrollPane scrollPane = new JScrollPane(seatPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setPreferredSize(new Dimension(350, 300)); // Kích thước khung cố định
+        add(scrollPane, "grow");
 
-        // Seat selection label and input field
-        JLabel lblAvailableSeats = new JLabel("Enter Seat Number");
-        lblAvailableSeats.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 16));
-        lblAvailableSeats.setForeground(new Color(100, 100, 100));
-        add(lblAvailableSeats, "span, center, gapbottom 10");
-
-        txtSeat = new JTextField();
-        txtSeat.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 16));
-        txtSeat.setPreferredSize(new Dimension(100, 30));
-        add(txtSeat, "span, center, wrap");
-
+        // Chỉ giữ lại nút Back và Confirm
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new MigLayout("wrap", "[grow]10[grow]"));
         buttonPanel.setOpaque(false);
@@ -101,7 +121,7 @@ public class FlightSeatPanel extends JPanel {
         buttonPanel.add(btnBack, "w 100!, h 40!");
 
         JButton btnConfirm = new JButton("Confirm");
-        btnConfirm.setBackground(new Color(7, 164, 121));
+        btnConfirm.setBackground(new Color(20, 140, 180));
         btnConfirm.setForeground(Color.WHITE);
         btnConfirm.addActionListener(e -> {
             FlightPayPanel payPanel = new FlightPayPanel(mainPanel, cardLayout);
@@ -112,6 +132,7 @@ public class FlightSeatPanel extends JPanel {
 
         add(buttonPanel, "span, center");
     }
+
 
     private void initSeatData() {
         try {
