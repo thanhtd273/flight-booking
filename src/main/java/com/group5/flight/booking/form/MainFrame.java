@@ -1,5 +1,6 @@
 package com.group5.flight.booking.form;
 
+import com.group5.flight.booking.form.component.FlightPayPanel;
 import com.group5.flight.booking.service.*;
 
 import javax.swing.*;
@@ -51,15 +52,16 @@ public class MainFrame extends JFrame {
         LoginPanel loginPanel = new LoginPanel(mainPanel, cardLayout, authService);
         FlightSearchPanel flightSearchPanel = new FlightSearchPanel(mainPanel, cardLayout, airportService, flightService,
                 airlineService, planeService);
-
+        FlightPayPanel flightPayer = new FlightPayPanel(mainPanel, cardLayout);
         mainPanel.add(signUpPanel, SIGNUP_SCREEN);
         mainPanel.add(loginPanel, LOGIN_SCREEN);
         mainPanel.add(flightSearchPanel, FLIGHT_SEARCHER_SCREEN);
         mainPanel.add(codeVerifierPanel, CODE_VERIFIER);
+        mainPanel.add(flightPayer,FLIGHT_PAYER);
         // Add the main panel to the frame
         add(mainPanel);
 
         // Show the sign-up panel initially
-        cardLayout.show(mainPanel, FLIGHT_SEARCHER_SCREEN);
+        cardLayout.show(mainPanel, FLIGHT_PAYER);
     }
 }
