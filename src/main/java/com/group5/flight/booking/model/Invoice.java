@@ -19,8 +19,8 @@ public class Invoice {
     @Column(name = "invoice_id")
     private Long invoiceId;
 
-    @Column(name = "contact_id")
-    private Long contactId;
+    @Column(name = "booking_id")
+    private Long bookingId;
 
     @Column(name = "total_amount")
     private Float totalAmount;

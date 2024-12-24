@@ -22,4 +22,16 @@ public class FlightDisplayInfo {
     private String returnDate;
 
     private Float price;
+
+    @Override
+    public String toString() {
+        return "FlightDisplayInfo{" +
+                "flightCode=" + flightCode +
+                ", departure='" + departure + '\'' +
+                ", destination='" + destination + '\'' +
+                ", departureDate='" + departureDate + '\'' +
+                ", returnDate='" + returnDate + '\'' +
+                ", price=" + price +
+                '}';
+    }
 }

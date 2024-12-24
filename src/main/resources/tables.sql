@@ -151,17 +151,6 @@ CREATE TABLE contact (
     deleted BOOLEAN
 );
 
-CREATE TABLE invoice (
-    invoice_id BIGSERIAL PRIMARY KEY,
-    contact_id BIGINT NOT NULL,
-    total_amount FLOAT NOT NULL,
-
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted BOOLEAN,
-    CONSTRAINT contact_fk FOREIGN KEY (contact_id) REFERENCES contact(contact_id)
-);
-
 CREATE TABLE booking (
     booking_id BIGSERIAL PRIMARY KEY,
     booking_code BIGINT,
@@ -179,6 +168,17 @@ CREATE TABLE booking (
     CONSTRAINT flight_fk FOREIGN KEY (flight_id) REFERENCEs flight(flight_id),
     CONSTRAINT contact_fk FOREIGN KEY (contact_id) REFERENCES contact(contact_id),
     CONSTRAINT invoice_fk FOREIGN KEY (invoice_id) REFERENCES invoice(invoice_fk)
+);
+
+CREATE TABLE invoice (
+    invoice_id BIGSERIAL PRIMARY KEY,
+    booking_id BIGINT NOT NULL,
+    total_amount FLOAT NOT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP,
+    deleted BOOLEAN,
+    CONSTRAINT booking_fk FOREIGN KEY (booking_id) REFERENCES booking(booking_id)
 );
 
 CREATE TABLE booking_passenger (

@@ -19,12 +19,20 @@ public class AirportInfo {
 
     private Long cityId;
 
-    private CityInfo city;
+    private CityInfo cityInfo;
 
     public boolean isAllNotNull() {
         return ObjectUtils.isEmpty(name) && ObjectUtils.isEmpty(airportCode) && ObjectUtils.isEmpty(cityId);
     }
-    public String getAirportName(){
-        return name;
+
+    @Override
+    public String toString() {
+        return "AirportInfo{" +
+                "airportId=" + airportId +
+                ", name='" + name + '\'' +
+                ", airportCode='" + airportCode + '\'' +
+                ", cityId=" + cityId +
+                ", cityInfo=" + cityInfo +
+                '}';
     }
 }

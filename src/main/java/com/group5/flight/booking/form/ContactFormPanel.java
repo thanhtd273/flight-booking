@@ -1,21 +1,27 @@
 package com.group5.flight.booking.form;
 
+import com.group5.flight.booking.core.AppUtils;
 import com.group5.flight.booking.core.Constants;
-import com.group5.flight.booking.dto.ContactInfo;
-import com.group5.flight.booking.dto.PassengerInfo;
-import com.group5.flight.booking.dto.BookingInfo;
+import com.group5.flight.booking.dto.*;
 import com.group5.flight.booking.form.component.RoundedBorder;
 import com.group5.flight.booking.form.swing.MyTextField;
+import com.group5.flight.booking.model.Nation;
+import com.group5.flight.booking.service.BookingService;
 import com.group5.flight.booking.service.FlightService;
+import com.group5.flight.booking.service.NationService;
 import com.toedter.calendar.JDateChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.ObjectUtils;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ContactFormPanel extends JPanel{
 
@@ -33,15 +39,23 @@ public class ContactFormPanel extends JPanel{
 
     private final FlightService flightService;
 
+    private final BookingService bookingService;
+
+    private final NationService nationService;
+
     private ContactInfo contactInfo;
 
     private final PassengerInfo[] passengerInfos;
 
-    public ContactFormPanel(JPanel mainPanel, CardLayout cardLayout, BookingInfo bookingInfo, FlightService flightService) {
+    public ContactFormPanel(JPanel mainPanel, CardLayout cardLayout, BookingInfo bookingInfo,
+                            FlightService flightService, BookingService bookingService, NationService nationService) {
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
         this.bookingInfo = bookingInfo;
         this.flightService = flightService;
+        this.bookingService = bookingService;
+        this.nationService = nationService;
+
         contactInfo = new ContactInfo();
         passengerInfos = new PassengerInfo[bookingInfo.getNumOfPassengers()];
         for (int i = 0; i < bookingInfo.getNumOfPassengers(); i ++) {
@@ -139,11 +153,12 @@ public class ContactFormPanel extends JPanel{
         continueButton.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
         continueButton.addActionListener(e -> {
             logger.debug("contactInfo: {}, passengerInfos: {}", contactInfo, passengerInfos);
-            bookingInfo.setPassengers(passengerInfos);
-            bookingInfo.setContact(contactInfo);
-            FlightSeatPanel flightSeatPanel = new FlightSeatPanel(mainPanel, cardLayout, bookingInfo, flightService);
+            bookingInfo.setPassengerInfos(passengerInfos);
+            bookingInfo.setContactInfo(contactInfo);
+            FlightSeatPanel flightSeatPanel = new FlightSeatPanel(mainPanel, cardLayout, bookingInfo,
+                    flightService, bookingService);
             mainPanel.add(flightSeatPanel, Constants.FLIGHT_SEAT_SCREEN);
-//            cardLayout.show(mainPanel, Constants.FLIGHT_SEAT_SCREEN);
+            cardLayout.show(mainPanel, Constants.FLIGHT_SEAT_SCREEN);
         });
         buttonPanel.add(continueButton, BorderLayout.EAST);
 
@@ -420,12 +435,22 @@ public class ContactFormPanel extends JPanel{
         gbc.gridy = 3;
         gbc.insets = new Insets(20, 30, 5, 10);
         gbc.anchor = GridBagConstraints.NORTHWEST;
-        // TODO: Change input component from inputField to menu
         panel.add(nationalityPassengerLabel, gbc);
 
-        MyTextField nationalityPassengerField = new MyTextField();
-        nationalityPassengerField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
+        List<Nation> nationInfos = nationService.getAllNations();
+        Map<String, Long> nationNameMap = generateMenuData(nationInfos);
+        String[] names = AppUtils.list2Array(nationNameMap.keySet().stream().toList());
+
+        JComboBox<String> nationalityPassengerField = new JComboBox<>(names);
         nationalityPassengerField.setPreferredSize(new Dimension(300, 50));
+        nationalityPassengerField.addActionListener(e -> {
+            String nationality = (String) nationalityPassengerField.getSelectedItem();
+            if (!ObjectUtils.isEmpty(nationality)) {
+                passengerInfos[i].setNationalityId(nationNameMap.get(nationality));
+                passengerInfos[i].setNationInfo(nationService.getNationInfo(nationNameMap.get(nationality)));
+            }
+            logger.debug("Chosen nationality: {}", nationality);
+        });
 
         gbc.gridx = 1;
         gbc.gridy = 4;
@@ -505,5 +530,13 @@ public class ContactFormPanel extends JPanel{
         button.setFocusPainted(false);
         button.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
         return button;
+    }
+
+    private Map<String, Long> generateMenuData(List<Nation>  nationList) {
+        Map<String, Long> map = new HashMap<>();
+        for (Nation nation: nationList) {
+            map.put(nation.getName(), nation.getNationId());
+        }
+        return map;
     }
 }

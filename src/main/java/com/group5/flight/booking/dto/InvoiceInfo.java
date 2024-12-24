@@ -5,22 +5,30 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.io.Serial;
+import java.io.Serializable;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class InvoiceInfo {
+public class InvoiceInfo implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1905122041950251207L;
 
     private Long invoiceId;
 
-    private Long contactId;
-
-    private ContactInfo contact;
-
-    private List<PassengerInfo> passengerInfos;
+    private Long bookingId;
 
     private Float totalAmount;
 
+    @Override
+    public String toString() {
+        return "InvoiceInfo{" +
+                "invoiceId=" + invoiceId +
+                ", bookingId=" + bookingId +
+                ", totalAmount=" + totalAmount +
+                '}';
+    }
 }

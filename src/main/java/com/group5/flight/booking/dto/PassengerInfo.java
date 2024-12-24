@@ -6,13 +6,19 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.util.ObjectUtils;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class PassengerInfo {
+public class PassengerInfo implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1905122041950251207L;
+
     private String firstName;
 
     private String lastName;
@@ -27,7 +33,7 @@ public class PassengerInfo {
 
     private Long nationalityId;
 
-    private NationInfo nation;
+    private NationInfo nationInfo;
     public boolean isAllNotNull() {
         return ObjectUtils.isEmpty(firstName) && ObjectUtils.isEmpty(lastName)
                 && ObjectUtils.isEmpty(birthday) && ObjectUtils.isEmpty(gender)
@@ -44,7 +50,7 @@ public class PassengerInfo {
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
                 ", nationalityId=" + nationalityId +
-                ", nation=" + nation +
+                ", nationInfo=" + nationInfo +
                 '}';
     }
 }

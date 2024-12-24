@@ -88,7 +88,7 @@ public class FlightController {
         long start = System.currentTimeMillis();
 
         try {
-            List<FlightInfo> flightInfoList = flightService.filter(filterCriteria);
+            List<FlightInfo> flightInfoList = flightService.filterFlights(filterCriteria);
             logger.debug("GET /api/v1/flight-booking/flights/filter success, count = {}", flightInfoList.size());
             return new APIResponse(ErrorCode.SUCCESS, "", System.currentTimeMillis() - start, flightInfoList);
         } catch (Exception e) {

@@ -6,8 +6,7 @@ import com.group5.flight.booking.dto.FlightInfo;
 import com.group5.flight.booking.dto.FilterCriteria;
 import com.group5.flight.booking.dto.BookingInfo;
 import com.group5.flight.booking.model.Airline;
-import com.group5.flight.booking.service.AirlineService;
-import com.group5.flight.booking.service.FlightService;
+import com.group5.flight.booking.service.*;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,13 +35,19 @@ public class FlightListPanel extends JPanel {
 
     private final FlightService flightService;
 
+    private final BookingService bookingService;
+
+    private final NationService nationService;
 
     public FlightListPanel(JPanel mainPanel, CardLayout cardLayout, BookingInfo bookingInfo, List<FlightInfo> flightInfoList,
-                           AirlineService airlineService, FlightService flightService) {
+                           AirlineService airlineService, FlightService flightService, BookingService bookingService, NationService nationService) {
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
         this.airlineService = airlineService;
         this.flightService = flightService;
+        this.bookingService = bookingService;
+        this.nationService = nationService;
+
         this.bookingInfo = bookingInfo;
         setBaseFilterCriteria();
         this.flightInfoList = flightInfoList;
@@ -213,9 +218,9 @@ public class FlightListPanel extends JPanel {
         JPanel flightInfoPanel = new JPanel();
         flightInfoPanel.setLayout(new BoxLayout(flightInfoPanel, BoxLayout.Y_AXIS));
         flightInfoPanel.setBackground(Color.WHITE);
-        JLabel timeLabel = new JLabel(AppUtils.formatTime(flightInfo.getDepatureDate()) + " → " + AppUtils.formatTime(flightInfo.getReturnDate()));
+        JLabel timeLabel = new JLabel(AppUtils.formatTime(flightInfo.getDepartureDate()) + " → " + AppUtils.formatTime(flightInfo.getReturnDate()));
         timeLabel.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 14));
-        JLabel airportLabel = new JLabel(flightInfo.getFromAirport().getAirportCode() + " → " + flightInfo.getToAirport().getAirportCode());
+        JLabel airportLabel = new JLabel(flightInfo.getDepartureAirportInfo().getAirportCode() + " → " + flightInfo.getDestinationAirportInfo().getAirportCode());
         airportLabel.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 14));
         airportLabel.setForeground(new Color(100, 100, 100));
         flightInfoPanel.add(timeLabel);
@@ -268,16 +273,14 @@ public class FlightListPanel extends JPanel {
         JButton chooseButton = createChooseButton();
         chooseButton.addActionListener(e -> {
             bookingInfo.setFlightId(flightInfo.getFlightId());
-            bookingInfo.setDepartureDate(flightInfo.getDepatureDate());
+            bookingInfo.setDepartureDate(flightInfo.getDepartureDate());
             bookingInfo.setFlightId(flightInfo.getFlightId());
-            bookingInfo.setFlight(flightInfo);
-            ContactFormPanel contactFormPanel = new ContactFormPanel(mainPanel, cardLayout, bookingInfo, flightService);
+            bookingInfo.setFlightInfo(flightInfo);
+            ContactFormPanel contactFormPanel = new ContactFormPanel(mainPanel, cardLayout, bookingInfo,
+                    flightService, bookingService, nationService);
             mainPanel.add(contactFormPanel, Constants.CONTACT_FORM);
             cardLayout.show(mainPanel, Constants.CONTACT_FORM);
-//            FlightDetailPanel detailPanel = new FlightDetailPanel(mainPanel, cardLayout, flightInfo,
-//                    planeService, flightService);
-//            mainPanel.add(detailPanel, Constants.FLIGHT_DETAIL_SCREEN);
-//            cardLayout.show(mainPanel, Constants.FLIGHT_DETAIL_SCREEN);
+
         });
         selectPanel.add(chooseButton);
         return selectPanel;
@@ -315,7 +318,7 @@ public class FlightListPanel extends JPanel {
 
     private void updateFilterResult() {
         try {
-            flightInfoList = flightService.filter(filterCriteria);
+            flightInfoList = flightService.filterFlights(filterCriteria);
         } catch (Exception e) {
             logger.error("Filter flight failed, error: {}", e.getMessage());
             AppUtils.showErrorDialog(e.getMessage());
@@ -324,8 +327,8 @@ public class FlightListPanel extends JPanel {
 
     private void setBaseFilterCriteria() {
         this.filterCriteria = new FilterCriteria();
-        this.filterCriteria.setFromAirportId(bookingInfo.getDepartureAirportId());
-        this.filterCriteria.setToAirportId(bookingInfo.getDestinationAirportId());
+        this.filterCriteria.setDepartureAirportId(bookingInfo.getDepartureAirportId());
+        this.filterCriteria.setDestinationAirportId(bookingInfo.getDestinationAirportId());
         this.filterCriteria.setDepartureDate(bookingInfo.getDepartureDate());
     }
 

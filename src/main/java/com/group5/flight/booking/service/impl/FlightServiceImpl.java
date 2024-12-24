@@ -57,11 +57,11 @@ public class FlightServiceImpl implements FlightService {
         if (flightInfo.isAnyNull()) {
             throw new LogicException(ErrorCode.BLANK_FIELD);
         }
-        Airport departureAirport = airportService.findByAirportId(flightInfo.getFromAirportId());
+        Airport departureAirport = airportService.findByAirportId(flightInfo.getDepartureAirportId());
         if (ObjectUtils.isEmpty(departureAirport)) {
             throw new LogicException(ErrorCode.DATA_NULL, "Departure airport does not exist");
         }
-        Airport destinationAirport = airportService.findByAirportId(flightInfo.getToAirportId());
+        Airport destinationAirport = airportService.findByAirportId(flightInfo.getDestinationAirportId());
         if (ObjectUtils.isEmpty(destinationAirport)) {
             throw new LogicException(ErrorCode.DATA_NULL, "Destination airport does not exist");
         }
@@ -69,9 +69,9 @@ public class FlightServiceImpl implements FlightService {
         Flight flight = new Flight();
         flight.setAirlineId(flightInfo.getAirlineId());
         flight.setPlaneId(flightInfo.getPlaneId());
-        flight.setFromAirportId(flightInfo.getFromAirportId());
-        flight.setToAirportId(flightInfo.getToAirportId());
-        flight.setDepartureDate(flightInfo.getDepatureDate());
+        flight.setFromAirportId(flightInfo.getDepartureAirportId());
+        flight.setToAirportId(flightInfo.getDestinationAirportId());
+        flight.setDepartureDate(flightInfo.getDepartureDate());
         if (!ObjectUtils.isEmpty(flightInfo.getReturnDate())) {
             flight.setReturnDate(flightInfo.getReturnDate());
         }
@@ -94,26 +94,26 @@ public class FlightServiceImpl implements FlightService {
     }
 
     @Override
-    public List<FlightInfo> findFlight(Long fromAirportId, Long toAirportId, Date departureDate) throws LogicException {
-        List<Flight> flights = flightDao.findByFromAndToAirportAndDepartureDate(fromAirportId, toAirportId, departureDate);
+    public List<FlightInfo> findFlight(Long departureAirportId, Long destinationAirportId, Date departureDate) throws LogicException {
+        List<Flight> flights = flightDao.findByFromAndToAirportAndDepartureDate(departureAirportId, destinationAirportId, departureDate);
 
         return flights.stream().map(this::getFlightInfo).toList();
     }
 
     @Override
-    public List<FlightInfo> filter(FilterCriteria filterCriteria)
+    public List<FlightInfo> filterFlights(FilterCriteria filterCriteria)
             throws LogicException {
-        Long fromAirportId = filterCriteria.getFromAirportId();
-        Long toAirportId = filterCriteria.getToAirportId();
+        Long departureAirportId = filterCriteria.getDepartureAirportId();
+        Long destinationAirportId = filterCriteria.getDestinationAirportId();
         Date departureDate = filterCriteria.getDepartureDate();
 
-        if (ObjectUtils.isEmpty(filterCriteria.getFromAirportId())
-                || ObjectUtils.isEmpty(filterCriteria.getToAirportId())
+        if (ObjectUtils.isEmpty(filterCriteria.getDepartureAirportId())
+                || ObjectUtils.isEmpty(filterCriteria.getDestinationAirportId())
                 || ObjectUtils.isEmpty(filterCriteria.getDepartureDate())) {
             throw new LogicException(ErrorCode.BLANK_FIELD);
         }
         if (ObjectUtils.isEmpty(filterCriteria)) {
-            return findFlight(fromAirportId, toAirportId, departureDate);
+            return findFlight(departureAirportId, destinationAirportId, departureDate);
         }
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Flight> criteriaQuery = criteriaBuilder.createQuery(Flight.class);
@@ -121,8 +121,8 @@ public class FlightServiceImpl implements FlightService {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        predicates.add(criteriaBuilder.equal(root.get("fromAirportId"), fromAirportId));
-        predicates.add(criteriaBuilder.equal(root.get("toAirportId"), toAirportId));
+        predicates.add(criteriaBuilder.equal(root.get("fromAirportId"), departureAirportId));
+        predicates.add(criteriaBuilder.equal(root.get("toAirportId"), destinationAirportId));
 
         Date startOfDay = setHourAndMinuteAndSecond(departureDate, LocalTime.of(0, 0, 0));
         Date endOfDay = setHourAndMinute(departureDate, LocalTime.of(23, 59, 59));
@@ -194,8 +194,8 @@ public class FlightServiceImpl implements FlightService {
 
         for (FlightInfo flightInfo: flightInfos) {
 
-            flightDisplayInfos.add(new FlightDisplayInfo(flightInfo.getFlightId(), flightInfo.getFromAirport().getName(),
-                    flightInfo.getToAirport().getName(), AppUtils.formatDate(flightInfo.getDepatureDate()),
+            flightDisplayInfos.add(new FlightDisplayInfo(flightInfo.getFlightId(), flightInfo.getDepartureAirportInfo().getName(),
+                    flightInfo.getDestinationAirportInfo().getName(), AppUtils.formatDate(flightInfo.getDepartureDate()),
                     AppUtils.formatDate(flightInfo.getReturnDate()), flightInfo.getBasePrice()));
         }
         return flightDisplayInfos;
@@ -229,13 +229,14 @@ public class FlightServiceImpl implements FlightService {
         PlaneInfo planeInfo = planeService.getPlaneInfo(planeId);
         Long airlineId = flight.getAirlineId();
         AirlineInfo airlineInfo = airlineService.getAirlineInfo(airlineId);
-        Long fromAirportId = flight.getFromAirportId();
-        AirportInfo fromAirport = airportService.getAirportInfo(fromAirportId);
-        Long toAirportId = flight.getToAirportId();
-        AirportInfo toAirport = airportService.getAirportInfo(toAirportId);
+        Long departureAirportId = flight.getFromAirportId();
+        AirportInfo departureAirport = airportService.getAirportInfo(departureAirportId);
+        Long destinationAirportId = flight.getToAirportId();
+        AirportInfo destinationAirport = airportService.getAirportInfo(destinationAirportId);
 
-        return new FlightInfo(flight.getFlightId(), planeId, planeInfo, airlineId, airlineInfo, fromAirportId, fromAirport, toAirportId, toAirport,
-                flight.getDepartureDate(), flight.getReturnDate(), flight.getBasePrice(), flight.getNumOfPassengers());
+        return new FlightInfo(flight.getFlightId(), planeId, planeInfo, airlineId, airlineInfo, departureAirportId,
+                departureAirport, destinationAirportId, destinationAirport, flight.getDepartureDate(),
+                flight.getReturnDate(), flight.getBasePrice(), flight.getNumOfPassengers());
     }
 
     private Date setHourAndMinute(Date date, LocalTime time) {

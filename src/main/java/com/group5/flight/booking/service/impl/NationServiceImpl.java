@@ -73,6 +73,6 @@ public class NationServiceImpl implements NationService {
         Nation nation = findByNationId(nationId);
         if (ObjectUtils.isEmpty(nation)) return null;
 
-        return new NationInfo(nation.getName());
+        return new NationInfo(nationId, nation.getName());
     }
 }

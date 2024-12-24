@@ -4,19 +4,32 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
 
+import com.group5.flight.booking.core.AppUtils;
 import com.group5.flight.booking.core.Constants;
+import com.group5.flight.booking.dto.BookingInfo;
+import com.group5.flight.booking.model.Booking;
+import com.group5.flight.booking.service.BookingService;
 import net.miginfocom.swing.MigLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FlightPayPanel extends JPanel {
+
+    private static final Logger logger = LoggerFactory.getLogger(FlightPayPanel.class);
 
     private final JPanel mainPanel;
 
     private final CardLayout cardLayout;
 
-    public FlightPayPanel(JPanel mainPanel, CardLayout cardLayout) {
+    private final BookingInfo bookingInfo;
+
+    private final BookingService bookingService;
+
+    public FlightPayPanel(JPanel mainPanel, CardLayout cardLayout, BookingInfo bookingInfo, BookingService bookingService) {
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
-
+        this.bookingInfo = bookingInfo;
+        this.bookingService = bookingService;
         initComponents();
     }
 
@@ -58,6 +71,12 @@ public class FlightPayPanel extends JPanel {
         add(lblAccountNumber, "span, center");
         add(lblBankInfo, "span, center, gap bottom 10");
 
+        JPanel buttonPanel = createActionPanel();
+
+        add(buttonPanel, "span, center, gap bottom 20");
+    }
+
+    private JPanel createActionPanel() {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new MigLayout("wrap", "[grow]10[grow]"));
         buttonPanel.setOpaque(false);
@@ -71,10 +90,19 @@ public class FlightPayPanel extends JPanel {
         JButton btnDone = new JButton("Done");
         btnDone.setBackground(new Color(20, 140, 180));
         btnDone.setForeground(Color.WHITE);
-        btnDone.addActionListener(e -> cardLayout.show(mainPanel, Constants.FLIGHT_SEARCHER_SCREEN));
+        btnDone.addActionListener(e -> {
+            logger.debug("Booking info: {}", bookingInfo);
+            try {
+                Booking booking = bookingService.create(bookingInfo);
+                logger.debug("Booked successfully, booking: {}", booking);
+                cardLayout.show(mainPanel, Constants.FLIGHT_SEARCHER_SCREEN);
+            } catch (Exception ex) {
+                logger.error("Booking flight failed, error: {}", ex.getMessage());
+                AppUtils.showErrorDialog(ex.getMessage());
+            }
+        });
         buttonPanel.add(btnDone, "w 100!, h 40!");
-
-        add(buttonPanel, "span, center, gap bottom 20");
+        return buttonPanel;
     }
 
     private JLabel createLabel(String text) {

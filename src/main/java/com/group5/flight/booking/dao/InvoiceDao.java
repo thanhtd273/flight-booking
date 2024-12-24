@@ -11,4 +11,6 @@ public interface InvoiceDao extends JpaRepository<Invoice, Long> {
     List<Invoice> findByDeletedFalse();
 
     Invoice findByInvoiceIdAndDeletedFalse(Long invoiceId);
+
+    Invoice findByBookingIdAndDeletedFalse(Long bookingId);
 }

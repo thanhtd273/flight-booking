@@ -10,8 +10,6 @@ import com.group5.flight.booking.service.FlightService;
 import com.group5.flight.booking.service.PlaneService;
 import net.miginfocom.swing.MigLayout;
 
-import static com.group5.flight.booking.core.Constants.*;
-
 public class FlightDetailPanel extends JPanel {
 
     private static final String GAP_RIGHT = "gapright 10";
@@ -63,13 +61,13 @@ public class FlightDetailPanel extends JPanel {
         flightInfoPanel.add(createValueLabel(String.valueOf(flightInfo.getFlightId())));
 
         flightInfoPanel.add(lblDepartureAirport, GAP_RIGHT);
-        flightInfoPanel.add(createValueLabel(flightInfo.getFromAirport().getName()));
+        flightInfoPanel.add(createValueLabel(flightInfo.getDepartureAirportInfo().getName()));
 
         flightInfoPanel.add(lblArrivalAirport, GAP_RIGHT);
-        flightInfoPanel.add(createValueLabel(flightInfo.getToAirport().getName()));
+        flightInfoPanel.add(createValueLabel(flightInfo.getDestinationAirportInfo().getName()));
 
         flightInfoPanel.add(lblDepartureTime, GAP_RIGHT);
-        flightInfoPanel.add(createValueLabel(AppUtils.formatDate(flightInfo.getDepatureDate())));
+        flightInfoPanel.add(createValueLabel(AppUtils.formatDate(flightInfo.getDepartureDate())));
 
         flightInfoPanel.add(lblArrivalTime, GAP_RIGHT);
         flightInfoPanel.add(createValueLabel(AppUtils.formatDate(flightInfo.getReturnDate())));

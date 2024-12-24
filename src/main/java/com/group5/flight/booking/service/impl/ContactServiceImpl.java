@@ -34,8 +34,10 @@ public class ContactServiceImpl implements ContactService {
         if (ObjectUtils.isEmpty(contactInfo)) {
             throw new LogicException(ErrorCode.DATA_NULL);
         }
-        if (!contactInfo.isAllNull()) {
-            throw new LogicException(ErrorCode.BLANK_FIELD, "Contact's info is required");
+        if (ObjectUtils.isEmpty(contactInfo.getPhone()) || ObjectUtils.isEmpty(contactInfo.getFirstName())
+                || ObjectUtils.isEmpty(contactInfo.getLastName()) || ObjectUtils.isEmpty(contactInfo.getEmail())) {
+
+            throw new LogicException(ErrorCode.BLANK_FIELD, "Contact is missing required fields");
         }
 
         Contact contact = new Contact();

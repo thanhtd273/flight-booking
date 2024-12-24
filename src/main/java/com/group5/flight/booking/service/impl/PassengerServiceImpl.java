@@ -41,7 +41,8 @@ public class PassengerServiceImpl implements PassengerService {
         if (ObjectUtils.isEmpty(passengerInfo)) {
             throw new LogicException(ErrorCode.DATA_NULL);
         }
-        if (!passengerInfo.isAllNotNull()) {
+        if (ObjectUtils.isEmpty(passengerInfo.getFirstName()) || ObjectUtils.isEmpty(passengerInfo.getLastName())
+                || ObjectUtils.isEmpty(passengerInfo.getBirthday()) || ObjectUtils.isEmpty(passengerInfo.getNationalityId())) {
             throw new LogicException(ErrorCode.BLANK_FIELD, "Passenger's info is required");
         }
 
@@ -55,9 +56,13 @@ public class PassengerServiceImpl implements PassengerService {
         passenger.setFirstName(passengerInfo.getFirstName());
         passenger.setLastName(passengerInfo.getLastName());
         passenger.setBirthday(passengerInfo.getBirthday());
-        passenger.setGender(passengerInfo.getGender());
-        passenger.setPhone(passengerInfo.getPhone());
-        passenger.setEmail(passengerInfo.getEmail());
+        if (!ObjectUtils.isEmpty(passengerInfo.getGender()))
+            passenger.setGender(passengerInfo.getGender());
+
+        if (!ObjectUtils.isEmpty(passengerInfo.getPhone()))
+            passenger.setPhone(passengerInfo.getPhone());
+        if (!ObjectUtils.isEmpty(passengerInfo.getEmail()))
+            passenger.setEmail(passengerInfo.getEmail());
 
         passenger.setCreatedAt(new Date(System.currentTimeMillis()));
         passenger.setDeleted(false);
@@ -132,7 +137,7 @@ public class PassengerServiceImpl implements PassengerService {
 
         NationInfo nationInfo = nationService.getNationInfo(passengerInfo.getNationalityId());
         passengerInfo.setNationalityId(passenger.getNationalityId());
-        passengerInfo.setNation(nationInfo);
+        passengerInfo.setNationInfo(nationInfo);
 
         return passengerInfo;
     }

@@ -6,13 +6,18 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.util.ObjectUtils;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class FlightInfo {
+public class FlightInfo implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1905122041950251207L;
 
     private Long flightId;
 
@@ -24,15 +29,15 @@ public class FlightInfo {
 
     private AirlineInfo airline;
 
-    private Long fromAirportId;
+    private Long departureAirportId;
 
-    private AirportInfo fromAirport;
+    private AirportInfo departureAirportInfo;
 
-    private Long toAirportId;
+    private Long destinationAirportId;
 
-    private AirportInfo toAirport;
+    private AirportInfo destinationAirportInfo;
 
-    private Date depatureDate;
+    private Date departureDate;
 
     private Date returnDate;
 
@@ -41,8 +46,27 @@ public class FlightInfo {
     private Integer numOfPassengers;
 
     public boolean isAnyNull() {
-        return ObjectUtils.isEmpty(planeId) && ObjectUtils.isEmpty(airlineId) && ObjectUtils.isEmpty(fromAirportId)
-                && ObjectUtils.isEmpty(toAirportId) && ObjectUtils.isEmpty(depatureDate)
+        return ObjectUtils.isEmpty(planeId) && ObjectUtils.isEmpty(airlineId) && ObjectUtils.isEmpty(departureAirportId)
+                && ObjectUtils.isEmpty(destinationAirportId) && ObjectUtils.isEmpty(departureDate)
                 && ObjectUtils.isEmpty(basePrice);
+    }
+
+    @Override
+    public String toString() {
+        return "FlightInfo{" +
+                "flightId=" + flightId +
+                ", planeId=" + planeId +
+                ", plane=" + plane +
+                ", airlineId=" + airlineId +
+                ", airline=" + airline +
+                ", departureAirportId=" + departureAirportId +
+                ", departureAirportInfo=" + departureAirportInfo +
+                ", destinationAirportId=" + destinationAirportId +
+                ", destinationAirportInfo=" + destinationAirportInfo +
+                ", departureDate=" + departureDate +
+                ", returnDate=" + returnDate +
+                ", basePrice=" + basePrice +
+                ", numOfPassengers=" + numOfPassengers +
+                '}';
     }
 }

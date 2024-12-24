@@ -18,17 +18,23 @@ public class MainFrame extends JFrame {
 
     private final AirlineService airlineService;
 
+    private final BookingService bookingService;
+
+    private final NationService nationService;
+
     private final CardLayout cardLayout;
 
     private final JPanel mainPanel;
 
     public MainFrame(AuthService authService, AirportService airportService, FlightService flightService,
-                     UserService userService, AirlineService airlineService) {
+                     UserService userService, AirlineService airlineService, BookingService bookingService, NationService nationService) {
         this.authService = authService;
         this.airportService = airportService;
         this.flightService = flightService;
         this.userService = userService;
         this.airlineService = airlineService;
+        this.bookingService = bookingService;
+        this.nationService = nationService;
 
         // Initialize CardLayout and main panel
         cardLayout = new CardLayout();
@@ -48,7 +54,7 @@ public class MainFrame extends JFrame {
         SignUpPanel signUpPanel = new SignUpPanel(mainPanel, cardLayout, codeVerifierPanel, authService);
         LoginPanel loginPanel = new LoginPanel(mainPanel, cardLayout, authService);
         FlightSearchPanel flightSearchPanel = new FlightSearchPanel(mainPanel, cardLayout, airportService, flightService,
-                airlineService);
+                airlineService, bookingService, nationService);
 
         mainPanel.add(signUpPanel, SIGNUP_SCREEN);
         mainPanel.add(loginPanel, LOGIN_SCREEN);

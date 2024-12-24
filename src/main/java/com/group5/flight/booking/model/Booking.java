@@ -28,9 +28,6 @@ public class Booking {
     @Column(name = "contact_id")
     private Long contactId;
 
-    @Column(name = "invoice_id")
-    private Long invoiceId;
-
     @Column(name = "payment_method")
     private String paymentMethod;
 

@@ -10,6 +10,7 @@ import com.group5.flight.booking.core.Constants;
 import com.group5.flight.booking.dto.BookingInfo;
 import com.group5.flight.booking.dto.SeatInfo;
 import com.group5.flight.booking.form.component.FlightPayPanel;
+import com.group5.flight.booking.service.BookingService;
 import com.group5.flight.booking.service.FlightService;
 import net.miginfocom.swing.MigLayout;
 import org.slf4j.Logger;
@@ -30,15 +31,19 @@ public class FlightSeatPanel extends JPanel {
 
     private final FlightService flightService;
 
+    private final BookingService bookingService;
+
     private final JPanel mainPanel;
 
     private final CardLayout cardLayout;
 
-    public FlightSeatPanel(JPanel mainPanel, CardLayout cardLayout, BookingInfo bookingInfo, FlightService flightService) {
+    public FlightSeatPanel(JPanel mainPanel, CardLayout cardLayout, BookingInfo bookingInfo,
+                           FlightService flightService, BookingService bookingService) {
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
-        this.flightService = flightService;
         this.bookingInfo = bookingInfo;
+        this.flightService = flightService;
+        this.bookingService = bookingService;
 
         initSeatData();
         initComponents();
@@ -143,9 +148,9 @@ public class FlightSeatPanel extends JPanel {
                 for (int i = 0; i < numOfPassenger; i ++) {
                     seatIds[i] = selectedSeats.get(i);
                 }
-                bookingInfo.setSeats(seatIds);
+                bookingInfo.setSeatInfos(seatIds);
                 logger.debug("bookingInfo: {}", bookingInfo);
-                FlightPayPanel payPanel = new FlightPayPanel(mainPanel, cardLayout);
+                FlightPayPanel payPanel = new FlightPayPanel(mainPanel, cardLayout, bookingInfo, bookingService);
                 mainPanel.add(payPanel, Constants.FLIGHT_PAYER);
                 cardLayout.show(mainPanel, Constants.FLIGHT_PAYER);
             } else {

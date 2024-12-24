@@ -3,10 +3,10 @@ package com.group5.flight.booking.service.impl;
 import com.group5.flight.booking.core.ErrorCode;
 import com.group5.flight.booking.core.exception.LogicException;
 import com.group5.flight.booking.dao.SeatDao;
-import com.group5.flight.booking.dao.FlightSeatPassengerDao;
 import com.group5.flight.booking.dto.SeatInfo;
 import com.group5.flight.booking.model.FlightSeatPassenger;
 import com.group5.flight.booking.model.Seat;
+import com.group5.flight.booking.service.FlightSeatPassengerService;
 import com.group5.flight.booking.service.PlaneService;
 import com.group5.flight.booking.service.SeatService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class SeatServiceImpl implements SeatService {
 
     private final SeatDao seatDao;
 
-    private final FlightSeatPassengerDao flightSeatPassengerDao;
+    private final FlightSeatPassengerService flightSeatPassengerService;
 
     private final PlaneService planeService;
 
@@ -100,9 +100,10 @@ public class SeatServiceImpl implements SeatService {
         seatInfo.setSeatId(seatId);
         seatInfo.setClassLevel(seat.getClassLevel());
         seatInfo.setSeatCode(seat.getSeatCode());
-        FlightSeatPassenger flightSeatPassenger = flightSeatPassengerDao.findByFlightIdAndSeatId(flightId, seatId);
+        FlightSeatPassenger flightSeatPassenger = flightSeatPassengerService.findByFlightIdAndSeatId(flightId, seatId);
         seatInfo.setAvailable(ObjectUtils.isEmpty(flightSeatPassenger));
-        seatInfo.setPlane(planeService.getPlaneInfo(seat.getPlaneId()));
+        seatInfo.setPlaneId(seat.getPlaneId());
+        seatInfo.setPlaneInfo(planeService.getPlaneInfo(seat.getPlaneId()));
 
         return seatInfo;
     }

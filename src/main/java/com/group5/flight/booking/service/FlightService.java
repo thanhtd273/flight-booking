@@ -19,9 +19,9 @@ public interface FlightService {
 
     Flight findByFlightId(Long flightId);
 
-    List<FlightInfo> findFlight(Long fromAirportId, Long toAirportId, Date departureDate) throws LogicException;
+    List<FlightInfo> findFlight(Long departureAirportId, Long destinationAirportId, Date departureDate) throws LogicException;
 
-    List<FlightInfo> filter(FilterCriteria filterCriteria) throws LogicException;
+    List<FlightInfo> filterFlights(FilterCriteria filterCriteria) throws LogicException;
 
     FlightInfo getFlightInfo(Long flightId);
 

@@ -10,9 +10,7 @@ import com.group5.flight.booking.core.Constants;
 import com.group5.flight.booking.core.exception.LogicException;
 import com.group5.flight.booking.dto.*;
 import com.group5.flight.booking.form.component.FbButton;
-import com.group5.flight.booking.service.AirlineService;
-import com.group5.flight.booking.service.AirportService;
-import com.group5.flight.booking.service.FlightService;
+import com.group5.flight.booking.service.*;
 import com.toedter.calendar.JDateChooser;
 import net.miginfocom.swing.MigLayout;
 import org.slf4j.Logger;
@@ -39,14 +37,21 @@ public class FlightSearchPanel extends JPanel {
 
     private final AirlineService airlineService;
 
+    private final BookingService bookingService;
 
-    public FlightSearchPanel(JPanel mainPanel, CardLayout cardLayout,
-                             AirportService airportService, FlightService flightService, AirlineService airlineService) {
+    private final NationService nationService;
+
+    public FlightSearchPanel(JPanel mainPanel, CardLayout cardLayout, AirportService airportService,
+                             FlightService flightService, AirlineService airlineService, BookingService bookingService,
+                             NationService nationService) {
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
         this.airportService = airportService;
         this.flightService = flightService;
         this.airlineService = airlineService;
+        this.bookingService = bookingService;
+        this.nationService = nationService;
+
         this.bookingInfo = new BookingInfo();
         this.bookingInfo.setNumOfPassengers(1);
 
@@ -165,7 +170,7 @@ public class FlightSearchPanel extends JPanel {
                     flightInfoList.addAll(flightService.findFlight(bookingInfo.getDepartureAirportId(), bookingInfo.getDestinationAirportId(), bookingInfo.getDepartureDate())) ;
                     logger.debug("Flight list: {}", flightInfoList);
                     FlightListPanel flightListPanel = new FlightListPanel(mainPanel, cardLayout, bookingInfo,
-                            flightInfoList, airlineService, flightService);
+                            flightInfoList, airlineService, flightService, bookingService, nationService);
                     mainPanel.add(flightListPanel, FLIGHT_LIST_SCREEN);
                     cardLayout.show(mainPanel, FLIGHT_LIST_SCREEN);
                 } catch (LogicException ex) {
@@ -231,8 +236,8 @@ public class FlightSearchPanel extends JPanel {
     private Map<String, Long> generateMenuData(List<AirportInfo> airportInfos) {
         Map<String, Long> map = new HashMap<>();
         for (AirportInfo airportInfo: airportInfos) {
-            NationInfo nationInfo = airportInfo.getCity().getNation();
-            String key = String.format("%s, %s, %s", airportInfo.getName(), airportInfo.getCity().getName(), nationInfo.getName());
+            NationInfo nationInfo = airportInfo.getCityInfo().getNationInfo();
+            String key = String.format("%s, %s, %s", airportInfo.getName(), airportInfo.getCityInfo().getName(), nationInfo.getName());
             map.put(key, airportInfo.getAirportId());
         }
         return map;

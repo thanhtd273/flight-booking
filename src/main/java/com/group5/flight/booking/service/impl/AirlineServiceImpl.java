@@ -82,9 +82,6 @@ public class AirlineServiceImpl implements AirlineService {
         Airline airline = findByAirlineId(airlineId);
         if (ObjectUtils.isEmpty(airline)) return null;
 
-        AirlineInfo airlineInfo = new AirlineInfo();
-        airlineInfo.setName(airline.getName());
-        airlineInfo.setCode(airlineInfo.getCode());
-        return airlineInfo;
+        return new AirlineInfo(airlineId, airline.getName(), airline.getCode());
     }
 }

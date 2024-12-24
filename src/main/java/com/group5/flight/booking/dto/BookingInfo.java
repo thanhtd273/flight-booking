@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -12,7 +14,10 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookingInfo {
+public class BookingInfo implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 2405172041950251807L;
 
     private Long bookingId;
 
@@ -20,7 +25,7 @@ public class BookingInfo {
 
     private Long flightId;
 
-    private FlightInfo flight;
+    private FlightInfo flightInfo;
 
     private Long departureAirportId;
 
@@ -30,17 +35,17 @@ public class BookingInfo {
 
     private Long contactId;
 
-    private ContactInfo contact;
+    private ContactInfo contactInfo;
 
     private Integer numOfPassengers;
 
-    private PassengerInfo[] passengers;
+    private PassengerInfo[] passengerInfos;
 
-    private SeatInfo[] seats;
+    private SeatInfo[] seatInfos;
 
     private Long invoiceId;
 
-    private InvoiceInfo invoice;
+    private InvoiceInfo invoiceInfo;
 
     private String paymentMethod;
 
@@ -49,19 +54,20 @@ public class BookingInfo {
     @Override
     public String toString() {
         return "BookingInfo{" +
-                "bookingCode=" + bookingCode +
+                "bookingId=" + bookingId +
+                ", bookingCode=" + bookingCode +
                 ", flightId=" + flightId +
-                ", flight=" + flight +
+                ", flightInfo=" + flightInfo +
                 ", departureAirportId=" + departureAirportId +
                 ", destinationAirportId=" + destinationAirportId +
                 ", departureDate=" + departureDate +
                 ", contactId=" + contactId +
-                ", contact=" + contact +
+                ", contactInfo=" + contactInfo +
                 ", numOfPassengers=" + numOfPassengers +
-                ", passengers=" + Arrays.toString(passengers) +
-                ", seats=" + Arrays.toString(seats) +
+                ", passengerInfos=" + Arrays.toString(passengerInfos) +
+                ", seatInfos=" + Arrays.toString(seatInfos) +
                 ", invoiceId=" + invoiceId +
-                ", invoice=" + invoice +
+                ", invoiceInfo=" + invoiceInfo +
                 ", paymentMethod='" + paymentMethod + '\'' +
                 ", ticketNumber=" + ticketNumber +
                 '}';

@@ -16,9 +16,9 @@ import java.util.List;
 @Getter
 @Setter
 public class FilterCriteria {
-    private Long fromAirportId;
+    private Long departureAirportId;
 
-    private Long toAirportId;
+    private Long destinationAirportId;
 
     private Date departureDate;
 
@@ -31,4 +31,18 @@ public class FilterCriteria {
     private List<Range<LocalTime>> arrivalTimes = new ArrayList<>();
 
     private List<Long> airlineIds = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "FilterCriteria{" +
+                "departureAirportId=" + departureAirportId +
+                ", destinationAirportId=" + destinationAirportId +
+                ", departureDate=" + departureDate +
+                ", minPrice=" + minPrice +
+                ", maxPrice=" + maxPrice +
+                ", departureTimes=" + departureTimes +
+                ", arrivalTimes=" + arrivalTimes +
+                ", airlineIds=" + airlineIds +
+                '}';
+    }
 }

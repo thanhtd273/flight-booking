@@ -7,11 +7,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.util.ObjectUtils;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ContactInfo {
+public class ContactInfo implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1905122041950251207L;
 
     private Long contactId;
 

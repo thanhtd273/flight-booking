@@ -13,10 +13,14 @@ public interface InvoiceService {
 
     Invoice findByInvoiceId(Long invoiceId);
 
+    Invoice findByBookingId(Long bookingId);
+
     Invoice create(Long bookingId) throws LogicException;
 
     ErrorCode delete(Long invoiceId);
 
     InvoiceInfo getInvoiceInfo(Long invoiceId);
+
+    InvoiceInfo getInvoiceInfoByBookingId(Long bookingId);
 
 }
