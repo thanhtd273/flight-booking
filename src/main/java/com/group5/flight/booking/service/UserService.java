@@ -23,7 +23,7 @@ public interface UserService {
 
     User updateUser(Long userId, UserInfo userInfo) throws LogicException;
 
-    ErrorCode activateUser(OTPInfo activationInfo) throws LogicException;
+    ErrorCode activateUser(String email, Integer code) throws LogicException;
 
     ErrorCode deactivateUser(Long userId) throws LogicException;
 
@@ -31,7 +31,7 @@ public interface UserService {
 
     ErrorCode forgotPassword(UserInfo userInfo) throws LogicException;
 
-    ErrorCode verifyPasswordResetCode(OTPInfo passwordResetInfo) throws LogicException;
+    ErrorCode verifyPasswordResetCode(String email, Integer code) throws LogicException;
 
     ErrorCode addRole(UserInfo userInfo) throws LogicException;
 

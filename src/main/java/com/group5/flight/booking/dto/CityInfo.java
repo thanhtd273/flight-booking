@@ -10,9 +10,22 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CityInfo {
+
+    private Long cityId;
+
     private Long nationId;
 
-    private NationInfo nation;
+    private NationInfo nationInfo;
 
     private String name;
+
+    @Override
+    public String toString() {
+        return "CityInfo{" +
+                "cityId=" + cityId +
+                ", nationId=" + nationId +
+                ", nationInfo=" + nationInfo +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

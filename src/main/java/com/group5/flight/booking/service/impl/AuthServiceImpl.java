@@ -44,22 +44,20 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public LoginSessionInfo login(HttpServletRequest request, Credential credential) throws LogicException {
-        User loginUser = userService.findByEmail(credential.getEmail());
+    public LoginSessionInfo login(String email, String password) throws LogicException {
+        User loginUser = userService.findByEmail(email);
         if (ObjectUtils.isEmpty(loginUser)) {
             throw new LogicException(ErrorCode.NOT_FOUND_USER);
         }
-        Authentication usernamePasswordAuthentication = new UsernamePasswordAuthenticationToken(credential.getEmail(), credential.getPassword());
+        Authentication usernamePasswordAuthentication = new UsernamePasswordAuthenticationToken(email, password);
         Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthentication);
         User user = (User) authentication.getPrincipal();
         if (ObjectUtils.isEmpty(user))
             throw new LogicException(ErrorCode.LOGIN_FAIL);
 
         UserInfo userInfo = userService.getUserInfo(user);
-        request.getSession().setAttribute("user", userInfo);
 
         LoginSessionInfo loginSessionInfo = new LoginSessionInfo();
-        loginSessionInfo.setSessionId(request.getSession().getId());
         loginSessionInfo.setUserInfo(userInfo);
         loginSessionInfo.setToken(jwtService.generateToken(user));
         loginSessionInfo.setExpireIn(jwtService.getExpireIn());

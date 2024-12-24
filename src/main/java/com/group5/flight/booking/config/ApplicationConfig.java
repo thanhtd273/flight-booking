@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class ApplicationConfig {
     private final UserDao userDao;
+
     @Bean
     public UserDetailsService userDetailService() {
         return userDao::findByEmail;
@@ -37,4 +38,6 @@ public class ApplicationConfig {
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
+
+
 }

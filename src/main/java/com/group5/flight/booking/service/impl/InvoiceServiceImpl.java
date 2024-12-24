@@ -4,7 +4,6 @@ import com.group5.flight.booking.core.ErrorCode;
 import com.group5.flight.booking.core.exception.LogicException;
 import com.group5.flight.booking.dao.BookingDao;
 import com.group5.flight.booking.dao.InvoiceDao;
-import com.group5.flight.booking.dto.ContactInfo;
 import com.group5.flight.booking.dto.InvoiceInfo;
 import com.group5.flight.booking.model.Booking;
 import com.group5.flight.booking.model.Flight;
@@ -27,8 +26,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     private final BookingDao bookingDao;
 
-    private final ContactService contactService;
-
     private final FlightService flightService;
 
     @Override
@@ -42,25 +39,21 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
+    public Invoice findByBookingId(Long bookingId) {
+        return invoiceDao.findByBookingIdAndDeletedFalse(bookingId);
+    }
+
+    @Override
     public Invoice create(Long bookingId) throws LogicException {
         if (ObjectUtils.isEmpty(bookingId)) {
-            throw new LogicException(ErrorCode.DATA_NULL);
+            throw new LogicException(ErrorCode.BLANK_FIELD);
         }
 
-        Booking booking = bookingDao.findByBookingId(bookingId);
-        if (ObjectUtils.isEmpty(booking)) {
-            throw new LogicException(ErrorCode.DATA_NULL, "Booking does not exist");
-        }
-
-        Flight flight = flightService.findByFlightId(booking.getFlightId());
-        if (ObjectUtils.isEmpty(flight)) {
-            throw new LogicException(ErrorCode.DATA_NULL, "Flight belong to this booking does not exist");
-        }
 
         Invoice invoice = new Invoice();
-        invoice.setContactId(booking.getContactId());
-        Integer numOfPassengers = booking.getNumOfPassengers();
-        invoice.setTotalAmount(numOfPassengers * flight.getBasePrice());
+        Booking booking = bookingDao.findByBookingId(bookingId);
+        Flight flight = flightService.findByFlightId(bookingId);
+        invoice.setTotalAmount(booking.getNumOfPassengers() * flight.getBasePrice());
         invoice.setCreatedAt(new Date(System.currentTimeMillis()));
         invoice.setDeleted(false);
 
@@ -82,8 +75,15 @@ public class InvoiceServiceImpl implements InvoiceService {
     public InvoiceInfo getInvoiceInfo(Long invoiceId) {
         Invoice invoice = findByInvoiceId(invoiceId);
         if (ObjectUtils.isEmpty(invoice)) return null;
-        ContactInfo contact = contactService.getContactInfo(invoice.getContactId());
 
-        return new InvoiceInfo(invoice.getContactId(), contact, invoice.getTotalAmount());
+        return new InvoiceInfo(invoiceId, invoice.getBookingId(), invoice.getTotalAmount());
+    }
+
+    @Override
+    public InvoiceInfo getInvoiceInfoByBookingId(Long bookingId) {
+        Invoice invoice = findByBookingId(bookingId);
+        if (ObjectUtils.isEmpty(invoice)) return null;
+
+        return new InvoiceInfo(invoice.getInvoiceId(), bookingId, invoice.getTotalAmount());
     }
 }

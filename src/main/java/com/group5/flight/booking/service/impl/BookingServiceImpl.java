@@ -5,17 +5,8 @@ import com.group5.flight.booking.core.ErrorCode;
 import com.group5.flight.booking.core.exception.LogicException;
 import com.group5.flight.booking.dao.BookingDao;
 import com.group5.flight.booking.dao.BookingPassengerDao;
-import com.group5.flight.booking.dto.ContactInfo;
-import com.group5.flight.booking.dto.BookingDetail;
-import com.group5.flight.booking.dto.BookingInfo;
-import com.group5.flight.booking.dto.FlightInfo;
-import com.group5.flight.booking.dto.InvoiceInfo;
-import com.group5.flight.booking.dto.PassengerInfo;
-import com.group5.flight.booking.model.Contact;
-import com.group5.flight.booking.model.Booking;
-import com.group5.flight.booking.model.BookingPassenger;
-import com.group5.flight.booking.model.Flight;
-import com.group5.flight.booking.model.Passenger;
+import com.group5.flight.booking.dto.*;
+import com.group5.flight.booking.model.*;
 import com.group5.flight.booking.service.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +30,11 @@ public class BookingServiceImpl implements BookingService {
 
     private final InvoiceService invoiceService;
 
+    private final SeatService seatService;
+
     private final BookingPassengerDao bookingPassengerDao;
+
+    private final FlightSeatPassengerService flightSeatPassengerService;
 
     @Override
     public List<Booking> getAllBookings() {
@@ -55,6 +50,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public Booking create(BookingInfo bookingInfo) throws LogicException {
         if (ObjectUtils.isEmpty(bookingInfo)) {
             throw new LogicException(ErrorCode.DATA_NULL, "Booking info is null");
@@ -69,12 +65,30 @@ public class BookingServiceImpl implements BookingService {
             throw new LogicException(ErrorCode.DATA_NULL, "Flight does not exist");
         }
 
+        Contact contact = contactService.create(bookingInfo.getContactInfo());
+        bookingInfo.setContactId(contact.getContactId());
+
+        for (int i = 0; i < bookingInfo.getNumOfPassengers(); i ++) {
+            PassengerInfo passengerInfo = bookingInfo.getPassengerInfos()[i];
+            SeatInfo seatInfo = bookingInfo.getSeatInfos()[i];
+
+            Passenger passenger = passengerService.create(passengerInfo);
+            Seat seat = seatService.create(seatInfo);
+            FlightSeatPassenger flightSeatPassenger = flightSeatPassengerService.create(flightId, seat.getSeatId(), passenger.getPassengerId());
+        }
+
+
+
         Booking booking = new Booking();
         booking.setFlightId(flightId);
         booking.setNumOfPassengers(numOfPassengers);
         booking.setStatus(DataStatus.FLIGHT_CHOSEN);
         booking.setCreatedAt(new Date(System.currentTimeMillis()));
+        booking = bookingDao.save(booking);
 
+        Invoice invoice = invoiceService.create(booking.getBookingId());
+        bookingInfo.setInvoiceId(invoice.getInvoiceId());
+        bookingInfo.setInvoiceInfo(invoiceService.getInvoiceInfo(booking.getBookingId()));
         return bookingDao.save(booking);
     }
 
@@ -93,14 +107,14 @@ public class BookingServiceImpl implements BookingService {
             throw new LogicException(ErrorCode.DATA_NULL, "Booking does not exist");
         }
 
-        if (booking.getNumOfPassengers() != bookingDetail.getPassengers().size()) {
+        if (booking.getNumOfPassengers() != bookingDetail.getPassengerInfos().size()) {
             throw new LogicException(ErrorCode.FAIL, "Number of passengers in booking detail is not equal to reserved seats");
         }
 
-        ContactInfo contactInfo = bookingDetail.getContact();
+        ContactInfo contactInfo = bookingDetail.getContactInfo();
         Contact contact = contactService.create(contactInfo);
         booking.setContactId(contact.getContactId());
-        for (PassengerInfo passengerInfo: bookingDetail.getPassengers()) {
+        for (PassengerInfo passengerInfo: bookingDetail.getPassengerInfos()) {
             Passenger passenger = passengerService.create(passengerInfo);
             BookingPassenger bookingPassenger = new BookingPassenger();
             bookingPassenger.setBookingId(bookingId);
@@ -132,10 +146,19 @@ public class BookingServiceImpl implements BookingService {
         }
         FlightInfo flight = flightService.getFlightInfo(booking.getFlightId());
         ContactInfo contact = contactService.getContactInfo(booking.getContactId());
-        InvoiceInfo invoice = invoiceService.getInvoiceInfo(booking.getInvoiceId());
-        return new BookingInfo(booking.getBookingCode(), booking.getFlightId(), flight, booking.getContactId(),
-                contact, booking.getInvoiceId(), invoice, booking.getPaymentMethod(),
-                booking.getTicketNumber(), booking.getNumOfPassengers());
+        InvoiceInfo invoice = invoiceService.getInvoiceInfoByBookingId(bookingId);
+        List<FlightSeatPassenger> flightSeatPassengers = flightSeatPassengerService.findByFlightId(flight.getFlightId());
+        PassengerInfo[] passengers = new PassengerInfo[flightSeatPassengers.size()];
+        SeatInfo[] seatIds = new SeatInfo[flightSeatPassengers.size()];
+
+        for (int i = 0; i < flightSeatPassengers.size(); i ++) {
+            passengers[i] = passengerService.getPassengerInfo(flightSeatPassengers.get(i).getPassengerId());
+            seatIds[i] = seatService.getSeatInfo(flightSeatPassengers.get(i).getSeatId(), flight.getFlightId());
+        }
+
+        return new BookingInfo(bookingId, booking.getBookingCode(), flight.getFlightId(), flight, flight.getDepartureAirportId(),
+                flight.getDestinationAirportId(), flight.getDepartureDate(), contact.getContactId(), contact, booking.getNumOfPassengers(),
+                passengers, seatIds, invoice.getInvoiceId(), invoice, booking.getPaymentMethod(), booking.getTicketNumber());
     }
 
     @Override

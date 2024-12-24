@@ -11,4 +11,12 @@ public class Credential {
     private String email;
 
     private String password;
+
+    @Override
+    public String toString() {
+        return "Credential{" +
+                "email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                '}';
+    }
 }

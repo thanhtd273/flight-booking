@@ -10,5 +10,16 @@ import lombok.Setter;
 @Getter
 @Setter
 public class NationInfo {
+
+    private Long nationId;
+
     private String name;
+
+    @Override
+    public String toString() {
+        return "NationInfo{" +
+                "nationId=" + nationId +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

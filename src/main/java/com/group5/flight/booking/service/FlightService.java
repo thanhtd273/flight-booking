@@ -1,8 +1,11 @@
 package com.group5.flight.booking.service;
 
+import com.group5.flight.booking.core.ErrorCode;
 import com.group5.flight.booking.core.exception.LogicException;
+import com.group5.flight.booking.dto.FlightDisplayInfo;
 import com.group5.flight.booking.dto.FlightInfo;
-import com.group5.flight.booking.dto.SearchCriteria;
+import com.group5.flight.booking.dto.FilterCriteria;
+import com.group5.flight.booking.dto.SeatInfo;
 import com.group5.flight.booking.model.Flight;
 
 import java.util.Date;
@@ -16,9 +19,15 @@ public interface FlightService {
 
     Flight findByFlightId(Long flightId);
 
-    List<FlightInfo> findFlight(Long fromAirportId, Long toAirportId, Date departureDate) throws LogicException;
+    List<FlightInfo> findFlight(Long departureAirportId, Long destinationAirportId, Date departureDate) throws LogicException;
 
-    List<FlightInfo> filter(SearchCriteria searchCriteria) throws LogicException;
+    List<FlightInfo> filterFlights(FilterCriteria filterCriteria) throws LogicException;
 
     FlightInfo getFlightInfo(Long flightId);
+
+    List<FlightDisplayInfo> getFlightsDisplay(List<FlightInfo> flightInfos);
+
+    List<SeatInfo> getFlightSeats(Long flightId) throws LogicException;
+
+    ErrorCode exportFlightTicket(Long ticketId);
 }

@@ -9,11 +9,13 @@ import com.group5.flight.booking.model.Nation;
 import com.group5.flight.booking.model.Passenger;
 import com.group5.flight.booking.service.NationService;
 import com.group5.flight.booking.service.PassengerService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -39,7 +41,8 @@ public class PassengerServiceImpl implements PassengerService {
         if (ObjectUtils.isEmpty(passengerInfo)) {
             throw new LogicException(ErrorCode.DATA_NULL);
         }
-        if (!passengerInfo.isAllNotNull()) {
+        if (ObjectUtils.isEmpty(passengerInfo.getFirstName()) || ObjectUtils.isEmpty(passengerInfo.getLastName())
+                || ObjectUtils.isEmpty(passengerInfo.getBirthday()) || ObjectUtils.isEmpty(passengerInfo.getNationalityId())) {
             throw new LogicException(ErrorCode.BLANK_FIELD, "Passenger's info is required");
         }
 
@@ -53,14 +56,29 @@ public class PassengerServiceImpl implements PassengerService {
         passenger.setFirstName(passengerInfo.getFirstName());
         passenger.setLastName(passengerInfo.getLastName());
         passenger.setBirthday(passengerInfo.getBirthday());
-        passenger.setGender(passengerInfo.getGender());
-        passenger.setPhone(passengerInfo.getPhone());
-        passenger.setEmail(passengerInfo.getEmail());
+        if (!ObjectUtils.isEmpty(passengerInfo.getGender()))
+            passenger.setGender(passengerInfo.getGender());
+
+        if (!ObjectUtils.isEmpty(passengerInfo.getPhone()))
+            passenger.setPhone(passengerInfo.getPhone());
+        if (!ObjectUtils.isEmpty(passengerInfo.getEmail()))
+            passenger.setEmail(passengerInfo.getEmail());
 
         passenger.setCreatedAt(new Date(System.currentTimeMillis()));
         passenger.setDeleted(false);
 
         return passengerDao.save(passenger);
+    }
+
+    @Override
+    @Transactional
+    public List<Passenger> create(PassengerInfo[] passengerInfos) throws LogicException {
+        List<Passenger> passengers = new LinkedList<>();
+        for (PassengerInfo passengerInfo: passengerInfos) {
+            passengers.add(create(passengerInfo));
+        }
+
+        return passengers;
     }
 
     @Override
@@ -119,7 +137,7 @@ public class PassengerServiceImpl implements PassengerService {
 
         NationInfo nationInfo = nationService.getNationInfo(passengerInfo.getNationalityId());
         passengerInfo.setNationalityId(passenger.getNationalityId());
-        passengerInfo.setNation(nationInfo);
+        passengerInfo.setNationInfo(nationInfo);
 
         return passengerInfo;
     }

@@ -65,7 +65,7 @@ create table plane (
 	plane_id BIGSERIAL primary key,
 	name VARCHAR(75) not null,
 	code VARCHAR(10) not null,
-	
+	num_of_seats INTEGER,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
     deleted BOOLEAN DEFAULT FALSE
@@ -102,12 +102,13 @@ CREATE TABLE flight (
 
 CREATE TABLE seat (
     seat_id BIGSERIAL PRIMARY key,
+    plane_id BIGINT,
 	class_level VARCHAR(15) not null,
 	seat_code VARCHAR(10),
-	available BOOLEAN default true,
 
 	created_at TIMESTAMP default current_timestamp,
-	updated_at timestamp
+	updated_at timestamp,
+    constraint seat_plane_fk foreign key (plane_id) references plane(plane_id)
 );
 
 CREATE TABLE passenger (
@@ -150,17 +151,6 @@ CREATE TABLE contact (
     deleted BOOLEAN
 );
 
-CREATE TABLE invoice (
-    invoice_id BIGSERIAL PRIMARY KEY,
-    contact_id BIGINT NOT NULL,
-    total_amount FLOAT NOT NULL,
-
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted BOOLEAN,
-    CONSTRAINT contact_fk FOREIGN KEY (contact_id) REFERENCES contact(contact_id)
-);
-
 CREATE TABLE booking (
     booking_id BIGSERIAL PRIMARY KEY,
     booking_code BIGINT,
@@ -178,6 +168,17 @@ CREATE TABLE booking (
     CONSTRAINT flight_fk FOREIGN KEY (flight_id) REFERENCEs flight(flight_id),
     CONSTRAINT contact_fk FOREIGN KEY (contact_id) REFERENCES contact(contact_id),
     CONSTRAINT invoice_fk FOREIGN KEY (invoice_id) REFERENCES invoice(invoice_fk)
+);
+
+CREATE TABLE invoice (
+    invoice_id BIGSERIAL PRIMARY KEY,
+    booking_id BIGINT NOT NULL,
+    total_amount FLOAT NOT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP,
+    deleted BOOLEAN,
+    CONSTRAINT booking_fk FOREIGN KEY (booking_id) REFERENCES booking(booking_id)
 );
 
 CREATE TABLE booking_passenger (

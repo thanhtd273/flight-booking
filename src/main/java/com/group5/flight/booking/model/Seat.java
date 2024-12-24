@@ -19,14 +19,14 @@ public class Seat {
     @Column(name = "seat_id")
     private Long seatId;
 
+    @Column(name = "plane_id")
+    private Long planeId;
+
     @Column(name = "class_level")
     private String classLevel;
 
     @Column(name = "seat_code")
     private String seatCode;
-
-    @Column(name = "available")
-    private Boolean available;
 
     @Column(name = "created_at")
     private Date createdAt;

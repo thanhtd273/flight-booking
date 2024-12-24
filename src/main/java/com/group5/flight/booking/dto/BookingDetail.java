@@ -13,11 +13,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookingDetail {
-    private ContactInfo contact;
+    private ContactInfo contactInfo;
 
-    private List<PassengerInfo> passengers;
+    private List<PassengerInfo> passengerInfos;
 
     public boolean isAllNull() {
-        return ObjectUtils.isEmpty(contact) && ObjectUtils.isEmpty(passengers);
+        return ObjectUtils.isEmpty(contactInfo) && ObjectUtils.isEmpty(passengerInfos);
     }
 }

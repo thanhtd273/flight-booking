@@ -19,7 +19,6 @@ public class ContactServiceImpl implements ContactService {
 
     private final ContactDao contactDao;
 
-
     @Override
     public List<Contact> getAllContacts() {
         return contactDao.findByDeletedFalse();
@@ -35,8 +34,10 @@ public class ContactServiceImpl implements ContactService {
         if (ObjectUtils.isEmpty(contactInfo)) {
             throw new LogicException(ErrorCode.DATA_NULL);
         }
-        if (!contactInfo.isAllNull()) {
-            throw new LogicException(ErrorCode.BLANK_FIELD, "Contact's info is required");
+        if (ObjectUtils.isEmpty(contactInfo.getPhone()) || ObjectUtils.isEmpty(contactInfo.getFirstName())
+                || ObjectUtils.isEmpty(contactInfo.getLastName()) || ObjectUtils.isEmpty(contactInfo.getEmail())) {
+
+            throw new LogicException(ErrorCode.BLANK_FIELD, "Contact is missing required fields");
         }
 
         Contact contact = new Contact();
@@ -92,13 +93,6 @@ public class ContactServiceImpl implements ContactService {
         Contact contact = findByContactId(contactId);
         if (ObjectUtils.isEmpty(contact)) return null;
 
-        ContactInfo contactInfo = new ContactInfo();
-        contactInfo.setFirstName(contact.getFirstName());
-        contactInfo.setLastName(contact.getLastName());
-        contactInfo.setEmail(contact.getEmail());
-        contactInfo.setPhone(contact.getPhone());
-
-
-        return contactInfo;
+        return new ContactInfo(contactId, contact.getFirstName(), contact.getLastName(), contact.getPhone(), contact.getEmail());
     }
 }
