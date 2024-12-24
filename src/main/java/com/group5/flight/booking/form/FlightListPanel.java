@@ -123,7 +123,7 @@ public class FlightListPanel extends JPanel {
                 filterCriteria.setAirlineIds(currentIds);
                 updateFilterResult();
             });
-            airlineFilterPanel.add(airlineCheckbox);
+            airlineFilterPanel.add(createAirlineCheckboxWithIcon(airlineCheckbox, airline));
             airlineFilterPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         }
         airlineFilterPanel.add(Box.createVerticalGlue());
@@ -330,66 +330,61 @@ public class FlightListPanel extends JPanel {
         this.filterCriteria.setDepartureDate(departureDate);
     }
 
+    private JPanel createAirlineCheckboxWithIcon(JCheckBox airlineCheckbox, Airline airline) {
+        // Tạo đường dẫn đến biểu tượng của hãng hàng không
+        String iconPath = "";
+        switch (airline.getName()) {
+            case "VietJet Air":
+                iconPath = "/VietJet.png";
+                break;
+            case "Vietnam Airlines":
+                iconPath = "/Vietnam.png";
+                break;
+            case "Bamboo Airways":
+                iconPath = "/Bambo.png";
+                break;
+            case "Pacific Airlines":
+                iconPath = "/pacific.png";
+                break;
+            case "VASCO":
+                iconPath = "/vasco.png";
+                break;
+        }
+
+        // Tải và điều chỉnh kích thước của biểu tượng
+        ImageIcon icon = resizeIcon(iconPath, 15, 15);
+
+        // Tạo một JPanel để chứa Checkbox, Biểu tượng và Tên hãng
+        JPanel airlinePanel = new JPanel();
+        airlinePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5)); // Căn lề bên trái
+        airlinePanel.setBackground(Color.WHITE);
+
+        // Đảm bảo biểu tượng chỉ xuất hiện khi có đường dẫn hình ảnh hợp lệ
+        if (icon != null) {
+            JLabel airlineIconLabel = new JLabel(icon);  // Đặt biểu tượng
+            airlinePanel.add(airlineCheckbox);          // Thêm JCheckBox
+            airlinePanel.add(airlineIconLabel);         // Thêm biểu tượng
+        } else {
+            airlinePanel.add(airlineCheckbox);          // Thêm JCheckBox
+        }
+
+        // Thêm tên hãng hàng không vào JLabel riêng
+        JLabel airlineNameLabel = new JLabel(airline.getName());
+        airlineNameLabel.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 12));
+        airlineNameLabel.setForeground(Color.BLACK);
+        airlinePanel.add(airlineNameLabel);            // Thêm tên hãng
+
+        return airlinePanel; // Trả về JPanel đã cấu hình
+    }
 
     private ImageIcon resizeIcon(String resourcePath, int width, int height) {
         try {
             ImageIcon icon = new ImageIcon(getClass().getResource(resourcePath));
             return new ImageIcon(icon.getImage().getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH));
         } catch (Exception e) {
-            System.err.println("Failed to load image: " + resourcePath);
+            logger.error("Failed to load image: {}", resourcePath);
             return null;
         }
-    }
-
-    private JPanel createAirlineCheckbox(String airlineName, String price, String iconPath) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS)); // Sắp xếp theo chiều ngang
-        panel.setBackground(Color.WHITE);
-        panel.setAlignmentX(Component.LEFT_ALIGNMENT); // Căn lề trái cho toàn bộ panel
-
-        // Tạo checkbox
-        JCheckBox airlineCheckbox = new JCheckBox();
-        airlineCheckbox.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        airlineCheckbox.setBackground(Color.WHITE);
-        airlineCheckbox.setFocusPainted(false);
-        airlineCheckbox.setAlignmentY(Component.CENTER_ALIGNMENT); // Giữ checkbox thẳng hàng theo chiều dọc
-
-        // Tạo icon hãng hàng không
-        JLabel airlineIcon = new JLabel();
-        airlineIcon.setIcon(resizeIcon(iconPath, 20, 20)); // Icon kích thước 20x20
-        airlineIcon.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10)); // Khoảng cách xung quanh icon
-        airlineIcon.setAlignmentY(Component.CENTER_ALIGNMENT); // Giữ icon thẳng hàng theo chiều dọc
-
-        // Panel chứa tên hãng và giá (theo chiều dọc)
-        JPanel verticalPanel = new JPanel();
-        verticalPanel.setLayout(new BoxLayout(verticalPanel, BoxLayout.Y_AXIS)); // Sắp xếp dọc
-        verticalPanel.setBackground(Color.WHITE);
-        verticalPanel.setAlignmentY(Component.CENTER_ALIGNMENT); // Giữ cả tên và giá thẳng hàng theo chiều dọc
-
-        // Tạo nhãn tên hãng
-        JLabel airlineNameLabel = new JLabel(airlineName);
-        airlineNameLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        airlineNameLabel.setForeground(Color.BLACK);
-        airlineNameLabel.setAlignmentX(Component.LEFT_ALIGNMENT); // Căn trái
-
-        // Tạo nhãn giá
-        JLabel priceLabel = new JLabel(price);
-        priceLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
-        priceLabel.setForeground(new Color(255, 69, 0)); // Màu cam cho giá
-        priceLabel.setAlignmentX(Component.LEFT_ALIGNMENT); // Căn trái
-
-        // Thêm tên hãng và giá vào verticalPanel
-        verticalPanel.add(airlineNameLabel);
-        verticalPanel.add(Box.createRigidArea(new Dimension(0, 5))); // Khoảng cách giữa tên và giá
-        verticalPanel.add(priceLabel);
-
-        // Thêm checkbox, icon, và verticalPanel vào panel chính
-        panel.add(airlineCheckbox);
-        panel.add(airlineIcon);
-        panel.add(Box.createRigidArea(new Dimension(10, 0))); // Khoảng cách giữa icon và tên
-        panel.add(verticalPanel);
-
-        return panel;
     }
 
     private void styleActionButton(JButton button) {
