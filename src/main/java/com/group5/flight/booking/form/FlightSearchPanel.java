@@ -8,14 +8,11 @@ import javax.swing.*;
 import com.group5.flight.booking.core.AppUtils;
 import com.group5.flight.booking.core.Constants;
 import com.group5.flight.booking.core.exception.LogicException;
-import com.group5.flight.booking.dto.AirportInfo;
-import com.group5.flight.booking.dto.FlightInfo;
-import com.group5.flight.booking.dto.NationInfo;
+import com.group5.flight.booking.dto.*;
 import com.group5.flight.booking.form.component.FbButton;
 import com.group5.flight.booking.service.AirlineService;
 import com.group5.flight.booking.service.AirportService;
 import com.group5.flight.booking.service.FlightService;
-import com.group5.flight.booking.service.PlaneService;
 import com.toedter.calendar.JDateChooser;
 import net.miginfocom.swing.MigLayout;
 import org.slf4j.Logger;
@@ -34,28 +31,30 @@ public class FlightSearchPanel extends JPanel {
 
     private final CardLayout cardLayout;
 
+    private final BookingInfo bookingInfo;
+
     private final AirportService airportService;
 
     private final FlightService flightService;
 
     private final AirlineService airlineService;
 
-    private final PlaneService planeService;
 
     public FlightSearchPanel(JPanel mainPanel, CardLayout cardLayout,
-                             AirportService airportService, FlightService flightService, AirlineService airlineService,
-                             PlaneService planeService) {
+                             AirportService airportService, FlightService flightService, AirlineService airlineService) {
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
         this.airportService = airportService;
         this.flightService = flightService;
         this.airlineService = airlineService;
-        this.planeService = planeService;
+        this.bookingInfo = new BookingInfo();
+        this.bookingInfo.setNumOfPassengers(1);
+
         initComponents();
         setOpaque(false);
     }
 
-        private JPanel createAirlineCheckbox(String airlineName, String price, String iconPath) {
+    private JPanel createAirlineCheckbox(String airlineName, String price, String iconPath) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         panel.setBackground(new Color(238, 238, 238));
@@ -87,15 +86,12 @@ public class FlightSearchPanel extends JPanel {
         return panel;
     }
 
-    private JDateChooser createCustomDateChooser(String title, int x, int y, int width, int height, Date[] departureDate) {
+    private JDateChooser createCustomDateChooser() {
         JDateChooser dateChooser = new JDateChooser();
-        dateChooser.setBorder(BorderFactory.createTitledBorder(title));
-        dateChooser.setBounds(x, y, width, height);
+        dateChooser.setBorder(BorderFactory.createTitledBorder("Departure Date"));
+        dateChooser.setBounds(300, 440, 400, 80);
 
-        dateChooser.addPropertyChangeListener("date", evt -> {
-            departureDate[0] = (Date) evt.getNewValue();
-            logger.debug("Selected Date: {}", departureDate[0]);
-        });
+        dateChooser.addPropertyChangeListener("date", evt -> bookingInfo.setDepartureDate((Date) evt.getNewValue()));
 
         return dateChooser;
     }
@@ -103,9 +99,6 @@ public class FlightSearchPanel extends JPanel {
     private void initComponents() {
         JComboBox<String> cbDestination;
         JComboBox<String> cbDeparture;
-        final Long[] departureId = new Long[1];
-        final Long[] destinationId = new Long[1];
-        final Date[] departureDate = new Date[1];
         final List<FlightInfo> flightInfoList = new ArrayList<>();
 
         setLayout(new MigLayout("wrap, fill", "[center]", "[top][grow]"));
@@ -129,9 +122,8 @@ public class FlightSearchPanel extends JPanel {
         cbDeparture.addActionListener(e -> {
             String location = (String) cbDeparture.getSelectedItem();
             if (!ObjectUtils.isEmpty(location)) {
-                departureId[0] = airportLocations.get(location);
+                bookingInfo.setDepartureAirportId(airportLocations.get(location));
             }
-            logger.debug("Chose departure location: {}", location);
         });
         flightSearcherPanel.add(cbDeparture, STYLE_CONSTRAINT);
 
@@ -141,13 +133,13 @@ public class FlightSearchPanel extends JPanel {
         cbDestination.addActionListener(e -> {
             String location = (String) cbDestination.getSelectedItem();
             if (!ObjectUtils.isEmpty(location)) {
-                destinationId[0] = airportLocations.get(location);
+                bookingInfo.setDestinationAirportId(airportLocations.get(location));
             }
             logger.debug("Chose destination location: {}", location);
         });
         flightSearcherPanel.add(cbDestination, STYLE_CONSTRAINT);
 
-        JDateChooser dateChooser = createCustomDateChooser("Departure Date", 300, 440, 400, 80, departureDate);
+        JDateChooser dateChooser = createCustomDateChooser();
         flightSearcherPanel.add(dateChooser, STYLE_CONSTRAINT);
 
         add(flightSearcherPanel);
@@ -162,15 +154,18 @@ public class FlightSearchPanel extends JPanel {
         btnSearch.setPreferredSize(new Dimension(200, 40));
         btnSearch.addActionListener(e -> {
             logger.debug("Find flight by departureId = {}, destinationId =  {}, departureDate = {}",
-                    departureId[0], destinationId[0], departureDate[0]);
-            if (ObjectUtils.isEmpty(departureId[0]) || ObjectUtils.isEmpty(destinationId[0]) || ObjectUtils.isEmpty(departureDate[0])) {
+                    bookingInfo.getDepartureAirportId(), bookingInfo.getDestinationAirportId(), bookingInfo.getDepartureDate());
+            if (ObjectUtils.isEmpty(bookingInfo.getDepartureAirportId()) ||
+                    ObjectUtils.isEmpty(bookingInfo.getDestinationAirportId()) ||
+                    ObjectUtils.isEmpty(bookingInfo.getDepartureDate())) {
                 JOptionPane.showMessageDialog(null, "Please choose full of information", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 try {
-                    flightInfoList.addAll(flightService.findFlight(departureId[0], destinationId[0], departureDate[0])) ;
+                    logger.debug("Travel info: {}", bookingInfo);
+                    flightInfoList.addAll(flightService.findFlight(bookingInfo.getDepartureAirportId(), bookingInfo.getDestinationAirportId(), bookingInfo.getDepartureDate())) ;
                     logger.debug("Flight list: {}", flightInfoList);
-                    FlightListPanel flightListPanel = new FlightListPanel(mainPanel, cardLayout, departureId[0],
-                            destinationId[0], departureDate[0], flightInfoList, airlineService, flightService);
+                    FlightListPanel flightListPanel = new FlightListPanel(mainPanel, cardLayout, bookingInfo,
+                            flightInfoList, airlineService, flightService);
                     mainPanel.add(flightListPanel, FLIGHT_LIST_SCREEN);
                     cardLayout.show(mainPanel, FLIGHT_LIST_SCREEN);
                 } catch (LogicException ex) {
@@ -184,9 +179,8 @@ public class FlightSearchPanel extends JPanel {
         passengerPanel.setOpaque(false);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        
-        final int[] passengerCount = {1};
-        JLabel lblPassengerCount = new JLabel(String.valueOf(passengerCount[0]), SwingConstants.CENTER);
+
+        JLabel lblPassengerCount = new JLabel(String.valueOf(bookingInfo.getNumOfPassengers()), SwingConstants.CENTER);
         lblPassengerCount.setFont(new Font(Constants.FB_FONT, Font.BOLD, 14));
         lblPassengerCount.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         lblPassengerCount.setPreferredSize(new Dimension(50, 30));
@@ -194,18 +188,18 @@ public class FlightSearchPanel extends JPanel {
         JButton btnDecrease = new JButton("-");
         btnDecrease.setFont(new Font(Constants.FB_FONT, Font.BOLD, 14));
         btnDecrease.addActionListener(e -> {
-            if (passengerCount[0] > 1) {
-                passengerCount[0]--;
-                lblPassengerCount.setText(String.valueOf(passengerCount[0]));
+            if (bookingInfo.getNumOfPassengers() > 1) {
+                bookingInfo.setNumOfPassengers(bookingInfo.getNumOfPassengers() - 1);
+                lblPassengerCount.setText(String.valueOf(bookingInfo.getNumOfPassengers()));
             }
         });
 
         JButton btnIncrease = new JButton("+");
         btnIncrease.setFont(new Font(Constants.FB_FONT, Font.BOLD, 14));
         btnIncrease.addActionListener(e -> {
-            if (passengerCount[0] < 9) {
-                passengerCount[0]++;
-                lblPassengerCount.setText(String.valueOf(passengerCount[0]));
+            if (bookingInfo.getNumOfPassengers() < 9) {
+                bookingInfo.setNumOfPassengers(bookingInfo.getNumOfPassengers() + 1);
+                lblPassengerCount.setText(String.valueOf(bookingInfo.getNumOfPassengers()));
             }
         });
 
@@ -216,7 +210,7 @@ public class FlightSearchPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 1;
-        gbc.insets = new Insets(0, 0, 0, 10); // Thêm khoảng cách ben phải
+        gbc.insets = new Insets(0, 0, 0, 10);
         passengerPanel.add(airline1Panel, gbc);
 
         gbc.gridx = 1;

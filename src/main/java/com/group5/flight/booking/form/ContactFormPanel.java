@@ -2,20 +2,24 @@ package com.group5.flight.booking.form;
 
 import com.group5.flight.booking.core.Constants;
 import com.group5.flight.booking.dto.ContactInfo;
-import com.group5.flight.booking.dto.FlightInfo;
 import com.group5.flight.booking.dto.PassengerInfo;
+import com.group5.flight.booking.dto.BookingInfo;
 import com.group5.flight.booking.form.component.RoundedBorder;
 import com.group5.flight.booking.form.swing.MyTextField;
 import com.group5.flight.booking.service.FlightService;
 import com.toedter.calendar.JDateChooser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 
 public class ContactFormPanel extends JPanel{
+
+    private static final Logger logger = LoggerFactory.getLogger(ContactFormPanel.class);
     
     private static final Integer PANEL_WIDTH = 750;
 
@@ -25,22 +29,24 @@ public class ContactFormPanel extends JPanel{
 
     private final CardLayout cardLayout;
 
-    private final FlightInfo flightInfo;
+    private final BookingInfo bookingInfo;
 
     private final FlightService flightService;
 
     private ContactInfo contactInfo;
 
-    private List<PassengerInfo> passengerInfoList;
+    private final PassengerInfo[] passengerInfos;
 
-    public ContactFormPanel(JPanel mainPanel, CardLayout cardLayout, FlightInfo flightInfo, FlightService flightService) {
+    public ContactFormPanel(JPanel mainPanel, CardLayout cardLayout, BookingInfo bookingInfo, FlightService flightService) {
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
-        this.flightInfo = flightInfo;
+        this.bookingInfo = bookingInfo;
         this.flightService = flightService;
-
         contactInfo = new ContactInfo();
-        passengerInfoList = new LinkedList<>();
+        passengerInfos = new PassengerInfo[bookingInfo.getNumOfPassengers()];
+        for (int i = 0; i < bookingInfo.getNumOfPassengers(); i ++) {
+            passengerInfos[i] = new PassengerInfo();
+        }
 
         initComponent();
     }
@@ -86,7 +92,7 @@ public class ContactFormPanel extends JPanel{
 
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.gridy = 1;
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < bookingInfo.getNumOfPassengers(); i++) {
             passengerWrapper.add(Box.createVerticalStrut(20), gbc);
             gbc.gridy++;
             passengerWrapper.add(createPassengerInfoPanel(i,"Passenger " + (i + 1)), gbc);
@@ -132,9 +138,12 @@ public class ContactFormPanel extends JPanel{
         JButton continueButton = customButton("Continue", new Color(0, 123, 255));
         continueButton.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
         continueButton.addActionListener(e -> {
-            FlightSeatPanel flightSeatPanel = new FlightSeatPanel(mainPanel, cardLayout, flightInfo, flightService);
+            logger.debug("contactInfo: {}, passengerInfos: {}", contactInfo, passengerInfos);
+            bookingInfo.setPassengers(passengerInfos);
+            bookingInfo.setContact(contactInfo);
+            FlightSeatPanel flightSeatPanel = new FlightSeatPanel(mainPanel, cardLayout, bookingInfo, flightService);
             mainPanel.add(flightSeatPanel, Constants.FLIGHT_SEAT_SCREEN);
-            cardLayout.show(mainPanel, Constants.FLIGHT_SEAT_SCREEN);
+//            cardLayout.show(mainPanel, Constants.FLIGHT_SEAT_SCREEN);
         });
         buttonPanel.add(continueButton, BorderLayout.EAST);
 
@@ -154,154 +163,243 @@ public class ContactFormPanel extends JPanel{
         innerPanel.setLayout(new GridBagLayout());
         innerPanel.setOpaque(false);
 
-        JLabel titleContactLabel = new JLabel("Contact Details");
-        titleContactLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
+        JLabel titleLabel = new JLabel("Contact Details");
+        titleLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 4;
         gbc.insets = new Insets(10, 0, 20, 0);
         gbc.anchor = GridBagConstraints.NORTHWEST;
-        panel.add(titleContactLabel, BorderLayout.NORTH);
+        panel.add(titleLabel, BorderLayout.NORTH);
 
-        JLabel firstnameContactLabel = new JLabel("First / Given Name & Middle Name");
-        firstnameContactLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        firstnameContactLabel.setForeground(new Color(171, 165, 168));
+        JLabel firstnameLabel = new JLabel("First / Given Name & Middle Name");
+        firstnameLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
+        firstnameLabel.setForeground(new Color(171, 165, 168));
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
         gbc.insets = new Insets(10, 10, 5, 30);
         gbc.anchor = GridBagConstraints.NORTHWEST;
-        innerPanel.add(firstnameContactLabel, gbc);
+        innerPanel.add(firstnameLabel, gbc);
 
-        MyTextField firstnameContactField = new MyTextField();
-        firstnameContactField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        firstnameContactField.setPreferredSize(new Dimension(300, 50));
+        MyTextField firstnameField = new MyTextField();
+        firstnameField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
+        firstnameField.setPreferredSize(new Dimension(300, 50));
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.insets = new Insets(5, 10, 20, 30);
-        firstnameContactField.addActionListener(e -> contactInfo.setFirstName(firstnameContactField.getText()));
-        innerPanel.add(firstnameContactField, gbc);
+        firstnameField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent documentEvent) {
+                contactInfo.setFirstName(firstnameField.getText());
+            }
 
-        JLabel lastnameContactLabel = new JLabel("Family Name / Last Name");
-        lastnameContactLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        lastnameContactLabel.setForeground(new Color(171, 165, 168));
+            @Override
+            public void removeUpdate(DocumentEvent documentEvent) {
+                contactInfo.setFirstName(firstnameField.getText());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent documentEvent) {
+                contactInfo.setFirstName(firstnameField.getText());
+            }
+        });
+        innerPanel.add(firstnameField, gbc);
+
+        JLabel lastnameLabel = new JLabel("Family Name / Last Name");
+        lastnameLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
+        lastnameLabel.setForeground(new Color(171, 165, 168));
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.insets = new Insets(10, 30, 5, 10);
         gbc.anchor = GridBagConstraints.NORTHWEST;
-        innerPanel.add(lastnameContactLabel, gbc);
+        innerPanel.add(lastnameLabel, gbc);
 
-        MyTextField lastnameContactField = new MyTextField();
-        lastnameContactField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        lastnameContactField.setPreferredSize(new Dimension(300, 50));
+        MyTextField lastnameField = new MyTextField();
+        lastnameField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
+        lastnameField.setPreferredSize(new Dimension(300, 50));
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.insets = new Insets(5, 30, 20, 10);
-        lastnameContactField.addActionListener(e -> contactInfo.setLastName(lastnameContactField.getText()));
-        innerPanel.add(lastnameContactField, gbc);
+        lastnameField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent documentEvent) {
+                contactInfo.setLastName(lastnameField.getText());
+            }
 
-        JLabel phoneContactLabel = new JLabel("Mobile Number");
-        phoneContactLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        phoneContactLabel.setForeground(new Color(171, 165, 168));
+            @Override
+            public void removeUpdate(DocumentEvent documentEvent) {
+                contactInfo.setLastName(lastnameField.getText());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent documentEvent) {
+                contactInfo.setLastName(lastnameField.getText());
+            }
+        });
+        innerPanel.add(lastnameField, gbc);
+
+        JLabel phoneLabel = new JLabel("Mobile Number");
+        phoneLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
+        phoneLabel.setForeground(new Color(171, 165, 168));
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.insets = new Insets(20, 10, 5, 30);
         gbc.anchor = GridBagConstraints.NORTHWEST;
-        innerPanel.add(phoneContactLabel, gbc);
+        innerPanel.add(phoneLabel, gbc);
 
-        MyTextField phoneContactField = new MyTextField();
-        phoneContactField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        phoneContactField.setPreferredSize(new Dimension(300, 50));
+        MyTextField phoneField = new MyTextField();
+        phoneField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
+        phoneField.setPreferredSize(new Dimension(300, 50));
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.insets = new Insets(5, 10, 20, 30);
-        phoneContactField.addActionListener(e -> contactInfo.setPhone(phoneContactField.getText()));
-        innerPanel.add(phoneContactField, gbc);
+        phoneField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent documentEvent) {
+                contactInfo.setPhone(phoneField.getText());
+            }
 
-        JLabel emailContactLabel = new JLabel("Email");
-        emailContactLabel.setForeground(new Color(171, 165, 168));
-        emailContactLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
+            @Override
+            public void removeUpdate(DocumentEvent documentEvent) {
+                contactInfo.setPhone(phoneField.getText());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent documentEvent) {
+                contactInfo.setPhone(phoneField.getText());
+            }
+        });
+        innerPanel.add(phoneField, gbc);
+
+        JLabel emailLabel = new JLabel("Email");
+        emailLabel.setForeground(new Color(171, 165, 168));
+        emailLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
         gbc.gridx = 1;
         gbc.gridy = 3;
         gbc.insets = new Insets(20, 30, 5, 10);
         gbc.anchor = GridBagConstraints.NORTHWEST;
-        innerPanel.add(emailContactLabel, gbc);
+        innerPanel.add(emailLabel, gbc);
 
-        MyTextField emailContactField = new MyTextField();
-        emailContactField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        emailContactField.setPreferredSize(new Dimension(300, 50));
+        MyTextField emailField = new MyTextField();
+        emailField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
+        emailField.setPreferredSize(new Dimension(300, 50));
         gbc.gridx = 1;
         gbc.gridy = 4;
         gbc.insets = new Insets(5, 30, 20, 10);
-        innerPanel.add(emailContactField, gbc);
-        emailContactField.addActionListener(e -> contactInfo.setEmail(emailContactField.getText()));
+        innerPanel.add(emailField, gbc);
+        emailField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent documentEvent) {
+                contactInfo.setEmail(emailField.getText());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent documentEvent) {
+                contactInfo.setEmail(emailField.getText());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent documentEvent) {
+                contactInfo.setEmail(emailField.getText());
+            }
+        });
         panel.add(innerPanel, BorderLayout.SOUTH);
 
         return panel;
     }
 
     private JPanel createPassengerInfoPanel(int i, String title) {
-        PassengerInfo passengerInfo = new PassengerInfo();
 
         GridBagConstraints gbc = new GridBagConstraints();
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         panel.setBackground(Color.WHITE);
 
-        JLabel titlePassengerLabel = new JLabel(title);
-        titlePassengerLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
+        JLabel titleLabel = new JLabel(title);
+        titleLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 4;
         gbc.insets = new Insets(10, 0, 20, 0);
         gbc.anchor = GridBagConstraints.NORTHWEST;
-        panel.add(titlePassengerLabel, gbc);
+        panel.add(titleLabel, gbc);
 
-        JLabel firstnamePassengerLabel = new JLabel("First / Given Name & Middle Name");
-        firstnamePassengerLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        firstnamePassengerLabel.setForeground(new Color(171, 165, 168));
+        JLabel firstnameLabel = new JLabel("First / Given Name & Middle Name");
+        firstnameLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
+        firstnameLabel.setForeground(new Color(171, 165, 168));
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
         gbc.insets = new Insets(10, 10, 5, 30);
         gbc.anchor = GridBagConstraints.NORTHWEST;
-        panel.add(firstnamePassengerLabel, gbc);
+        panel.add(firstnameLabel, gbc);
 
-        MyTextField firstnamePassengerField = new MyTextField();
-        firstnamePassengerField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        firstnamePassengerField.setPreferredSize(new Dimension(300, 50));
+        MyTextField firstnameField = new MyTextField();
+        firstnameField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
+        firstnameField.setPreferredSize(new Dimension(300, 50));
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.insets = new Insets(5, 10, 20, 30);
-        firstnamePassengerField.addActionListener(e -> passengerInfo.setFirstName(firstnamePassengerField.getText()));
-        panel.add(firstnamePassengerField, gbc);
+        firstnameField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent documentEvent) {
+                passengerInfos[i].setFirstName(firstnameField.getText());
+            }
 
-        JLabel lastnamePassengerLabel = new JLabel("Family Name / Last Name");
-        lastnamePassengerLabel.setForeground(new Color(171, 165, 168));
-        lastnamePassengerLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
+            @Override
+            public void removeUpdate(DocumentEvent documentEvent) {
+                passengerInfos[i].setFirstName(firstnameField.getText());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent documentEvent) {
+                passengerInfos[i].setFirstName(firstnameField.getText());
+            }
+        });
+        panel.add(firstnameField, gbc);
+
+        JLabel lastnameLabel = new JLabel("Family Name / Last Name");
+        lastnameLabel.setForeground(new Color(171, 165, 168));
+        lastnameLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.insets = new Insets(10, 30, 5, 10);
         gbc.anchor = GridBagConstraints.NORTHWEST;
-        panel.add(lastnamePassengerLabel, gbc);
+        panel.add(lastnameLabel, gbc);
 
-        MyTextField lastnamePassengerField = new MyTextField();
-        lastnamePassengerField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        lastnamePassengerField.setPreferredSize(new Dimension(300, 50));
+        MyTextField lastnameField = new MyTextField();
+        lastnameField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
+        lastnameField.setPreferredSize(new Dimension(300, 50));
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.insets = new Insets(5, 30, 20, 10);
-        lastnamePassengerField.addActionListener(e -> passengerInfo.setLastName(lastnamePassengerField.getText()));
-        panel.add(lastnamePassengerField, gbc);
+        lastnameField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent documentEvent) {
+                passengerInfos[i].setLastName(lastnameField.getText());
+            }
 
-        JLabel birthdayPassengerLabel = new JLabel("Date of Birth");
-        birthdayPassengerLabel.setForeground(new Color(171, 165, 168));
-        birthdayPassengerLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
+            @Override
+            public void removeUpdate(DocumentEvent documentEvent) {
+                passengerInfos[i].setLastName(lastnameField.getText());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent documentEvent) {
+                passengerInfos[i].setLastName(lastnameField.getText());
+            }
+        });
+        panel.add(lastnameField, gbc);
+
+        JLabel birthdayLabel = new JLabel("Date of Birth");
+        birthdayLabel.setForeground(new Color(171, 165, 168));
+        birthdayLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.insets = new Insets(20, 10, 5, 30);
         gbc.anchor = GridBagConstraints.NORTHWEST;
-        panel.add(birthdayPassengerLabel, gbc);
+        panel.add(birthdayLabel, gbc);
 
         JDateChooser birthdayChooser = new JDateChooser();
         birthdayChooser.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
@@ -312,7 +410,7 @@ public class ContactFormPanel extends JPanel{
         gbc.gridy = 4;
         gbc.insets = new Insets(5, 10, 20, 30);
         birthdayChooser.addPropertyChangeListener("date",
-                evt -> passengerInfo.setBirthday((Date) evt.getNewValue()));
+                evt -> passengerInfos[i].setBirthday((Date) evt.getNewValue()));
         panel.add(birthdayChooser, gbc);
 
         JLabel nationalityPassengerLabel = new JLabel("Nationality");
@@ -322,11 +420,13 @@ public class ContactFormPanel extends JPanel{
         gbc.gridy = 3;
         gbc.insets = new Insets(20, 30, 5, 10);
         gbc.anchor = GridBagConstraints.NORTHWEST;
+        // TODO: Change input component from inputField to menu
         panel.add(nationalityPassengerLabel, gbc);
 
         MyTextField nationalityPassengerField = new MyTextField();
         nationalityPassengerField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
         nationalityPassengerField.setPreferredSize(new Dimension(300, 50));
+
         gbc.gridx = 1;
         gbc.gridy = 4;
         gbc.insets = new Insets(5, 30, 20, 10);

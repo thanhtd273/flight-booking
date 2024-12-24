@@ -97,6 +97,7 @@ public class SeatServiceImpl implements SeatService {
         }
 
         SeatInfo seatInfo = new SeatInfo();
+        seatInfo.setSeatId(seatId);
         seatInfo.setClassLevel(seat.getClassLevel());
         seatInfo.setSeatCode(seat.getSeatCode());
         FlightSeatPassenger flightSeatPassenger = flightSeatPassengerDao.findByFlightIdAndSeatId(flightId, seatId);

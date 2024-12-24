@@ -33,4 +33,18 @@ public class PassengerInfo {
                 && ObjectUtils.isEmpty(birthday) && ObjectUtils.isEmpty(gender)
                 && ObjectUtils.isEmpty(email) && ObjectUtils.isEmpty(phone) && ObjectUtils.isEmpty(nationalityId);
     }
+
+    @Override
+    public String toString() {
+        return "PassengerInfo{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", birthday=" + birthday +
+                ", gender='" + gender + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", nationalityId=" + nationalityId +
+                ", nation=" + nation +
+                '}';
+    }
 }

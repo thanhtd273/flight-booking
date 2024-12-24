@@ -12,6 +12,9 @@ import java.util.List;
 @Getter
 @Setter
 public class InvoiceInfo {
+
+    private Long invoiceId;
+
     private Long contactId;
 
     private ContactInfo contact;

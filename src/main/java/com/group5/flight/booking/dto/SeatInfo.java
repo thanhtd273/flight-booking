@@ -11,6 +11,7 @@ import org.springframework.util.ObjectUtils;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SeatInfo {
+
     private Long seatId;
 
     private Long planeId;
@@ -27,5 +28,17 @@ public class SeatInfo {
         return !ObjectUtils.isEmpty(classLevel) && 
                !ObjectUtils.isEmpty(seatCode) && 
                !ObjectUtils.isEmpty(planeId);
+    }
+
+    @Override
+    public String toString() {
+        return "SeatInfo{" +
+                "seatId=" + seatId +
+                ", planeId=" + planeId +
+                ", plane=" + plane +
+                ", classLevel='" + classLevel + '\'' +
+                ", seatCode='" + seatCode + '\'' +
+                ", available=" + available +
+                '}';
     }
 }

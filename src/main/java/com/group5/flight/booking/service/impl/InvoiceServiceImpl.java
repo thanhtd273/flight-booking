@@ -86,6 +86,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         ContactInfo contact = contactService.getContactInfo(invoice.getContactId());
 
         // TODO: Not hard code for passenger list
-        return new InvoiceInfo(invoice.getContactId(), contact, new ArrayList<>(), invoice.getTotalAmount());
+        return new InvoiceInfo(invoiceId, invoice.getContactId(), contact, new ArrayList<>(), invoice.getTotalAmount());
     }
 }

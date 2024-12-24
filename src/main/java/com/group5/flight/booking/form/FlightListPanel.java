@@ -4,6 +4,7 @@ import com.group5.flight.booking.core.AppUtils;
 import com.group5.flight.booking.core.Constants;
 import com.group5.flight.booking.dto.FlightInfo;
 import com.group5.flight.booking.dto.FilterCriteria;
+import com.group5.flight.booking.dto.BookingInfo;
 import com.group5.flight.booking.model.Airline;
 import com.group5.flight.booking.service.AirlineService;
 import com.group5.flight.booking.service.FlightService;
@@ -13,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,15 +21,11 @@ public class FlightListPanel extends JPanel {
 
     private static final Logger logger = LoggerFactory.getLogger(FlightListPanel.class);
 
-    private final Long fromAirportId;
-
-    private final Long toAirportId;
-
-    private final Date departureDate;
-
     private final JPanel mainPanel;
 
     private final CardLayout cardLayout;
+
+    private final BookingInfo bookingInfo;
 
     @Setter
     private List<FlightInfo> flightInfoList;
@@ -41,17 +37,14 @@ public class FlightListPanel extends JPanel {
     private final FlightService flightService;
 
 
-    public FlightListPanel(JPanel mainPanel, CardLayout cardLayout, Long fromAirportId,
-                           Long toAirportId, Date departureDate, List<FlightInfo> flightInfoList,
+    public FlightListPanel(JPanel mainPanel, CardLayout cardLayout, BookingInfo bookingInfo, List<FlightInfo> flightInfoList,
                            AirlineService airlineService, FlightService flightService) {
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
         this.airlineService = airlineService;
         this.flightService = flightService;
-        setBaseFilterCriteria(fromAirportId, toAirportId, departureDate);
-        this.fromAirportId = fromAirportId;
-        this.toAirportId = toAirportId;
-        this.departureDate = departureDate;
+        this.bookingInfo = bookingInfo;
+        setBaseFilterCriteria();
         this.flightInfoList = flightInfoList;
 
         initComponent();
@@ -84,7 +77,7 @@ public class FlightListPanel extends JPanel {
         resetButton.setForeground(new Color(0, 123, 255)); // Blue color for the button
         resetButton.setContentAreaFilled(false);
         resetButton.addActionListener(e -> {
-            setBaseFilterCriteria(fromAirportId, toAirportId, departureDate);
+            setBaseFilterCriteria();
             updateFilterResult();
         });
         resetButton.setBorder(null);
@@ -247,22 +240,21 @@ public class FlightListPanel extends JPanel {
         JPanel actionPanel = new JPanel();
         actionPanel.setLayout(new BorderLayout());
         actionPanel.setBackground(Color.WHITE);
-        actionPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 10, 10)); // Thêm khoảng cách dưới và hai bên
+        actionPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 10, 10));
 
-        // Nút "Chi tiết"
         JPanel detailsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         detailsPanel.setBackground(Color.WHITE);
-        JButton detailsButton = new JButton("Chi tiết");
+        JButton detailsButton = new JButton("Detail");
         detailsButton.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 12));
         detailsButton.setForeground(new Color(0, 123, 255));
         detailsButton.setContentAreaFilled(false);
         detailsButton.setBorder(null);
         detailsPanel.add(detailsButton);
 
-        JPanel selectPanel = getSelectPanel(flightInfo);
+        JPanel selectPanel = createChoosePanel(flightInfo);
 
-        actionPanel.add(detailsPanel, BorderLayout.WEST); // Đặt nút "Chi tiết" ở lề trái
-        actionPanel.add(selectPanel, BorderLayout.EAST);  // Đặt nút "Chọn" ở lề phải
+        actionPanel.add(detailsPanel, BorderLayout.WEST);
+        actionPanel.add(selectPanel, BorderLayout.EAST);
 
         cardPanel.add(mainInfoPanel, BorderLayout.CENTER);
         cardPanel.add(actionPanel, BorderLayout.SOUTH);
@@ -270,12 +262,16 @@ public class FlightListPanel extends JPanel {
         return cardPanel;
     }
 
-    private JPanel getSelectPanel(FlightInfo flightInfo) {
+    private JPanel createChoosePanel(FlightInfo flightInfo) {
         JPanel selectPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         selectPanel.setBackground(Color.WHITE);
-        JButton selectButton = getSelectButton();
-        selectButton.addActionListener(e -> {
-            ContactFormPanel contactFormPanel = new ContactFormPanel(mainPanel, cardLayout, flightInfo, flightService);
+        JButton chooseButton = createChooseButton();
+        chooseButton.addActionListener(e -> {
+            bookingInfo.setFlightId(flightInfo.getFlightId());
+            bookingInfo.setDepartureDate(flightInfo.getDepatureDate());
+            bookingInfo.setFlightId(flightInfo.getFlightId());
+            bookingInfo.setFlight(flightInfo);
+            ContactFormPanel contactFormPanel = new ContactFormPanel(mainPanel, cardLayout, bookingInfo, flightService);
             mainPanel.add(contactFormPanel, Constants.CONTACT_FORM);
             cardLayout.show(mainPanel, Constants.CONTACT_FORM);
 //            FlightDetailPanel detailPanel = new FlightDetailPanel(mainPanel, cardLayout, flightInfo,
@@ -283,12 +279,12 @@ public class FlightListPanel extends JPanel {
 //            mainPanel.add(detailPanel, Constants.FLIGHT_DETAIL_SCREEN);
 //            cardLayout.show(mainPanel, Constants.FLIGHT_DETAIL_SCREEN);
         });
-        selectPanel.add(selectButton);
+        selectPanel.add(chooseButton);
         return selectPanel;
     }
 
-    private JButton getSelectButton() {
-        JButton selectButton = new JButton("Chọn") {
+    private JButton createChooseButton() {
+        JButton button = new JButton("Choose") {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
@@ -306,15 +302,15 @@ public class FlightListPanel extends JPanel {
             }
         };
 
-        selectButton.setPreferredSize(new Dimension(100, 30));
-        selectButton.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 12));
-        selectButton.setBackground(new Color(0, 123, 255));
-        selectButton.setForeground(Color.WHITE);
-        selectButton.setContentAreaFilled(false);
-        selectButton.setOpaque(false);
-        selectButton.setFocusPainted(false);
-        selectButton.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
-        return selectButton;
+        button.setPreferredSize(new Dimension(100, 30));
+        button.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 12));
+        button.setBackground(new Color(0, 123, 255));
+        button.setForeground(Color.WHITE);
+        button.setContentAreaFilled(false);
+        button.setOpaque(false);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        return button;
     }
 
     private void updateFilterResult() {
@@ -326,15 +322,14 @@ public class FlightListPanel extends JPanel {
         }
     }
 
-    private void setBaseFilterCriteria(Long fromAirportId, Long toAirportId, Date departureDate) {
+    private void setBaseFilterCriteria() {
         this.filterCriteria = new FilterCriteria();
-        this.filterCriteria.setFromAirportId(fromAirportId);
-        this.filterCriteria.setToAirportId(toAirportId);
-        this.filterCriteria.setDepartureDate(departureDate);
+        this.filterCriteria.setFromAirportId(bookingInfo.getDepartureAirportId());
+        this.filterCriteria.setToAirportId(bookingInfo.getDestinationAirportId());
+        this.filterCriteria.setDepartureDate(bookingInfo.getDepartureDate());
     }
 
     private JPanel createAirlineCheckboxWithIcon(JCheckBox airlineCheckbox, Airline airline) {
-        // Tạo đường dẫn đến biểu tượng của hãng hàng không
         String iconPath = "";
         switch (airline.getName()) {
             case "VietJet Air":

@@ -13,6 +13,8 @@ import org.springframework.util.ObjectUtils;
 @NoArgsConstructor
 public class ContactInfo {
 
+    private Long contactId;
+
     private String firstName;
 
     private String lastName;
@@ -26,4 +28,14 @@ public class ContactInfo {
                 && ObjectUtils.isEmpty(phone) && ObjectUtils.isEmpty(email);
     }
 
+    @Override
+    public String toString() {
+        return "ContactInfo{" +
+                "contactId=" + contactId +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
 }

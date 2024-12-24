@@ -210,7 +210,7 @@ public class FlightServiceImpl implements FlightService {
         List<SeatInfo> seatInfoList = new LinkedList<>();
         List<Seat> seats = seatService.findByPlaneId(flight.getPlaneId());
         for (Seat seat: seats) {
-            SeatInfo seatInfo = seatService.getSeatInfo(seat.getPlaneId(), flightId);
+            SeatInfo seatInfo = seatService.getSeatInfo(seat.getSeatId(), flightId);
             seatInfoList.add(seatInfo);
         }
         return seatInfoList;

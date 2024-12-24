@@ -19,7 +19,6 @@ public class ContactServiceImpl implements ContactService {
 
     private final ContactDao contactDao;
 
-
     @Override
     public List<Contact> getAllContacts() {
         return contactDao.findByDeletedFalse();
@@ -92,13 +91,6 @@ public class ContactServiceImpl implements ContactService {
         Contact contact = findByContactId(contactId);
         if (ObjectUtils.isEmpty(contact)) return null;
 
-        ContactInfo contactInfo = new ContactInfo();
-        contactInfo.setFirstName(contact.getFirstName());
-        contactInfo.setLastName(contact.getLastName());
-        contactInfo.setEmail(contact.getEmail());
-        contactInfo.setPhone(contact.getPhone());
-
-
-        return contactInfo;
+        return new ContactInfo(contactId, contact.getFirstName(), contact.getLastName(), contact.getPhone(), contact.getEmail());
     }
 }

@@ -5,17 +5,9 @@ import com.group5.flight.booking.core.ErrorCode;
 import com.group5.flight.booking.core.exception.LogicException;
 import com.group5.flight.booking.dao.BookingDao;
 import com.group5.flight.booking.dao.BookingPassengerDao;
-import com.group5.flight.booking.dto.ContactInfo;
-import com.group5.flight.booking.dto.BookingDetail;
-import com.group5.flight.booking.dto.BookingInfo;
-import com.group5.flight.booking.dto.FlightInfo;
-import com.group5.flight.booking.dto.InvoiceInfo;
-import com.group5.flight.booking.dto.PassengerInfo;
-import com.group5.flight.booking.model.Contact;
-import com.group5.flight.booking.model.Booking;
-import com.group5.flight.booking.model.BookingPassenger;
-import com.group5.flight.booking.model.Flight;
-import com.group5.flight.booking.model.Passenger;
+import com.group5.flight.booking.dao.FlightSeatPassengerDao;
+import com.group5.flight.booking.dto.*;
+import com.group5.flight.booking.model.*;
 import com.group5.flight.booking.service.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +31,11 @@ public class BookingServiceImpl implements BookingService {
 
     private final InvoiceService invoiceService;
 
+    private final SeatService seatService;
+
     private final BookingPassengerDao bookingPassengerDao;
+
+    private final FlightSeatPassengerDao flightSeatPassengerDao;
 
     @Override
     public List<Booking> getAllBookings() {
@@ -133,9 +129,18 @@ public class BookingServiceImpl implements BookingService {
         FlightInfo flight = flightService.getFlightInfo(booking.getFlightId());
         ContactInfo contact = contactService.getContactInfo(booking.getContactId());
         InvoiceInfo invoice = invoiceService.getInvoiceInfo(booking.getInvoiceId());
-        return new BookingInfo(booking.getBookingCode(), booking.getFlightId(), flight, booking.getContactId(),
-                contact, booking.getInvoiceId(), invoice, booking.getPaymentMethod(),
-                booking.getTicketNumber(), booking.getNumOfPassengers());
+        List<FlightSeatPassenger> flightSeatPassengers = flightSeatPassengerDao.findByFlightId(flight.getFlightId());
+        PassengerInfo[] passengers = new PassengerInfo[flightSeatPassengers.size()];
+        SeatInfo[] seatIds = new SeatInfo[flightSeatPassengers.size()];
+
+        for (int i = 0; i < flightSeatPassengers.size(); i ++) {
+            passengers[i] = passengerService.getPassengerInfo(flightSeatPassengers.get(i).getPassengerId());
+            seatIds[i] = seatService.getSeatInfo(flightSeatPassengers.get(i).getSeatId(), flight.getFlightId());
+        }
+
+        return new BookingInfo(bookingId, booking.getBookingCode(), flight.getFlightId(), flight, flight.getFromAirportId(),
+                flight.getToAirportId(), flight.getDepatureDate(), contact.getContactId(), contact, booking.getNumOfPassengers(),
+                passengers, seatIds, invoice.getInvoiceId(), invoice, booking.getPaymentMethod(), booking.getTicketNumber());
     }
 
     @Override

@@ -96,9 +96,9 @@ public class FlightDetailPanel extends JPanel {
 
         JButton btnSelectSeat = createButton("Select Seat");
         btnSelectSeat.addActionListener(e -> {
-            FlightSeatPanel seatPanel = new FlightSeatPanel(mainPanel, cardLayout, flightInfo, flightService);
-            mainPanel.add(seatPanel, FLIGHT_SEAT_SCREEN);
-            cardLayout.show(mainPanel, FLIGHT_SEAT_SCREEN);
+//            FlightSeatPanel seatPanel = new FlightSeatPanel(mainPanel, cardLayout, flightInfo, flightService);
+//            mainPanel.add(seatPanel, FLIGHT_SEAT_SCREEN);
+//            cardLayout.show(mainPanel, FLIGHT_SEAT_SCREEN);
         });
         buttonPanel.add(btnSelectSeat, "cell 1 0, align center, w 150!, h 40!");
 

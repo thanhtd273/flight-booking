@@ -14,6 +14,8 @@ public interface PassengerService {
 
     Passenger create(PassengerInfo passengerInfo) throws LogicException;
 
+    List<Passenger> create(PassengerInfo[] passengerInfos) throws LogicException;
+
     Passenger update(Long passengerId, PassengerInfo passengerInfo) throws LogicException;
 
     ErrorCode delete(Long passengerId);

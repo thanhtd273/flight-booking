@@ -92,6 +92,6 @@ public class CityServiceImpl implements CityService {
         if (ObjectUtils.isEmpty(city)) return null;
 
         NationInfo nationInfo = nationService.getNationInfo(city.getNationId());
-        return new CityInfo(city.getNationId(), nationInfo, city.getName());
+        return new CityInfo(cityId, city.getNationId(), nationInfo, city.getName());
     }
 }

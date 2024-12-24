@@ -113,7 +113,8 @@ public class AirportServiceImpl implements AirportService {
         List<AirportInfo> airportInfos = new LinkedList<>();
         for (Airport airport: airports) {
             CityInfo cityInfo = cityService.getCityInfo(airport.getCityId());
-            AirportInfo airportInfo = new AirportInfo(airport.getAirportId(), airport.getName(), airport.getAirportCode(), airport.getCityId(), cityInfo);
+            AirportInfo airportInfo = new AirportInfo(airport.getAirportId(), airport.getName(),
+                    airport.getAirportCode(), airport.getCityId(), cityInfo);
             airportInfos.add(airportInfo);
         }
         return airportInfos;

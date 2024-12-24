@@ -10,6 +10,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CityInfo {
+
+    private Long cityId;
+
     private Long nationId;
 
     private NationInfo nation;

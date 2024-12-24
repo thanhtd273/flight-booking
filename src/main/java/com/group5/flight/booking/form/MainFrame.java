@@ -1,6 +1,5 @@
 package com.group5.flight.booking.form;
 
-import com.group5.flight.booking.form.component.FlightPayPanel;
 import com.group5.flight.booking.service.*;
 
 import javax.swing.*;
@@ -18,20 +17,18 @@ public class MainFrame extends JFrame {
     private final UserService userService;
 
     private final AirlineService airlineService;
-    private final PlaneService planeService;
 
     private final CardLayout cardLayout;
 
     private final JPanel mainPanel;
 
     public MainFrame(AuthService authService, AirportService airportService, FlightService flightService,
-                     UserService userService, AirlineService airlineService, PlaneService planeService) {
+                     UserService userService, AirlineService airlineService) {
         this.authService = authService;
         this.airportService = airportService;
         this.flightService = flightService;
         this.userService = userService;
         this.airlineService = airlineService;
-        this.planeService = planeService;
 
         // Initialize CardLayout and main panel
         cardLayout = new CardLayout();
@@ -51,17 +48,16 @@ public class MainFrame extends JFrame {
         SignUpPanel signUpPanel = new SignUpPanel(mainPanel, cardLayout, codeVerifierPanel, authService);
         LoginPanel loginPanel = new LoginPanel(mainPanel, cardLayout, authService);
         FlightSearchPanel flightSearchPanel = new FlightSearchPanel(mainPanel, cardLayout, airportService, flightService,
-                airlineService, planeService);
-        FlightPayPanel flightPayer = new FlightPayPanel(mainPanel, cardLayout);
+                airlineService);
+
         mainPanel.add(signUpPanel, SIGNUP_SCREEN);
         mainPanel.add(loginPanel, LOGIN_SCREEN);
         mainPanel.add(flightSearchPanel, FLIGHT_SEARCHER_SCREEN);
         mainPanel.add(codeVerifierPanel, CODE_VERIFIER);
-        mainPanel.add(flightPayer,FLIGHT_PAYER);
         // Add the main panel to the frame
         add(mainPanel);
 
         // Show the sign-up panel initially
-        cardLayout.show(mainPanel, FLIGHT_PAYER);
+        cardLayout.show(mainPanel, FLIGHT_SEARCHER_SCREEN);
     }
 }

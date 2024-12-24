@@ -9,11 +9,13 @@ import com.group5.flight.booking.model.Nation;
 import com.group5.flight.booking.model.Passenger;
 import com.group5.flight.booking.service.NationService;
 import com.group5.flight.booking.service.PassengerService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -61,6 +63,17 @@ public class PassengerServiceImpl implements PassengerService {
         passenger.setDeleted(false);
 
         return passengerDao.save(passenger);
+    }
+
+    @Override
+    @Transactional
+    public List<Passenger> create(PassengerInfo[] passengerInfos) throws LogicException {
+        List<Passenger> passengers = new LinkedList<>();
+        for (PassengerInfo passengerInfo: passengerInfos) {
+            passengers.add(create(passengerInfo));
+        }
+
+        return passengers;
     }
 
     @Override
