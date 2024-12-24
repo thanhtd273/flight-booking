@@ -23,6 +23,12 @@ import org.springframework.util.ObjectUtils;
 import java.time.LocalTime;
 import java.util.*;
 
+//import com.itextpdf.text.Document;
+//import com.itextpdf.text.DocumentException;
+//import com.itextpdf.text.Font;
+//import com.itextpdf.text.Paragraph;
+//import com.itextpdf.text.pdf.PdfWriter;
+
 @Service
 @RequiredArgsConstructor
 public class FlightServiceImpl implements FlightService {
@@ -208,6 +214,12 @@ public class FlightServiceImpl implements FlightService {
             seatInfoList.add(seatInfo);
         }
         return seatInfoList;
+    }
+
+    @Override
+    public ErrorCode exportFlightTicket(Long ticketId) {
+//        Document document = new Document();
+        return ErrorCode.SUCCESS;
     }
 
     private FlightInfo getFlightInfo(Flight flight) {

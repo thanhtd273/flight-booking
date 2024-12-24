@@ -51,19 +51,15 @@ public class MainFrame extends JFrame {
         LoginPanel loginPanel = new LoginPanel(mainPanel, cardLayout, authService);
         FlightSearchPanel flightSearchPanel = new FlightSearchPanel(mainPanel, cardLayout, airportService, flightService,
                 airlineService, planeService);
-//        FlightListPanel flightListPanel = new FlightListPanel();
 
         mainPanel.add(signUpPanel, SIGNUP_SCREEN);
         mainPanel.add(loginPanel, LOGIN_SCREEN);
         mainPanel.add(flightSearchPanel, FLIGHT_SEARCHER_SCREEN);
-//        mainPanel.add(flightListPanel, FLIGHT_LIST_SCREEN);
-
         mainPanel.add(codeVerifierPanel, CODE_VERIFIER);
-
         // Add the main panel to the frame
         add(mainPanel);
 
         // Show the sign-up panel initially
-        cardLayout.show(mainPanel, SIGNUP_SCREEN);
+        cardLayout.show(mainPanel, FLIGHT_SEARCHER_SCREEN);
     }
 }

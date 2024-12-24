@@ -27,6 +27,8 @@ public final class Constants {
 
     public static final String FLIGHT_PAYER = "FlightPayer";
 
+    public static final String CONTACT_FORM = "ContactForm";
+
     public static final String MIDNIGHT_TO_MORNING = "00:00 - 06:00";
 
     public static final String MORNING_TO_NOON = "06:00 - 12:00";

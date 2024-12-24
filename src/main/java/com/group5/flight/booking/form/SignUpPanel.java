@@ -29,13 +29,12 @@ public class SignUpPanel extends JPanel {
 
     private final AuthService authService;
 
-    // Size frame
-    int panelWidth = 900;
-    int panelHeight = 600;
+    private static final int PANEL_WIDTH = 900;
+    private static final int PANEL_HEIGHT = 600;
 
     // Size panel
-    int leftPanelWidth = (int) (panelWidth * 0.6);
-    int rightPanelWidth = (int) (panelWidth * 0.4);
+    int leftPanelWidth = (int) (PANEL_WIDTH * 0.6);
+    int rightPanelWidth = (int) (PANEL_WIDTH * 0.4);
 
     public SignUpPanel(JPanel mainPanel, CardLayout cardLayout, CodeVerifierPanel codeVerifierPanel, AuthService authService) {
         this.mainPanel = mainPanel;
@@ -52,7 +51,7 @@ public class SignUpPanel extends JPanel {
         // Right panel
         JPanel rightPanel = new JPanel();
         rightPanel.setBackground(new Color(34, 177, 76));
-        rightPanel.setBounds(leftPanelWidth, 0, rightPanelWidth, panelHeight);
+        rightPanel.setBounds(leftPanelWidth, 0, rightPanelWidth, PANEL_HEIGHT);
         rightPanel.setLayout(null);
 
         JLabel lblWelcome = new JLabel("Hello, Friend!");
@@ -95,7 +94,7 @@ public class SignUpPanel extends JPanel {
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(null);
         leftPanel.setBackground(Color.WHITE);
-        leftPanel.setBounds(0, 0, leftPanelWidth, panelHeight);
+        leftPanel.setBounds(0, 0, leftPanelWidth, PANEL_HEIGHT);
 
         JLabel lblCreateAccount = new JLabel("Create Account");
         lblCreateAccount.setFont(new Font(FONT_NAME, Font.BOLD, 30));

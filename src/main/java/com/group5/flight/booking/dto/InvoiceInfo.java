@@ -4,7 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.util.ObjectUtils;
+
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,5 +16,8 @@ public class InvoiceInfo {
 
     private ContactInfo contact;
 
+    private List<PassengerInfo> passengerInfos;
+
     private Float totalAmount;
+
 }

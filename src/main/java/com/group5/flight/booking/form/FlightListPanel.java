@@ -7,7 +7,6 @@ import com.group5.flight.booking.dto.FilterCriteria;
 import com.group5.flight.booking.model.Airline;
 import com.group5.flight.booking.service.AirlineService;
 import com.group5.flight.booking.service.FlightService;
-import com.group5.flight.booking.service.PlaneService;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +15,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class FlightListPanel extends JPanel {
 
@@ -40,17 +40,14 @@ public class FlightListPanel extends JPanel {
 
     private final FlightService flightService;
 
-    private final PlaneService planeService;
-
 
     public FlightListPanel(JPanel mainPanel, CardLayout cardLayout, Long fromAirportId,
                            Long toAirportId, Date departureDate, List<FlightInfo> flightInfoList,
-                           AirlineService airlineService, FlightService flightService, PlaneService planeService) {
+                           AirlineService airlineService, FlightService flightService) {
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
         this.airlineService = airlineService;
         this.flightService = flightService;
-        this.planeService = planeService;
         setBaseFilterCriteria(fromAirportId, toAirportId, departureDate);
         this.fromAirportId = fromAirportId;
         this.toAirportId = toAirportId;
@@ -235,7 +232,7 @@ public class FlightListPanel extends JPanel {
         pricePanel.setLayout(new BoxLayout(pricePanel, BoxLayout.Y_AXIS));
         pricePanel.setBackground(Color.WHITE);
         JLabel priceLabel = new JLabel(String.valueOf(flightInfo.getBasePrice()));
-        priceLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+        priceLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
         priceLabel.setForeground(new Color(255, 69, 0));
         pricePanel.add(priceLabel);
 
@@ -256,23 +253,13 @@ public class FlightListPanel extends JPanel {
         JPanel detailsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         detailsPanel.setBackground(Color.WHITE);
         JButton detailsButton = new JButton("Chi tiết");
-        detailsButton.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        detailsButton.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 12));
         detailsButton.setForeground(new Color(0, 123, 255));
         detailsButton.setContentAreaFilled(false);
         detailsButton.setBorder(null);
         detailsPanel.add(detailsButton);
 
-        // Nút "Chọn"
-        JPanel selectPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        selectPanel.setBackground(Color.WHITE);
-        JButton selectButton = getSelectButton();
-        selectButton.addActionListener(e -> {
-            FlightDetailPanel detailPanel = new FlightDetailPanel(mainPanel, cardLayout, flightInfo,
-                    planeService, flightService);
-            mainPanel.add(detailPanel, Constants.FLIGHT_DETAIL_SCREEN);
-            cardLayout.show(mainPanel, Constants.FLIGHT_DETAIL_SCREEN);
-        });
-        selectPanel.add(selectButton);
+        JPanel selectPanel = getSelectPanel(flightInfo);
 
         actionPanel.add(detailsPanel, BorderLayout.WEST); // Đặt nút "Chi tiết" ở lề trái
         actionPanel.add(selectPanel, BorderLayout.EAST);  // Đặt nút "Chọn" ở lề phải
@@ -281,6 +268,19 @@ public class FlightListPanel extends JPanel {
         cardPanel.add(actionPanel, BorderLayout.SOUTH);
 
         return cardPanel;
+    }
+
+    private JPanel getSelectPanel(FlightInfo flightInfo) {
+        JPanel selectPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        selectPanel.setBackground(Color.WHITE);
+        JButton selectButton = getSelectButton();
+        selectButton.addActionListener(e -> {
+            ContactFormPanel contactFormPanel = new ContactFormPanel(mainPanel, cardLayout, flightInfo, flightService);
+            mainPanel.add(contactFormPanel, Constants.CONTACT_FORM);
+            cardLayout.show(mainPanel, Constants.CONTACT_FORM);
+        });
+        selectPanel.add(selectButton);
+        return selectPanel;
     }
 
     private JButton getSelectButton() {
@@ -303,7 +303,7 @@ public class FlightListPanel extends JPanel {
         };
 
         selectButton.setPreferredSize(new Dimension(100, 30));
-        selectButton.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        selectButton.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 12));
         selectButton.setBackground(new Color(0, 123, 255));
         selectButton.setForeground(Color.WHITE);
         selectButton.setContentAreaFilled(false);
@@ -348,52 +348,41 @@ public class FlightListPanel extends JPanel {
             case "VASCO":
                 iconPath = "/vasco.png";
                 break;
+            default:
+                break;
         }
 
-        // Tải và điều chỉnh kích thước của biểu tượng
         ImageIcon icon = resizeIcon(iconPath, 15, 15);
 
-        // Tạo một JPanel để chứa Checkbox, Biểu tượng và Tên hãng
         JPanel airlinePanel = new JPanel();
-        airlinePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5)); // Căn lề bên trái
+        airlinePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
         airlinePanel.setBackground(Color.WHITE);
 
-        // Đảm bảo biểu tượng chỉ xuất hiện khi có đường dẫn hình ảnh hợp lệ
         if (icon != null) {
-            JLabel airlineIconLabel = new JLabel(icon);  // Đặt biểu tượng
-            airlinePanel.add(airlineCheckbox);          // Thêm JCheckBox
-            airlinePanel.add(airlineIconLabel);         // Thêm biểu tượng
+            JLabel airlineIconLabel = new JLabel(icon);
+            airlinePanel.add(airlineCheckbox);
+            airlinePanel.add(airlineIconLabel);
         } else {
-            airlinePanel.add(airlineCheckbox);          // Thêm JCheckBox
+            airlinePanel.add(airlineCheckbox);
         }
 
-        // Thêm tên hãng hàng không vào JLabel riêng
         JLabel airlineNameLabel = new JLabel(airline.getName());
         airlineNameLabel.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 12));
         airlineNameLabel.setForeground(Color.BLACK);
-        airlinePanel.add(airlineNameLabel);            // Thêm tên hãng
+        airlinePanel.add(airlineNameLabel);
 
-        return airlinePanel; // Trả về JPanel đã cấu hình
+        return airlinePanel;
     }
 
     private ImageIcon resizeIcon(String resourcePath, int width, int height) {
         try {
-            ImageIcon icon = new ImageIcon(getClass().getResource(resourcePath));
+            ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource(resourcePath)));
             return new ImageIcon(icon.getImage().getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH));
         } catch (Exception e) {
             logger.error("Failed to load image: {}", resourcePath);
             return null;
         }
     }
-
-    private void styleActionButton(JButton button) {
-        button.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 12));
-        button.setBackground(new Color(0, 123, 255)); // Màu xanh cho nút
-        button.setForeground(Color.WHITE);
-        button.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-        button.setFocusPainted(false);
-    }
-
 
     private void styleTimeButton(JButton button) {
         button.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 14));

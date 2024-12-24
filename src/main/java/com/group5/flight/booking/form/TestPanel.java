@@ -1,162 +1,136 @@
 package com.group5.flight.booking.form;
 
+import com.group5.flight.booking.core.AppUtils;
 import com.group5.flight.booking.core.Constants;
-import com.group5.flight.booking.form.component.RoundedBorder;
-import com.group5.flight.booking.form.swing.MyTextField;
+import com.group5.flight.booking.dto.SeatInfo;
+import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class TestPanel {
+    private static final int NUM_OF_COLUMN = 6;
+
+    private static final int NUM_OF_PASSENGERS = 3;
+
+    private static final List<Long> selectedSeats = new ArrayList<>();
+
+    private static final List<SeatInfo> seatInfoList = new ArrayList<>();
+
+
     public static void main(String[] args) {
-        // Tạo frame chính
-        JFrame frame = new JFrame("Thông tin liên hệ");
+        generateFlightSeats();
+
+        initComponent();
+    }
+
+    private static void initComponent() {
+        JFrame frame = new JFrame("Thông tin liên hệ và chuyến bay");
+        frame.setBackground(new Color(247, 249, 250));
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setSize(900, 600);
 
-        JPanel contactInfoPanel = new JPanel();
-        contactInfoPanel.setLayout(new GridBagLayout());
-        contactInfoPanel.setBackground(Color.WHITE);
-        contactInfoPanel.setBorder(new RoundedBorder(15));
+        JPanel panel = new JPanel();
+        panel.setLayout(new MigLayout("wrap 1", "[grow]", "[top][grow][bottom]"));
+        panel.setBackground(Color.WHITE);
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        JScrollPane scrollPane = new JScrollPane(panel);
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-        JLabel titleLabel = new JLabel("Contact Information");
-        titleLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        contactInfoPanel.add(titleLabel, gbc);
+        JLabel lblTitle = new JLabel(String.format("Select %d seats", NUM_OF_PASSENGERS));
+        lblTitle.setFont(new Font(Constants.FB_FONT, Font.BOLD, 24));
+        lblTitle.setForeground(new Color(7, 164, 121));
+        panel.add(lblTitle, "span, center, gapbottom 20");
 
-        JLabel firstnameContactLabel = new JLabel("Firstname");
-        firstnameContactLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        contactInfoPanel.add(firstnameContactLabel, gbc);
+        JPanel seatPanel = new JPanel(new MigLayout("wrap " + NUM_OF_COLUMN, "[grow, center]5".repeat(NUM_OF_COLUMN), "[]10[]"));
+        seatPanel.setOpaque(false);
 
-        MyTextField firstnameContactField = new MyTextField();
-        firstnameContactField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        firstnameContactField.setPreferredSize(new Dimension(300, 50));
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        contactInfoPanel.add(firstnameContactField, gbc);
+        for (SeatInfo seatInfo: seatInfoList) {
+            JButton seatButton = getSeatButton(seatInfo);
+            seatPanel.add(seatButton);
+        }
 
-        // Tên Đệm & Tên
-        JLabel lastnameContactLabel = new JLabel("Lastname");
-        lastnameContactLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        contactInfoPanel.add(lastnameContactLabel, gbc);
+        panel.add(seatPanel, "grow");
 
-        MyTextField lastnameContactField = new MyTextField();
-        lastnameContactField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        lastnameContactField.setPreferredSize(new Dimension(300, 50));
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        contactInfoPanel.add(lastnameContactField, gbc);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new MigLayout("wrap", "[grow]10[grow]"));
+        buttonPanel.setOpaque(false);
 
-        JLabel phoneContactLabel = new JLabel("Phone Number");
-        phoneContactLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        contactInfoPanel.add(phoneContactLabel, gbc);
+        JButton btnBack = new JButton("Back");
+        btnBack.setBackground(new Color(7, 164, 121));
+        btnBack.setForeground(Color.WHITE);
+        buttonPanel.add(btnBack, "w 100!, h 40!");
 
-        MyTextField phoneContactField = new MyTextField();
-        phoneContactField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        phoneContactField.setPreferredSize(new Dimension(300, 50));
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        contactInfoPanel.add(phoneContactField, gbc);
+        JButton btnConfirm = new JButton("Confirm");
+        btnConfirm.setBackground(new Color(7, 164, 121));
+        btnConfirm.addActionListener(e -> {
+            if (selectedSeats.size() == NUM_OF_PASSENGERS) {
+                System.out.print(selectedSeats);
+            } else {
+                AppUtils.showErrorDialog("You have not selected enough seats");
+            }
+        });
+        btnConfirm.setForeground(Color.WHITE);
 
-        JLabel emailLabel = new JLabel("Email");
-        emailLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        gbc.gridx = 1;
-        gbc.gridy = 3;
-        contactInfoPanel.add(emailLabel, gbc);
+        buttonPanel.add(btnConfirm, "w 100!, h 40!");
 
-        MyTextField emailContactField = new MyTextField();
-        emailContactField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        emailContactField.setPreferredSize(new Dimension(300, 50));
-        gbc.gridx = 1;
-        gbc.gridy = 4;
-        contactInfoPanel.add(emailContactField, gbc);
+        panel.add(buttonPanel, "span, center");
 
-        JPanel passengerInfoPanel = new JPanel();
-        passengerInfoPanel.setLayout(new GridBagLayout());
-        passengerInfoPanel.setBackground(Color.WHITE);
-        passengerInfoPanel.setBorder(new RoundedBorder(15));
-
-//        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        JLabel titlePassengerLabel = new JLabel("Passenger Information");
-        titlePassengerLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        passengerInfoPanel.add(titlePassengerLabel, gbc);
-
-        JLabel firstnamePassengerLabel = new JLabel("Firstname");
-        firstnamePassengerLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        passengerInfoPanel.add(firstnamePassengerLabel, gbc);
-
-        MyTextField firstnamePassengerField = new MyTextField();
-        firstnamePassengerField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        firstnamePassengerField.setPreferredSize(new Dimension(300, 50));
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        passengerInfoPanel.add(firstnamePassengerField, gbc);
-
-        // Tên Đệm & Tên
-        JLabel lastnamePassengerLabel = new JLabel("Lastname");
-        lastnamePassengerLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        passengerInfoPanel.add(lastnamePassengerLabel, gbc);
-
-        MyTextField lastnamePassengerField = new MyTextField();
-        lastnamePassengerField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        lastnamePassengerField.setPreferredSize(new Dimension(300, 50));
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        passengerInfoPanel.add(lastnamePassengerField, gbc);
-
-        JLabel phonePassengerLabel = new JLabel("Phone Number");
-        phonePassengerLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        passengerInfoPanel.add(phonePassengerLabel, gbc);
-
-        MyTextField phonePassengerField = new MyTextField();
-        phonePassengerField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        phonePassengerField.setPreferredSize(new Dimension(300, 50));
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        passengerInfoPanel.add(phonePassengerField, gbc);
-
-        JLabel emailPassengerLabel = new JLabel("Email");
-        emailPassengerLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        gbc.gridx = 1;
-        gbc.gridy = 3;
-        passengerInfoPanel.add(emailPassengerLabel, gbc);
-
-        MyTextField emailPassengerField = new MyTextField();
-        emailPassengerField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        emailPassengerField.setPreferredSize(new Dimension(300, 50));
-        gbc.gridx = 1;
-        gbc.gridy = 4;
-        passengerInfoPanel.add(emailPassengerField, gbc);
-
-        // Thêm panel chính vào frame
-        frame.add(contactInfoPanel);
-        frame.add(passengerInfoPanel);
+        frame.add(scrollPane);
         frame.setVisible(true);
+    }
+
+    private static JButton getSeatButton(SeatInfo seatInfo) {
+        JButton seatButton = new JButton(seatInfo.getSeatCode());
+        seatButton.setFont(new Font(Constants.FB_FONT, Font.BOLD, 14));
+        seatButton.setPreferredSize(new Dimension(50, 50));
+
+        if (Boolean.TRUE.equals(seatInfo.getAvailable())) {
+            seatButton.setBackground(new Color(7, 164, 121));
+            seatButton.setForeground(Color.WHITE);
+            seatButton.addActionListener(e -> {
+                if (selectedSeats.size() == NUM_OF_PASSENGERS) {
+                    AppUtils.showErrorDialog("You have selected all the seats booked");
+                } else if (!selectedSeats.contains(seatInfo.getSeatId())) {
+                    selectedSeats.add(seatInfo.getSeatId());
+                    seatButton.setBackground(new Color(0, 123, 255));
+                } else {
+                    seatButton.setBackground(new Color(7, 164, 121));
+                    selectedSeats.remove(seatInfo.getSeatId());
+                }
+
+            });
+        } else {
+            seatButton.setBackground(Color.GRAY);
+            seatButton.setForeground(Color.WHITE);
+            seatButton.setEnabled(false);
+        }
+
+        return seatButton;
+    }
+
+    public static void generateFlightSeats() {
+        String classLevel;
+        int seatIdCounter = 1;
+        Random random = new Random();
+        for (int row = 1; row <= 20; row++) {
+            for (char column = 'A'; column <= 'G'; column++) {
+                String seatCode = row + String.valueOf(column);
+
+                if (row <= 5) {
+                    classLevel = "First";
+                } else if (row <= 15) {
+                    classLevel = "Business";
+                } else {
+                    classLevel = "Economy";
+                }
+
+                seatInfoList.add(new SeatInfo((long) seatIdCounter++, 0L, null, classLevel, seatCode, random.nextBoolean()));
+            }
+        }
     }
 }

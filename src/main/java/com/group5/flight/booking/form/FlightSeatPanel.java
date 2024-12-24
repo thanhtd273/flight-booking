@@ -8,9 +8,7 @@ import com.group5.flight.booking.core.Constants;
 import com.group5.flight.booking.dto.FlightInfo;
 import com.group5.flight.booking.dto.SeatInfo;
 import com.group5.flight.booking.form.component.FlightPayPanel;
-import com.group5.flight.booking.model.Plane;
 import com.group5.flight.booking.service.FlightService;
-import com.group5.flight.booking.service.PlaneService;
 import net.miginfocom.swing.MigLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,15 +18,11 @@ public class FlightSeatPanel extends JPanel {
 
     private static final Logger logger = LoggerFactory.getLogger(FlightSeatPanel.class);
 
-    private JTextField txtSeat;
-
     private boolean[] seats;
 
     private static final int NUM_OF_COLUMN = 6;
 
     private final FlightInfo flightInfo;
-
-    private final PlaneService planeService;
 
     private final FlightService flightService;
 
@@ -36,12 +30,10 @@ public class FlightSeatPanel extends JPanel {
 
     private final CardLayout cardLayout;
 
-    public FlightSeatPanel(JPanel mainPanel, CardLayout cardLayout, FlightInfo flightInfo,
-                           PlaneService planeService, FlightService flightService) {
+    public FlightSeatPanel(JPanel mainPanel, CardLayout cardLayout, FlightInfo flightInfo, FlightService flightService) {
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
         this.flightInfo = flightInfo;
-        this.planeService = planeService;
         this.flightService = flightService;
 
         initSeatData();
@@ -57,13 +49,8 @@ public class FlightSeatPanel extends JPanel {
         lblTitle.setForeground(new Color(7, 164, 121));
         add(lblTitle, "span, center, gapbottom 20");
 
-        // Sử dụng GridBagLayout để tạo khoảng cách giữa 3 cột trái và 3 cột phải
         JPanel seatPanel = new JPanel(new GridBagLayout());
         seatPanel.setOpaque(false);
-
-        Dimension fixedSize = new Dimension(350, 300); // Kích thước cố định cho khung chứa
-        int buttonWidth = fixedSize.width / NUM_OF_COLUMN - 15; // Chiều rộng mỗi nút ghế
-        int buttonHeight = fixedSize.height / (seats.length / NUM_OF_COLUMN + 1) - 10; // Chiều cao mỗi nút ghế
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
@@ -85,31 +72,26 @@ public class FlightSeatPanel extends JPanel {
                 seatButton.setEnabled(false);
             }
 
-            // Tính toán vị trí hàng và cột
-            int row = i / NUM_OF_COLUMN; // Số hàng
-            int col = i % NUM_OF_COLUMN; // Số cột
+            int row = i / NUM_OF_COLUMN;
+            int col = i % NUM_OF_COLUMN;
 
-            // Thêm khoảng cách lớn hơn giữa cột 3 và cột 4
             if (col == 3) {
-                gbc.insets = new Insets(10, 80, 10, 10); // Khoảng cách lớn hơn giữa cột 3 và 4
+                gbc.insets = new Insets(10, 80, 10, 10);
             } else {
-                gbc.insets = new Insets(10, 10, 10, 10); // Khoảng cách chuẩn giữa các nút
+                gbc.insets = new Insets(10, 10, 10, 10);
             }
-
-            gbc.gridx = col; // Cột hiện tại
-            gbc.gridy = row; // Hàng hiện tại
+            gbc.gridx = col;
+            gbc.gridy = row;
 
             seatPanel.add(seatButton, gbc);
         }
 
-        // Thêm thanh cuộn
         JScrollPane scrollPane = new JScrollPane(seatPanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setPreferredSize(new Dimension(350, 300)); // Kích thước khung cố định
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setPreferredSize(new Dimension(350, 300));
         add(scrollPane, "grow");
 
-        // Chỉ giữ lại nút Back và Confirm
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new MigLayout("wrap", "[grow]10[grow]"));
         buttonPanel.setOpaque(false);
@@ -133,20 +115,17 @@ public class FlightSeatPanel extends JPanel {
         add(buttonPanel, "span, center");
     }
 
-
     private void initSeatData() {
         try {
-            Plane plane = planeService.findByPlaneId(flightInfo.getPlane().getPlaneId());
             List<SeatInfo> seatInfoList = flightService.getFlightSeats(flightInfo.getFlightId());
             logger.debug("Search Info list: {}", seatInfoList);
 
-            seats = new boolean[plane.getNumOfSeats()];
+            seats = new boolean[120];
             for (int i = 0; i < seats.length; i++) {
                 seats[i] = (i % 3 != 0);
             }
         } catch (Exception e) {
             logger.error("Get flight's seats failed, error: {}", e.getMessage());
         }
-
     }
 }

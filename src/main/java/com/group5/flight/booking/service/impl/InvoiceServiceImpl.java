@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -84,6 +85,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (ObjectUtils.isEmpty(invoice)) return null;
         ContactInfo contact = contactService.getContactInfo(invoice.getContactId());
 
-        return new InvoiceInfo(invoice.getContactId(), contact, invoice.getTotalAmount());
+        // TODO: Not hard code for passenger list
+        return new InvoiceInfo(invoice.getContactId(), contact, new ArrayList<>(), invoice.getTotalAmount());
     }
 }
