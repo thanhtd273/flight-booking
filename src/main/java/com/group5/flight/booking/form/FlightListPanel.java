@@ -278,6 +278,10 @@ public class FlightListPanel extends JPanel {
             ContactFormPanel contactFormPanel = new ContactFormPanel(mainPanel, cardLayout, flightInfo, flightService);
             mainPanel.add(contactFormPanel, Constants.CONTACT_FORM);
             cardLayout.show(mainPanel, Constants.CONTACT_FORM);
+//            FlightDetailPanel detailPanel = new FlightDetailPanel(mainPanel, cardLayout, flightInfo,
+//                    planeService, flightService);
+//            mainPanel.add(detailPanel, Constants.FLIGHT_DETAIL_SCREEN);
+//            cardLayout.show(mainPanel, Constants.FLIGHT_DETAIL_SCREEN);
         });
         selectPanel.add(selectButton);
         return selectPanel;
