@@ -320,7 +320,6 @@ public class FlightListPanel extends JPanel {
             logger.error("Filter flight failed, error: {}", e.getMessage());
             AppUtils.showErrorDialog(e.getMessage());
         }
-
     }
 
     private void setBaseFilterCriteria(Long fromAirportId, Long toAirportId, Date departureDate) {
