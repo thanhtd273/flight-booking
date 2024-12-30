@@ -8,7 +8,7 @@
 		<version>3.3.0</version>
 		<relativePath/> 
 	</parent>
-	<groupId>com.group5</groupId>
+	<groupId>com.group1</groupId>
 	<artifactId>flight-booking</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>flight-booking</name>
@@ -92,26 +92,6 @@
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
 
-		<!-- Timed Task Library -->
-		<dependency>
-			<groupId>org.jdesktop</groupId>
-			<artifactId>timingframework</artifactId>
-			<version>0.55</version>
-		</dependency>
-
-		<!-- MIG Layout -->
-		<dependency>
-			<groupId>com.miglayout</groupId>
-			<artifactId>miglayout</artifactId>
-			<version>4.0</version>
-		</dependency>
-
-		<!-- JavaMail API -->
-		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>javax.mail</artifactId>
-			<version>1.6.2</version>
-		</dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>

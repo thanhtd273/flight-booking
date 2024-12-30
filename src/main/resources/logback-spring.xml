@@ -45,7 +45,7 @@
         <appender-ref ref="Console" />
     </root>
 
-    <logger name="com.group5.flight.booking" level="debug" additivity="false">
+    <logger name="com.group1.flight.booking" level="debug" additivity="false">
         <!--        <appender-ref ref="logStashAppender"/>-->
         <appender-ref ref="RollingFile"/>
         <appender-ref ref="Console"/>
