@@ -5,14 +5,19 @@ import java.awt.*;
 
 import com.group1.flight.booking.core.AppUtils;
 import com.group1.flight.booking.core.Constants;
+import com.group1.flight.booking.dto.BookingInfo;
 import com.group1.flight.booking.dto.FlightInfo;
+import com.group1.flight.booking.service.BookingService;
 import com.group1.flight.booking.service.FlightService;
 import com.group1.flight.booking.service.PlaneService;
 import net.miginfocom.swing.MigLayout;
+import com.group1.flight.booking.form.component.FlightPayPanel;
+
+import static com.group1.flight.booking.core.Constants.*;
 
 public class FlightDetailPanel extends JPanel {
 
-    private static final String GAP_RIGHT = "gapright 10";
+    private static final String GAP_RIGHT = "gap right 10";
 
     private final FlightInfo flightInfo;
 
@@ -24,10 +29,16 @@ public class FlightDetailPanel extends JPanel {
 
     private final CardLayout cardLayout;
 
+    private BookingInfo bookingInfo = null;
+
+    private BookingService bookingService = null;
+
     public FlightDetailPanel(JPanel mainPanel, CardLayout cardLayout, FlightInfo flightInfo,
                              PlaneService planeService, FlightService flightService) {
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
+        this.bookingInfo = bookingInfo;
+        this.bookingService = bookingService;
         this.flightInfo = flightInfo;
         this.planeService = planeService;
         this.flightService = flightService;
@@ -43,7 +54,7 @@ public class FlightDetailPanel extends JPanel {
         flightInfoPanel.setOpaque(false);
 
         JLabel lblTitle = new JLabel("Flight Information");
-        lblTitle.setFont(new Font(Constants.FB_FONT, Font.BOLD, 28));
+        lblTitle.setFont(new Font(FB_FONT, Font.BOLD, 28));
         lblTitle.setForeground(new Color(7, 164, 121));
         flightInfoPanel.add(lblTitle, "span, center, gapbottom 20");
 
@@ -53,33 +64,33 @@ public class FlightDetailPanel extends JPanel {
         JLabel lblArrivalAirport = createLabel("Arrival Airport:");
         JLabel lblDepartureTime = createLabel("Departure Time:");
         JLabel lblArrivalTime = createLabel("Arrival Time:");
-        JLabel lblSeatClass = createLabel("Seat Class:");
+        //JLabel lblSeatClass = createLabel("Seat Class:");
         JLabel lblTicketPrice = createLabel("Ticket Price:");
         JLabel lblSeat = createLabel("Seat:");
 
-        flightInfoPanel.add(lblFlightCode, GAP_RIGHT);
+        flightInfoPanel.add(lblFlightCode, "gap left 10");
         flightInfoPanel.add(createValueLabel(String.valueOf(flightInfo.getFlightId())));
 
-        flightInfoPanel.add(lblDepartureAirport, GAP_RIGHT);
+        flightInfoPanel.add(lblDepartureAirport, "gap left 10");
         flightInfoPanel.add(createValueLabel(flightInfo.getDepartureAirportInfo().getName()));
 
-        flightInfoPanel.add(lblArrivalAirport, GAP_RIGHT);
+        flightInfoPanel.add(lblArrivalAirport, "gap left 10");
         flightInfoPanel.add(createValueLabel(flightInfo.getDestinationAirportInfo().getName()));
 
-        flightInfoPanel.add(lblDepartureTime, GAP_RIGHT);
+        flightInfoPanel.add(lblDepartureTime, "gap left 10");
         flightInfoPanel.add(createValueLabel(AppUtils.formatDate(flightInfo.getDepartureDate())));
 
-        flightInfoPanel.add(lblArrivalTime, GAP_RIGHT);
+        flightInfoPanel.add(lblArrivalTime, "gap left 10");
         flightInfoPanel.add(createValueLabel(AppUtils.formatDate(flightInfo.getReturnDate())));
 
         //TODO
-        flightInfoPanel.add(lblSeatClass, GAP_RIGHT);
-        flightInfoPanel.add(createValueLabel("N/A"));
+//        flightInfoPanel.add(lblSeatClass, GAP_RIGHT);
+//        flightInfoPanel.add(createValueLabel("N/A"));
 
-        flightInfoPanel.add(lblTicketPrice, GAP_RIGHT);
+        flightInfoPanel.add(lblTicketPrice, "gap left 10");
         flightInfoPanel.add(createValueLabel(String.valueOf(flightInfo.getBasePrice())));
 
-        flightInfoPanel.add(lblSeat, GAP_RIGHT);
+        flightInfoPanel.add(lblSeat, "gap left 10");
         flightInfoPanel.add(createValueLabel("Not Selected"));
 
         add(flightInfoPanel, "align center");
@@ -89,14 +100,14 @@ public class FlightDetailPanel extends JPanel {
         buttonPanel.setOpaque(false);
 
         JButton btnBack = createButton("Back");
-        btnBack.addActionListener(e -> cardLayout.show(mainPanel, Constants.FLIGHT_SEARCHER_SCREEN));
+        btnBack.addActionListener(e -> cardLayout.show(mainPanel, FLIGHT_SEARCHER_SCREEN));
         buttonPanel.add(btnBack, "cell 0 0, align left, w 120!, h 40!");
 
         JButton btnSelectSeat = createButton("Select Seat");
         btnSelectSeat.addActionListener(e -> {
-//            FlightSeatPanel seatPanel = new FlightSeatPanel(mainPanel, cardLayout, flightInfo, flightService);
-//            mainPanel.add(seatPanel, FLIGHT_SEAT_SCREEN);
-//            cardLayout.show(mainPanel, FLIGHT_SEAT_SCREEN);
+            FlightPayPanel payPanel = new FlightPayPanel(mainPanel, cardLayout, bookingInfo, bookingService);
+            mainPanel.add(payPanel, FLIGHT_PAYER);
+            cardLayout.show(mainPanel, FLIGHT_PAYER);
         });
         buttonPanel.add(btnSelectSeat, "cell 1 0, align center, w 150!, h 40!");
 
@@ -105,21 +116,21 @@ public class FlightDetailPanel extends JPanel {
 
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
-        label.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 16));
+        label.setFont(new Font(FB_FONT, Font.PLAIN, 16));
         label.setForeground(new Color(50, 50, 50));
         return label;
     }
 
     private JLabel createValueLabel(String text) {
         JLabel label = new JLabel(text);
-        label.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
+        label.setFont(new Font(FB_FONT, Font.BOLD, 16));
         label.setForeground(new Color(30, 144, 255));
         return label;
     }
 
     private JButton createButton(String text) {
         JButton button = new JButton(text);
-        button.setFont(new Font(Constants.FB_FONT, Font.BOLD, 14));
+        button.setFont(new Font(FB_FONT, Font.BOLD, 14));
         button.setBackground(new Color(7, 164, 121));
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);

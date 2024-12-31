@@ -64,6 +64,6 @@ public class MainFrame extends JFrame {
         add(mainPanel);
 
         // Show the sign-up panel initially
-        cardLayout.show(mainPanel, FLIGHT_SEARCHER_SCREEN);
+        cardLayout.show(mainPanel, SIGNUP_SCREEN);
     }
 }

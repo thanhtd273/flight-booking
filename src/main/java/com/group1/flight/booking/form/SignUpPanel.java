@@ -153,7 +153,24 @@ public class SignUpPanel extends JPanel {
         });
         leftPanel.add(btnSignUp);
 
+        confirmPasswordField.addActionListener(e -> performSignUp(txtName, txtEmail, txtPassword, confirmPasswordField));
+
         add(leftPanel);
         add(rightPanel);
+    }
+
+    private void performSignUp(MyTextField txtName, MyTextField txtEmail, MyPasswordField txtPassword, MyPasswordField confirmPasswordField) {
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(txtEmail.getText());
+        userInfo.setPassword(String.valueOf(txtPassword.getPassword()));
+        userInfo.setConfirmPassword(String.valueOf(confirmPasswordField.getPassword()));
+        try {
+            User user = authService.signUp(userInfo);
+            logger.debug("Create user successfully, user = {}", user);
+            codeVerifierPanel.setEmail(txtEmail.getText());
+            cardLayout.show(mainPanel, CODE_VERIFIER);
+        } catch (LogicException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Sign Up Fail", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }
