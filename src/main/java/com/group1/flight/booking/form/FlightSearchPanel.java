@@ -198,9 +198,9 @@ public class FlightSearchPanel extends JPanel {
                     logger.debug("Travel info: {}", bookingInfo);
                     flightInfoList.addAll(flightService.findFlight(bookingInfo.getDepartureAirportId(), bookingInfo.getDestinationAirportId(), bookingInfo.getDepartureDate())) ;
                     logger.debug("Flight list: {}", flightInfoList);
-//                    FlightListPanel flightListPanel = new FlightListPanel(mainPanel, cardLayout, bookingInfo,
-//                            flightInfoList, airlineService, flightService, bookingService, nationService);
-//                    mainPanel.add(flightListPanel, FLIGHT_LIST_SCREEN);
+                    FlightListPanel flightListPanel = new FlightListPanel(mainPanel, cardLayout, bookingInfo,
+                            flightInfoList, airlineService, flightService, bookingService, nationService);
+                    mainPanel.add(flightListPanel, FLIGHT_LIST_SCREEN);
                     cardLayout.show(mainPanel, FLIGHT_LIST_SCREEN);
                 } catch (LogicException ex) {
                     JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
