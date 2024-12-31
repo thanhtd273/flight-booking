@@ -10,6 +10,7 @@ import com.group1.flight.booking.service.AirlineService;
 import com.group1.flight.booking.service.BookingService;
 import com.group1.flight.booking.service.FlightService;
 import com.group1.flight.booking.service.NationService;
+import com.group1.flight.booking.form.swing.Button;
 import lombok.Setter;
 import org.apache.commons.lang3.Range;
 import org.slf4j.Logger;
@@ -78,9 +79,6 @@ public class FlightListPanel extends JPanel {
     private void initComponent() {
         setLayout(new BorderLayout());
         add(createFilterSidebar(filterCriteria), BorderLayout.WEST);
-        JButton backButton = new JButton("Back");
-        backButton.addActionListener(e -> cardLayout.show(mainPanel, Constants.FLIGHT_SEARCHER_SCREEN));
-        add(backButton, BorderLayout.NORTH);
         add(createFlightListPanel(flightInfoList), BorderLayout.CENTER);
     }
 
@@ -144,6 +142,7 @@ public class FlightListPanel extends JPanel {
                 filterCriteria.setAirlineIds(currentIds);
                 updateFilterResult();
             });
+            airlineCheckbox.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 14));
             airlineFilterPanel.add(createAirlineCheckboxWithIcon(airlineCheckbox, airline));
             airlineFilterPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         }
@@ -235,6 +234,16 @@ public class FlightListPanel extends JPanel {
         filterPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         filterPanel.add(timeFilterPanel);
 
+        // Add "Back" button
+        filterPanel.add(Box.createVerticalGlue());
+        filterPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        JButton backButton = new JButton("Back");
+        backButton.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 14));
+        backButton.setBackground(new Color(7, 164, 121));
+        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        backButton.addActionListener(e -> cardLayout.show(mainPanel, Constants.FLIGHT_SEARCHER_SCREEN));
+        filterPanel.add(backButton);
+
         return filterPanel;
     }
 
@@ -260,7 +269,7 @@ public class FlightListPanel extends JPanel {
         cardPanel.setLayout(new BorderLayout());
         cardPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         cardPanel.setBackground(Color.WHITE);
-        cardPanel.setPreferredSize(new Dimension(600, 160));
+        cardPanel.setPreferredSize(new Dimension(500, 120));
 
         JPanel mainInfoPanel = new JPanel();
         mainInfoPanel.setLayout(new BoxLayout(mainInfoPanel, BoxLayout.X_AXIS));
@@ -287,7 +296,7 @@ public class FlightListPanel extends JPanel {
         JPanel pricePanel = new JPanel();
         pricePanel.setLayout(new BoxLayout(pricePanel, BoxLayout.Y_AXIS));
         pricePanel.setBackground(Color.WHITE);
-        JLabel priceLabel = new JLabel(String.valueOf(flightInfo.getBasePrice()));
+        JLabel priceLabel = new JLabel(String.valueOf(flightInfo.getBasePrice() + " VNĐ"));
         priceLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
         priceLabel.setForeground(new Color(255, 69, 0));
         pricePanel.add(priceLabel);
@@ -383,9 +392,6 @@ public class FlightListPanel extends JPanel {
             removeAll();
             setLayout(new BorderLayout());
             add(createFilterSidebar(filterCriteria), BorderLayout.WEST);
-            JButton backButton = new JButton("Back");
-            backButton.addActionListener(e -> cardLayout.show(mainPanel, Constants.FLIGHT_SEARCHER_SCREEN));
-            add(backButton, BorderLayout.NORTH);
             add(createFlightListPanel(updatedFlightList), BorderLayout.CENTER);
 
             revalidate();
@@ -425,7 +431,7 @@ public class FlightListPanel extends JPanel {
                 break;
         }
 
-        ImageIcon icon = resizeIcon(iconPath);
+        ImageIcon icon = resizeIcon(iconPath, 15, 15);
 
         JPanel airlinePanel = new JPanel();
         airlinePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
@@ -439,18 +445,13 @@ public class FlightListPanel extends JPanel {
             airlinePanel.add(airlineCheckbox);
         }
 
-        JLabel airlineNameLabel = new JLabel(airline.getName());
-        airlineNameLabel.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 12));
-        airlineNameLabel.setForeground(Color.BLACK);
-        airlinePanel.add(airlineNameLabel);
-
         return airlinePanel;
     }
 
-    private ImageIcon resizeIcon(String resourcePath) {
+    private ImageIcon resizeIcon(String resourcePath, int width, int height) {
         try {
             ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource(resourcePath)));
-            return new ImageIcon(icon.getImage().getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH));
+            return new ImageIcon(icon.getImage().getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH));
         } catch (Exception e) {
             logger.error("Failed to load image: {}", resourcePath);
             return null;
