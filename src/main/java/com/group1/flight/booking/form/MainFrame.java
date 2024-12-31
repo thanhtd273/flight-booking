@@ -66,6 +66,6 @@ public class MainFrame extends JFrame {
         add(mainPanel);
 
         // Show the sign-up panel initially
-        cardLayout.show(mainPanel, FORGOT_PASSWORD_SCREEN);
+        cardLayout.show(mainPanel, SIGNUP_SCREEN);
     }
 }
