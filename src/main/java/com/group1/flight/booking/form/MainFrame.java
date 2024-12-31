@@ -53,6 +53,7 @@ public class MainFrame extends JFrame {
         CodeVerifierPanel codeVerifierPanel = new CodeVerifierPanel(mainPanel, cardLayout, userService);
         SignUpPanel signUpPanel = new SignUpPanel(mainPanel, cardLayout, codeVerifierPanel, authService);
         LoginPanel loginPanel = new LoginPanel(mainPanel, cardLayout, authService);
+        ForgotPasswordPanel forgotPasswordPanel = new ForgotPasswordPanel(900);
         FlightSearchPanel flightSearchPanel = new FlightSearchPanel(mainPanel, cardLayout, airportService, flightService,
                 airlineService, bookingService, nationService);
 
@@ -60,10 +61,11 @@ public class MainFrame extends JFrame {
         mainPanel.add(loginPanel, LOGIN_SCREEN);
         mainPanel.add(flightSearchPanel, FLIGHT_SEARCHER_SCREEN);
         mainPanel.add(codeVerifierPanel, CODE_VERIFIER);
+        mainPanel.add(forgotPasswordPanel, FORGOT_PASSWORD_SCREEN);
         // Add the main panel to the frame
         add(mainPanel);
 
         // Show the sign-up panel initially
-        cardLayout.show(mainPanel, SIGNUP_SCREEN);
+        cardLayout.show(mainPanel, FORGOT_PASSWORD_SCREEN);
     }
 }

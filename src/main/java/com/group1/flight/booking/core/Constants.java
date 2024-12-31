@@ -13,6 +13,8 @@ public final class Constants {
 
     public static final String LOGIN_SCREEN = "Login";
 
+    public static final String FORGOT_PASSWORD_SCREEN = "ForgotPassword";
+
     public static final String FLIGHT_DETAIL_SCREEN = "FlightDetail";
 
     public static final String FLIGHT_SEARCHER_SCREEN = "FlightSearcher";
