@@ -72,19 +72,4 @@ public class BookingController {
         }
     }
 
-    @PostMapping(value = "/{bookingId}/detail")
-    public APIResponse fillOutBookingDetail(@PathVariable(value = "bookingId") Long bookingId, @RequestBody BookingDetail bookingDetail, HttpServletResponse response) {
-        long start = System.currentTimeMillis();
-
-        try {
-            Booking booking = bookingService.fillOutBookingDetail(bookingId, bookingDetail);
-            logger.debug("Call API POST /api/v1/flight-booking/bookings/{}/detail success", bookingId);
-            return new APIResponse(ErrorCode.SUCCESS, "", System.currentTimeMillis() - start, booking);
-        } catch (Exception e) {
-            logger.error("Call API POST /api/v1/flight-booking/bookings/{}/detail failed, error: {}", bookingId, e.getMessage());
-            return ExceptionHandler.handleException(response, e, start);
-        }
-    }
-
-
 }

@@ -25,7 +25,7 @@ public class SignUpPanel extends JPanel {
 
     private final CardLayout cardLayout;
 
-    private final CodeVerifierPanel codeVerifierPanel;
+    private final ActivateAccountPanel activateAccountPanel;
 
     private final AuthService authService;
 
@@ -36,10 +36,10 @@ public class SignUpPanel extends JPanel {
     int leftPanelWidth = (int) (PANEL_WIDTH * 0.6);
     int rightPanelWidth = (int) (PANEL_WIDTH * 0.4);
 
-    public SignUpPanel(JPanel mainPanel, CardLayout cardLayout, CodeVerifierPanel codeVerifierPanel, AuthService authService) {
+    public SignUpPanel(JPanel mainPanel, CardLayout cardLayout, ActivateAccountPanel activateAccountPanel, AuthService authService) {
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
-        this.codeVerifierPanel = codeVerifierPanel;
+        this.activateAccountPanel = activateAccountPanel;
         this.authService = authService;
         initComponent();
         setOpaque(false);
@@ -145,8 +145,8 @@ public class SignUpPanel extends JPanel {
             try {
                 User user = authService.signUp(userInfo);
                 logger.debug("Create user successfully, user = {}", user);
-                codeVerifierPanel.setEmail(txtEmail.getText());
-                cardLayout.show(mainPanel, CODE_VERIFIER);
+                activateAccountPanel.setEmail(txtEmail.getText());
+                cardLayout.show(mainPanel, ACCOUNT_ACTIVATOR);
             } catch (LogicException ex) {
                 JOptionPane.showMessageDialog(null, ex.getMessage(), "Sign Up Fail", JOptionPane.ERROR_MESSAGE);
             }
@@ -167,8 +167,8 @@ public class SignUpPanel extends JPanel {
         try {
             User user = authService.signUp(userInfo);
             logger.debug("Create user successfully, user = {}", user);
-            codeVerifierPanel.setEmail(txtEmail.getText());
-            cardLayout.show(mainPanel, CODE_VERIFIER);
+            activateAccountPanel.setEmail(txtEmail.getText());
+            cardLayout.show(mainPanel, ACCOUNT_ACTIVATOR);
         } catch (LogicException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Sign Up Fail", JOptionPane.ERROR_MESSAGE);
         }

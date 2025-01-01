@@ -7,6 +7,7 @@ public enum ErrorCode {
     LOGIN_FAIL(401, "Login Failed"),
     SIGNUP_FAIL(401, "Signup Failed"),
     WRONG_PASSWORD(400, "Old password does not match with current password"),
+    PASSWORD_NOT_MATCH(400, "Password and confirm password are not matched"),
     NO_SESSION(401, "No user in this session. You must login to create access resource"),
     EXPIRED_CODE(404, "Code is expired"),
     INVALID_CODE(404, "Invalid code"),

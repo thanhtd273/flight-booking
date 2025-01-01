@@ -21,7 +21,7 @@ public class NationServiceImpl implements NationService {
 
     @Override
     public List<Nation> getAllNations() {
-        return nationDao.findByDeletedFalse();
+        return nationDao.findAllNations();
     }
 
     @Override

@@ -32,9 +32,8 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
-    public Seat findBySeatId(Long seatId) throws LogicException {
-        return seatDao.findBySeatId(seatId)
-                .orElseThrow(() -> new LogicException(ErrorCode.DATA_NULL, "Seat not found"));
+    public Seat findBySeatId(Long seatId) {
+        return seatDao.findBySeatId(seatId);
     }
 
     @Override

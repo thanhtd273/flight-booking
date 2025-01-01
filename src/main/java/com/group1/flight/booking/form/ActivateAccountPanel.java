@@ -16,9 +16,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 
-public class CodeVerifierPanel extends JPanel {
+public class ActivateAccountPanel extends JPanel {
 
-    private static final Logger logger = LoggerFactory.getLogger(CodeVerifierPanel.class);
+    private static final Logger logger = LoggerFactory.getLogger(ActivateAccountPanel.class);
 
     private final JPanel mainPanel;
 
@@ -31,7 +31,7 @@ public class CodeVerifierPanel extends JPanel {
     @Setter
     private String email;
 
-    public CodeVerifierPanel(JPanel mainPanel, CardLayout cardLayout, UserService userService) {
+    public ActivateAccountPanel(JPanel mainPanel, CardLayout cardLayout, UserService userService) {
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
         this.userService = userService;

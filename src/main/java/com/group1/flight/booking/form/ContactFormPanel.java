@@ -155,6 +155,10 @@ public class ContactFormPanel extends JPanel{
             logger.debug("contactInfo: {}, passengerInfos: {}", contactInfo, passengerInfos);
             if (contactInfo.isEmptyField() || Arrays.stream(passengerInfos).anyMatch(PassengerInfo::isEmptyField)) {
                 AppUtils.showErrorDialog("Please fill out all information");
+            } else if (!AppUtils.validateEmail(contactInfo.getEmail())) {
+                AppUtils.showErrorDialog("Invalid email! Please fill email again");
+            } else if (!AppUtils.validatePhoneNumber(contactInfo.getPhone())) {
+                AppUtils.showErrorDialog("Invalid phone number! Please fill phone number again");
             } else {
                 bookingInfo.setPassengerInfos(passengerInfos);
                 bookingInfo.setContactInfo(contactInfo);

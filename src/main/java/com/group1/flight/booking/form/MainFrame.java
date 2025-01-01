@@ -50,17 +50,17 @@ public class MainFrame extends JFrame {
         setLocationRelativeTo(null);
 
         // Add the sign-up panel, login panel, and flight searcher panel
-        CodeVerifierPanel codeVerifierPanel = new CodeVerifierPanel(mainPanel, cardLayout, userService);
-        SignUpPanel signUpPanel = new SignUpPanel(mainPanel, cardLayout, codeVerifierPanel, authService);
+        ActivateAccountPanel activateAccountPanel = new ActivateAccountPanel(mainPanel, cardLayout, userService);
+        SignUpPanel signUpPanel = new SignUpPanel(mainPanel, cardLayout, activateAccountPanel, authService);
         LoginPanel loginPanel = new LoginPanel(mainPanel, cardLayout, authService);
-        ForgotPasswordPanel forgotPasswordPanel = new ForgotPasswordPanel(900);
+        ForgotPasswordPanel forgotPasswordPanel = new ForgotPasswordPanel(mainPanel, cardLayout, userService);
         FlightSearchPanel flightSearchPanel = new FlightSearchPanel(mainPanel, cardLayout, airportService, flightService,
                 airlineService, bookingService, nationService);
 
         mainPanel.add(signUpPanel, SIGNUP_SCREEN);
         mainPanel.add(loginPanel, LOGIN_SCREEN);
         mainPanel.add(flightSearchPanel, FLIGHT_SEARCHER_SCREEN);
-        mainPanel.add(codeVerifierPanel, CODE_VERIFIER);
+        mainPanel.add(activateAccountPanel, ACCOUNT_ACTIVATOR);
         mainPanel.add(forgotPasswordPanel, FORGOT_PASSWORD_SCREEN);
         // Add the main panel to the frame
         add(mainPanel);

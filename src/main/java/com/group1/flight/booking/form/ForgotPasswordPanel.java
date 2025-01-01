@@ -1,7 +1,13 @@
 package com.group1.flight.booking.form;
 
+import com.group1.flight.booking.core.Constants;
+import com.group1.flight.booking.core.ErrorCode;
+import com.group1.flight.booking.core.exception.LogicException;
 import com.group1.flight.booking.form.swing.Button;
 import com.group1.flight.booking.form.swing.MyTextField;
+import com.group1.flight.booking.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,22 +15,31 @@ import java.util.Objects;
 
 public class ForgotPasswordPanel extends JPanel {
 
-    private static final String FONT_NAME = "Arial";
-    private static final int PANEL_HEIGHT = 500;
-    private final int leftPanelWidth;
+    private static final Logger logger = LoggerFactory.getLogger(ForgotPasswordPanel.class);
 
-    public ForgotPasswordPanel(int leftPanelWidth) {
-        this.leftPanelWidth = leftPanelWidth;
-        initializeUI();
+    private static final int PANEL_HEIGHT = 500;
+
+    private final JPanel mainPanel;
+
+    private final CardLayout cardLayout;
+
+    private final UserService userService;
+
+    public ForgotPasswordPanel(JPanel mainPanel, CardLayout cardLayout, UserService userService) {
+        this.mainPanel = mainPanel;
+        this.cardLayout = cardLayout;
+        this.userService = userService;
+        initComponent();
     }
 
-    private void initializeUI() {
+    private void initComponent() {
         setLayout(null);
         setBackground(Color.WHITE);
+        int leftPanelWidth = 900;
         setBounds(0, 0, leftPanelWidth, PANEL_HEIGHT);
 
         JLabel lblForgotPassword = new JLabel("Forgot Password");
-        lblForgotPassword.setFont(new Font(FONT_NAME, Font.BOLD, 30));
+        lblForgotPassword.setFont(new Font(Constants.FB_FONT, Font.BOLD, 30));
         lblForgotPassword.setForeground(new Color(34, 177, 76));
         lblForgotPassword.setHorizontalAlignment(SwingConstants.CENTER);
         lblForgotPassword.setBounds(0, 135, leftPanelWidth, 40);
@@ -36,21 +51,45 @@ public class ForgotPasswordPanel extends JPanel {
         txtEmail.setHint("Enter your email");
         add(txtEmail);
 
-        Button btnSendResetLink = new Button();
-        btnSendResetLink.setText("SEND RESET LINK");
-        btnSendResetLink.setFont(new Font(FONT_NAME, Font.BOLD, 14));
-        btnSendResetLink.setForeground(Color.WHITE);
-        btnSendResetLink.setBackground(new Color(34, 177, 76));
-        btnSendResetLink.setBounds((leftPanelWidth - 200) / 2, 255, 200, 40);
-        btnSendResetLink.setFocusPainted(false);
-        btnSendResetLink.setBorderPainted(false);
-        add(btnSendResetLink);
+        Button sendOtpButton = createSendOtpButton(leftPanelWidth, txtEmail);
+        add(sendOtpButton);
 
-        JLabel lblBackToLogin = new JLabel("Back to Login");
-        lblBackToLogin.setFont(new Font(FONT_NAME, Font.PLAIN, 14));
-        lblBackToLogin.setForeground(new Color(34, 177, 76));
-        lblBackToLogin.setHorizontalAlignment(SwingConstants.CENTER);
-        lblBackToLogin.setBounds(0, 305, leftPanelWidth, 20);
-        add(lblBackToLogin);
+        JButton backToLoginBtn = new JButton("Back to Login");
+        backToLoginBtn.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 14));
+        backToLoginBtn.setForeground(new Color(34, 177, 76));
+        backToLoginBtn.setHorizontalAlignment(SwingConstants.CENTER);
+        backToLoginBtn.setBounds(0, 305, leftPanelWidth, 20);
+        backToLoginBtn.addActionListener(e -> cardLayout.show(mainPanel, Constants.LOGIN_SCREEN));
+        add(backToLoginBtn);
+    }
+
+    private Button createSendOtpButton(int leftPanelWidth, MyTextField txtEmail) {
+        Button sendOtpButton = new Button();
+        sendOtpButton.setText("Send OTP");
+        sendOtpButton.setFont(new Font(Constants.FB_FONT, Font.BOLD, 14));
+        sendOtpButton.setForeground(Color.WHITE);
+        sendOtpButton.setBackground(new Color(34, 177, 76));
+        sendOtpButton.setBounds((leftPanelWidth - 200) / 2, 255, 200, 40);
+        sendOtpButton.setFocusPainted(false);
+        sendOtpButton.setBorderPainted(false);
+        sendOtpButton.addActionListener(e -> sendOTPAction(txtEmail.getText()));
+        return sendOtpButton;
+    }
+
+    private void sendOTPAction(String email) {
+        logger.debug("Send OTP to email: {}", email);
+        try {
+            ErrorCode errorCode = userService.forgotPassword(email);
+            if (errorCode != ErrorCode.SUCCESS) {
+                throw new LogicException(errorCode);
+            } else {
+                OTPVerifierPanel otpVerifierPanel = new OTPVerifierPanel(mainPanel, cardLayout, userService);
+                otpVerifierPanel.setEmail(email);
+                mainPanel.add(otpVerifierPanel, Constants.CODE_VERIFIER);
+                cardLayout.show(mainPanel, Constants.CODE_VERIFIER);
+            }
+        } catch (Exception ex) {
+            logger.error("Send OTP fail: {}", ex.getMessage());
+        }
     }
 }

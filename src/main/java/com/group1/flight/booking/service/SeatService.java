@@ -10,7 +10,7 @@ import java.util.List;
 public interface SeatService {
     List<Seat> getAllSeats();
 
-    Seat findBySeatId(Long seatId) throws LogicException;
+    Seat findBySeatId(Long seatId);
 
     List<Seat> findByPlaneId(Long planeId) throws LogicException;
 

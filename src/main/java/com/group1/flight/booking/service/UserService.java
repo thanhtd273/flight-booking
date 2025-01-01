@@ -28,9 +28,11 @@ public interface UserService {
 
     ErrorCode changePassword(UpdatePasswordInfo updatePasswordInfo) throws LogicException;
 
-    ErrorCode forgotPassword(UserInfo userInfo) throws LogicException;
+    ErrorCode forgotPassword(String email) throws LogicException;
 
     ErrorCode verifyPasswordResetCode(String email, Integer code) throws LogicException;
+
+    ErrorCode resetPassword(String email, String password, String confirmPassword) throws LogicException;
 
     ErrorCode addRole(UserInfo userInfo) throws LogicException;
 

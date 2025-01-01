@@ -128,6 +128,7 @@ public class LoginPanel extends JPanel{
         lblForgotPassword.setBorderPainted(false);
         lblForgotPassword.setBounds((rightPanelWidth-200)/2, 300, 200, 30);
         lblForgotPassword.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblForgotPassword.addActionListener(e -> cardLayout.show(mainPanel, FORGOT_PASSWORD_SCREEN));
         rightPanel.add(lblForgotPassword );
 
         // Button signin

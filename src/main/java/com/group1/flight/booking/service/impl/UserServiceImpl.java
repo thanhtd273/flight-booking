@@ -217,12 +217,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ErrorCode forgotPassword(UserInfo userInfo) throws LogicException {
-        if (ObjectUtils.isEmpty(userInfo))
+    public ErrorCode forgotPassword(String email) throws LogicException {
+        if (ObjectUtils.isEmpty(email))
             return ErrorCode.DATA_NULL;
 
         // Check if user belongs to email is exist on system
-        User user = findByEmail(userInfo.getEmail());
+        User user = findByEmail(email);
         if (ObjectUtils.isEmpty(user))
             return ErrorCode.NOT_FOUND_USER;
 
@@ -230,14 +230,30 @@ public class UserServiceImpl implements UserService {
         user.setOtpCode(passwordResetCode);
         user.setOtpExpirationTime(new Date(System.currentTimeMillis() + OTP_EXPIRATION_TIME * 60 * 1000));
         userDao.save(user);
-        mailService.sendSimpleMail(userInfo.getEmail(), "Reset password OTP",
-                String.format("Reset password code: %s %n This code will expire in %d minutes.", passwordResetCode, OTP_EXPIRATION_TIME));
+        mailService.sendSimpleMail(email, "Reset password OTP",
+                String.format("Reset password code: %s %n This code will expire in %d minutes.",
+                        passwordResetCode, OTP_EXPIRATION_TIME));
         return ErrorCode.SUCCESS;
     }
 
     @Override
     public ErrorCode verifyPasswordResetCode(String email, Integer code) throws LogicException {
         return verifyOTP(new OTPInfo(code, email));
+    }
+
+    @Override
+    public ErrorCode resetPassword(String email, String password, String confirmPassword) throws LogicException{
+        User user = findByEmail(email);
+        if (ObjectUtils.isEmpty(user))
+            throw new LogicException(ErrorCode.NOT_FOUND_USER);
+        if (!password.equals(confirmPassword)) {
+            throw new LogicException(ErrorCode.PASSWORD_NOT_MATCH);
+        }
+        user.setPassword(passwordEncoder.encode(password));
+        user.setUpdatedAt(new Date(System.currentTimeMillis()));
+        userDao.save(user);
+
+        return ErrorCode.SUCCESS;
     }
 
     @Override

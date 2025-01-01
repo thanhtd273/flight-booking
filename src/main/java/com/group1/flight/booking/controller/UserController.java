@@ -95,25 +95,4 @@ public class UserController {
         }
     }
 
-    @PostMapping("/users/forgot-password")
-    public APIResponse forgotPassword(HttpServletResponse response, @RequestBody UserInfo userInfo) {
-        long start = System.currentTimeMillis();
-        try {
-            ErrorCode errorCode = userService.forgotPassword(userInfo);
-            if (errorCode == ErrorCode.SUCCESS) {
-                logger.info("Call API POST /api/v1/flight-booking/users/forgot-password success, user email: {}", userInfo.getEmail());
-            } else {
-                logger.error("Call API POST /api/v1/flight-booking/users/forgot-password failed, user email: {}, error: ", userInfo.getEmail());
-            }
-
-            response.setStatus(errorCode.getValue());
-            return new APIResponse(errorCode, "", System.currentTimeMillis() - start, errorCode.getMessage());
-        } catch (Exception e) {
-            logger.error("Call API POST /api/v1/flight-booking/users/forgot-password failed, user email: {}, error: {}",
-                    userInfo.getEmail(), e.getMessage());
-            return ExceptionHandler.handleException(response, e, start);
-        }
-    }
-
-
 }
