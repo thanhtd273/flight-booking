@@ -1,12 +1,8 @@
-package com.group1.flight.booking.form.component;
+package com.group1.flight.booking.form.swing;
 
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import javax.swing.JButton;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import java.awt.*;
 
 public class ButtonOutLine extends JButton {
 
@@ -18,13 +14,13 @@ public class ButtonOutLine extends JButton {
     }
 
     @Override
-    protected void paintComponent(Graphics graphics) {
+    protected void paintComponent(Graphics grphcs) {
         int width = getWidth();
         int height = getHeight();
-        Graphics2D g2 = (Graphics2D) graphics;
+        Graphics2D g2 = (Graphics2D) grphcs;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setColor(getBackground());
         g2.drawRoundRect(0, 0, width - 1, height - 1, height, height);
-        super.paintComponent(graphics);
+        super.paintComponent(grphcs);
     }
 }

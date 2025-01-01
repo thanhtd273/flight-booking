@@ -1,23 +1,13 @@
-package com.group1.flight.booking.form.component;
+package com.group1.flight.booking.form.swing;
 
-import com.group1.flight.booking.core.Constants;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.swing.*;
 import java.awt.*;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JPasswordField;
 
 @Getter
 public class FbPasswordField extends JPasswordField {
-
-    private Icon prefixIcon;
-
-    private Icon suffixIcon;
-
-    @Setter
-    private String hint = "";
 
     public void setPrefixIcon(Icon prefixIcon) {
         this.prefixIcon = prefixIcon;
@@ -29,11 +19,16 @@ public class FbPasswordField extends JPasswordField {
         initBorder();
     }
 
+    private Icon prefixIcon;
+    private Icon suffixIcon;
+    @Setter
+    private String hint = "";
+
     public FbPasswordField() {
-        setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setBackground(new Color(0, 0, 0, 0));
         setForeground(Color.decode("#7A8C8D"));
-        setFont(new Font(Constants.FB_FONT, Font.PLAIN, 13));
+        setFont(new Font("sanserif", Font.PLAIN, 13));
         setSelectionColor(new Color(75, 175, 152));
     }
 
@@ -41,7 +36,7 @@ public class FbPasswordField extends JPasswordField {
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setColor(new Color(230, 245, 241));
+        g2.setColor(new Color(218, 232, 228));
         g2.fillRoundRect(0, 0, getWidth(), getHeight(), 5, 5);
         paintIcon(g);
         super.paintComponent(g);
@@ -55,7 +50,7 @@ public class FbPasswordField extends JPasswordField {
             ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             Insets ins = getInsets();
             FontMetrics fm = g.getFontMetrics();
-            g.setColor(new Color(200, 200, 200));
+            g.setColor(new Color(180, 180, 180));
             g.drawString(hint, ins.left, h / 2 + fm.getAscent() / 2 - 2);
         }
     }
@@ -77,15 +72,12 @@ public class FbPasswordField extends JPasswordField {
     private void initBorder() {
         int left = 15;
         int right = 15;
-        //  5 is default
         if (prefixIcon != null) {
-            //  prefix is left
             left = prefixIcon.getIconWidth() + 15;
         }
         if (suffixIcon != null) {
-            //  suffix is right
             right = suffixIcon.getIconWidth() + 15;
         }
-        setBorder(javax.swing.BorderFactory.createEmptyBorder(10, left, 10, right));
+        setBorder(BorderFactory.createEmptyBorder(10, left, 10, right));
     }
 }

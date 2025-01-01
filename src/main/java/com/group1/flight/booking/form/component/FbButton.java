@@ -1,35 +1,29 @@
-package com.group1.flight.booking.form.component;
+package com.group1.flight.booking.form.swing;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import javax.swing.JButton;
-import javax.swing.border.EmptyBorder;
-
-import lombok.Getter;
-import lombok.Setter;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
 
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+
 public class FbButton extends JButton {
 
-    private Animator animator;
+    private final Animator animator;
+
     private int targetSize;
-    private float animateSize;
+
+    private float animatSize;
+
     private Point pressedPoint;
+
     private float alpha;
 
-    @Getter
-    @Setter
-    private Color effectColor = new Color(255, 255, 255);
+    private final Color effectColor = new Color(255, 255, 255);
 
     public FbButton() {
         setContentAreaFilled(false);
@@ -40,7 +34,7 @@ public class FbButton extends JButton {
             @Override
             public void mousePressed(MouseEvent me) {
                 targetSize = Math.max(getWidth(), getHeight()) * 2;
-                animateSize = 0;
+                animatSize = 0;
                 pressedPoint = me.getPoint();
                 alpha = 0.5f;
                 if (animator.isRunning()) {
@@ -55,7 +49,7 @@ public class FbButton extends JButton {
                 if (fraction > 0.5f) {
                     alpha = 1 - fraction;
                 }
-                animateSize = fraction * targetSize;
+                animatSize = fraction * targetSize;
                 repaint();
             }
         };
@@ -77,7 +71,7 @@ public class FbButton extends JButton {
         if (pressedPoint != null) {
             g2.setColor(effectColor);
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, alpha));
-            g2.fillOval((int) (pressedPoint.x - animateSize / 2), (int) (pressedPoint.y - animateSize / 2), (int) animateSize, (int) animateSize);
+            g2.fillOval((int) (pressedPoint.x - animatSize / 2), (int) (pressedPoint.y - animatSize / 2), (int) animatSize, (int) animatSize);
         }
         g2.dispose();
         grphcs.drawImage(img, 0, 0, null);
