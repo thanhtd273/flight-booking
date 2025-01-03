@@ -1,7 +1,14 @@
 package com.group1.flight.booking.config;
 
 import com.group1.flight.booking.form.MainFrame;
-import com.group1.flight.booking.service.*;
+
+import com.group1.flight.booking.service.AirlineService;
+import com.group1.flight.booking.service.AirportService;
+import com.group1.flight.booking.service.AuthService;
+import com.group1.flight.booking.service.BookingService;
+import com.group1.flight.booking.service.FlightService;
+import com.group1.flight.booking.service.NationService;
+import com.group1.flight.booking.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -3,8 +3,8 @@ package com.group1.flight.booking.form;
 import com.group1.flight.booking.core.Constants;
 import com.group1.flight.booking.core.ErrorCode;
 import com.group1.flight.booking.core.exception.LogicException;
-import com.group1.flight.booking.form.component.FbTextField;
 import com.group1.flight.booking.form.component.ButtonOutLine;
+import com.group1.flight.booking.form.component.FbTextField;
 import com.group1.flight.booking.form.component.PanelRound;
 import com.group1.flight.booking.service.UserService;
 import lombok.Setter;
@@ -74,27 +74,7 @@ public class OTPVerifierPanel extends JPanel {
         descriptionLabel.setText("Check your mail to get verify code");
 
         okBtn.setBackground(new Color(18, 138, 62));
-        okBtn.addActionListener(e -> {
-            try {
-                logger.debug("OTP code: email = {}, code = {}", email, txtCode.getText());
-                if (!NumberUtils.isCreatable(txtCode.getText())) {
-                    throw new LogicException(ErrorCode.INVALID_CODE);
-                }
-
-                ErrorCode errorCode = userService.verifyPasswordResetCode(email, Integer.valueOf(txtCode.getText()));
-                if (errorCode != ErrorCode.SUCCESS) {
-                    throw new LogicException(errorCode);
-                }
-                ResetPasswordPanel resetPasswordPanel = new ResetPasswordPanel(mainPanel, cardLayout, email, userService);
-                mainPanel.add(resetPasswordPanel, Constants.PASSWORD_RESET);
-                cardLayout.show(mainPanel, Constants.PASSWORD_RESET);
-            } catch (LogicException ex) {
-                logger.error("Verify OTP code fail, error: {}", ex.getMessage());
-                JOptionPane.showMessageDialog(null, ex.getMessage(), "Verify OTP Failed",
-                        JOptionPane.ERROR_MESSAGE);
-            }
-
-        });
+        okBtn.addActionListener(e -> resetPasswordAction());
         okBtn.setText("OK");
 
         cancelBtn.setBackground(new Color(192, 25, 25));
@@ -167,4 +147,25 @@ public class OTPVerifierPanel extends JPanel {
         super.paintComponent(grphcs);
     }
 
+
+    private void resetPasswordAction() {
+        try {
+            logger.debug("OTP code: email = {}, code = {}", email, txtCode.getText());
+            if (!NumberUtils.isCreatable(txtCode.getText())) {
+                throw new LogicException(ErrorCode.INVALID_CODE);
+            }
+
+            ErrorCode errorCode = userService.verifyPasswordResetCode(email, Integer.valueOf(txtCode.getText()));
+            if (errorCode != ErrorCode.SUCCESS) {
+                throw new LogicException(errorCode);
+            }
+            ResetPasswordPanel resetPasswordPanel = new ResetPasswordPanel(mainPanel, cardLayout, email, userService);
+            mainPanel.add(resetPasswordPanel, Constants.PASSWORD_RESET);
+            cardLayout.show(mainPanel, Constants.PASSWORD_RESET);
+        } catch (Exception ex) {
+            logger.error("Verify OTP code fail, error: {}", ex.getMessage());
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Verify OTP Failed",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
 }

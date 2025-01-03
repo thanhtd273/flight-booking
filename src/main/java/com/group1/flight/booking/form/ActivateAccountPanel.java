@@ -3,8 +3,8 @@ package com.group1.flight.booking.form;
 import com.group1.flight.booking.core.Constants;
 import com.group1.flight.booking.core.ErrorCode;
 import com.group1.flight.booking.core.exception.LogicException;
-import com.group1.flight.booking.form.component.FbTextField;
 import com.group1.flight.booking.form.component.ButtonOutLine;
+import com.group1.flight.booking.form.component.FbTextField;
 import com.group1.flight.booking.form.component.PanelRound;
 import com.group1.flight.booking.service.UserService;
 import lombok.Setter;
@@ -64,7 +64,7 @@ public class ActivateAccountPanel extends JPanel {
 
         txtCode.setHorizontalAlignment(SwingConstants.CENTER);
 
-        titleLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 24)); // NOI18N
+        titleLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 24));
         titleLabel.setForeground(new Color(63, 63, 63));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titleLabel.setText("Verify Code");
@@ -74,25 +74,7 @@ public class ActivateAccountPanel extends JPanel {
         descriptionLabel.setText("Check your mail to get verify code");
 
         okBtn.setBackground(new Color(18, 138, 62));
-        okBtn.addActionListener(e -> {
-            try {
-                logger.debug("OTP code: email = {}, code = {}", email, txtCode.getText());
-                if (!NumberUtils.isCreatable(txtCode.getText())) {
-                    throw new LogicException(ErrorCode.INVALID_CODE);
-                }
-
-                ErrorCode errorCode = userService.activateUser(email, Integer.valueOf(txtCode.getText()));
-                if (errorCode != ErrorCode.SUCCESS) {
-                    throw new LogicException(errorCode);
-                }
-
-                cardLayout.show(mainPanel, Constants.LOGIN_SCREEN);
-            } catch (LogicException ex) {
-                logger.error("Verify OTP code fail, error: {}", ex.getMessage());
-                JOptionPane.showMessageDialog(null, ex.getMessage(), "Verify OTP Failed", JOptionPane.ERROR_MESSAGE);
-            }
-
-        });
+        okBtn.addActionListener(e -> performOkAction());
         okBtn.setText("OK");
 
         cancelBtn.setBackground(new Color(192, 25, 25));
@@ -163,6 +145,25 @@ public class ActivateAccountPanel extends JPanel {
         g2.fillRect(0, 0, getWidth(), getHeight());
         g2.setComposite(AlphaComposite.SrcOver);
         super.paintComponent(grphcs);
+    }
+
+    private void performOkAction() {
+        try {
+            logger.debug("OTP code: email = {}, code = {}", email, txtCode.getText());
+            if (!NumberUtils.isCreatable(txtCode.getText())) {
+                throw new LogicException(ErrorCode.INVALID_CODE);
+            }
+
+            ErrorCode errorCode = userService.activateUser(email, Integer.valueOf(txtCode.getText()));
+            if (errorCode != ErrorCode.SUCCESS) {
+                throw new LogicException(errorCode);
+            }
+
+            cardLayout.show(mainPanel, Constants.LOGIN_SCREEN);
+        } catch (Exception ex) {
+            logger.error("Verify OTP code fail, error: {}", ex.getMessage());
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Verify OTP Failed", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
 }

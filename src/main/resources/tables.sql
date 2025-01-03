@@ -10,6 +10,7 @@
      updated_at TIMESTAMP,
      status INTEGER NOT NULL
  );
+CREATE INDEX user_idx ON _user (user_id);
 
  CREATE TABLE _role (
      role_id BIGSERIAL PRIMARY KEY,
@@ -39,6 +40,7 @@ CREATE TABLE nation (
     updated_at TIMESTAMP,
     deleted BOOLEAN DEFAULT FALSE
 );
+CREATE INDEX nation_idx ON nation (nation_id);
 
 CREATE TABLE city (
     city_id BIGSERIAL PRIMARY KEY,
@@ -48,6 +50,7 @@ CREATE TABLE city (
     updated_at TIMESTAMP,
     deleted BOOLEAN DEFAULT FALSE
 );
+CREATE INDEX city_idx ON city (city_id);
 
 CREATE TABLE airport (
     airport_id BIGSERIAL PRIMARY KEY,
@@ -60,16 +63,19 @@ CREATE TABLE airport (
     deleted BOOLEAN DEFAULT FALSE,
     CONSTRAINT city_fk FOREIGN KEY (city_id) REFERENCES city(city_id)
 );
+CREATE INDEX airport_idx ON airport (airport_id);
 
 create table plane (
 	plane_id BIGSERIAL primary key,
 	name VARCHAR(75) not null,
 	code VARCHAR(10) not null,
 	num_of_seats INTEGER,
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
     deleted BOOLEAN DEFAULT FALSE
 );
+CREATE INDEX plane_idx ON plane (plane_id);
 
 create table airline (
 	airline_id BIGSERIAL primary key,
@@ -79,6 +85,7 @@ create table airline (
     updated_at TIMESTAMP,
     deleted BOOLEAN DEFAULT FALSE
 );
+CREATE INDEX airline_idx ON airline (airline_id);
 
 CREATE TABLE flight (
     flight_id BIGSERIAL PRIMARY KEY,
@@ -100,16 +107,24 @@ CREATE TABLE flight (
     constraint flight_to_airport_fk foreign key (to_airport_id) references airport(airport_id)
 );
 
+CREATE INDEX flight_idx ON flight (flight_id);
+
+
 CREATE TABLE seat (
     seat_id BIGSERIAL PRIMARY key,
     plane_id BIGINT,
 	class_level VARCHAR(15) not null,
 	seat_code VARCHAR(10),
+	available BOOLEAN default true,
 
 	created_at TIMESTAMP default current_timestamp,
 	updated_at timestamp,
-    constraint seat_plane_fk foreign key (plane_id) references plane(plane_id)
+	constraint seat_plane_fk foreign key (plane_id) references plane(plane_id)
 );
+
+CREATE INDEX seat_idx ON seat (seat_id);
+
+
 
 CREATE TABLE passenger (
     passenger_id BIGSERIAL PRIMARY KEY,
@@ -128,6 +143,7 @@ CREATE TABLE passenger (
     constraint passenger_user_fk foreign key (user_id) references _user(user_id),
     constraint passenger_nationality_fk foreign key (nationality_id) references nation(nation_id)
 );
+CREATE INDEX passenger_idx ON passenger (passenger_id);
 
 CREATE TABLE flight_seat_passenger (
     id BIGSERIAL PRIMARY KEY,
@@ -138,6 +154,8 @@ CREATE TABLE flight_seat_passenger (
     CONSTRAINT seat_fk FOREIGN KEY (seat_id) REFERENCES seat(seat_id),
     CONSTRAINT passenger_fk FOREIGN KEY (passenger_id) REFERENCES passenger(passenger_id)
 );
+CREATE INDEX fsg_idx ON flight_seat_passenger (id);
+
 
 CREATE TABLE contact (
     contact_id BIGSERIAL PRIMARY KEY,
@@ -150,13 +168,13 @@ CREATE TABLE contact (
     updated_at TIMESTAMP,
     deleted BOOLEAN
 );
+CREATE INDEX contact_idx ON contact (contact_id);
 
 CREATE TABLE booking (
     booking_id BIGSERIAL PRIMARY KEY,
     booking_code BIGINT,
     flight_id BIGINT NOT NULL,
     contact_id BIGINT,
-    invoice_id BIGINT,
     payment_method VARCHAR(10),
     ticket_number BIGINT,
     num_of_passengers INTEGER NOT NULL,
@@ -166,9 +184,9 @@ CREATE TABLE booking (
     status INTEGER,
 
     CONSTRAINT flight_fk FOREIGN KEY (flight_id) REFERENCEs flight(flight_id),
-    CONSTRAINT contact_fk FOREIGN KEY (contact_id) REFERENCES contact(contact_id),
-    CONSTRAINT invoice_fk FOREIGN KEY (invoice_id) REFERENCES invoice(invoice_fk)
+    CONSTRAINT contact_fk FOREIGN KEY (contact_id) REFERENCES contact(contact_id)
 );
+CREATE INDEX booking_idx ON booking (booking_id);
 
 CREATE TABLE invoice (
     invoice_id BIGSERIAL PRIMARY KEY,
@@ -180,6 +198,7 @@ CREATE TABLE invoice (
     deleted BOOLEAN,
     CONSTRAINT booking_fk FOREIGN KEY (booking_id) REFERENCES booking(booking_id)
 );
+CREATE INDEX invoice_idx ON invoice (invoice_id);
 
 CREATE TABLE booking_passenger (
     id BIGSERIAL PRIMARY KEY,
@@ -188,6 +207,9 @@ CREATE TABLE booking_passenger (
     CONSTRAINT passenger_fk FOREIGN KEY (passenger_id) REFERENCES passenger(passenger_id),
     CONSTRAINT booking_fk FOREIGN KEY (booking_id) REFERENCES booking(booking_id)
 );
+CREATE INDEX booking_passenger_idx ON booking_passenger (id);
+
+
 
 
 

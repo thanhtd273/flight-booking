@@ -2,8 +2,8 @@ package com.group1.flight.booking.form;
 
 import com.group1.flight.booking.core.AppUtils;
 import com.group1.flight.booking.core.Constants;
-import com.group1.flight.booking.form.swing.Button;
-import com.group1.flight.booking.form.swing.MyPasswordField;
+import com.group1.flight.booking.form.component.FbButton;
+import com.group1.flight.booking.form.component.FbPasswordField;
 import com.group1.flight.booking.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,25 +47,25 @@ public class ResetPasswordPanel extends JPanel{
         lblResetPassword.setBounds(0, 135, leftPanelWidth, 40);
         add(lblResetPassword);
 
-        MyPasswordField passwordField = new MyPasswordField();
+        FbPasswordField passwordField = new FbPasswordField();
         passwordField.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/pass.png"))));
         passwordField.setBounds((leftPanelWidth - 300) / 2, 195, 300, 40);
         passwordField.setHint("Enter your password");
         add(passwordField);
 
-        MyPasswordField confirmPasswordField = new MyPasswordField();
+        FbPasswordField confirmPasswordField = new FbPasswordField();
         confirmPasswordField.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/pass.png"))));
         confirmPasswordField.setBounds((leftPanelWidth - 300) / 2, 255, 300, 40);
         confirmPasswordField.setHint("Enter your confirm password");
         add(confirmPasswordField);
 
-        Button summitButton = createSummitButton(leftPanelWidth, passwordField, confirmPasswordField);
+        FbButton summitButton = createSummitButton(leftPanelWidth, passwordField, confirmPasswordField);
         add(summitButton);
 
     }
 
-    private Button createSummitButton(int leftPanelWidth, MyPasswordField passwordField, MyPasswordField confirmPasswordField) {
-        Button summitButton = new Button();
+    private FbButton createSummitButton(int leftPanelWidth, FbPasswordField passwordField, FbPasswordField confirmPasswordField) {
+        FbButton summitButton = new FbButton();
         summitButton.setText("Summit");
         summitButton.setFont(new Font(Constants.FB_FONT, Font.BOLD, 14));
         summitButton.setForeground(Color.WHITE);

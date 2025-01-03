@@ -1,4 +1,4 @@
-package com.group1.flight.booking.form.swing;
+package com.group1.flight.booking.form.component;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

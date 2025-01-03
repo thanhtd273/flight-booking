@@ -6,7 +6,7 @@ import com.group1.flight.booking.dto.BookingInfo;
 import com.group1.flight.booking.dto.ContactInfo;
 import com.group1.flight.booking.dto.PassengerInfo;
 import com.group1.flight.booking.form.component.RoundedBorder;
-import com.group1.flight.booking.form.swing.MyTextField;
+import com.group1.flight.booking.form.component.FbTextField;
 import com.group1.flight.booking.model.Nation;
 import com.group1.flight.booking.service.BookingService;
 import com.group1.flight.booking.service.FlightService;
@@ -91,7 +91,7 @@ public class ContactFormPanel extends JPanel{
         passengerWrapper.setMaximumSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
         passengerWrapper.setMinimumSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
         passengerWrapper.setBackground(Color.WHITE);
-        passengerWrapper.setBorder(new RoundedBorder(15));
+        passengerWrapper.setBorder(new RoundedBorder());
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
@@ -151,24 +151,7 @@ public class ContactFormPanel extends JPanel{
 
         JButton continueButton = customButton("Continue", new Color(0, 123, 255));
         continueButton.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
-        continueButton.addActionListener(e -> {
-            logger.debug("contactInfo: {}, passengerInfos: {}", contactInfo, passengerInfos);
-            if (contactInfo.isEmptyField() || Arrays.stream(passengerInfos).anyMatch(PassengerInfo::isEmptyField)) {
-                AppUtils.showErrorDialog("Please fill out all information");
-            } else if (!AppUtils.validateEmail(contactInfo.getEmail())) {
-                AppUtils.showErrorDialog("Invalid email! Please fill email again");
-            } else if (!AppUtils.validatePhoneNumber(contactInfo.getPhone())) {
-                AppUtils.showErrorDialog("Invalid phone number! Please fill phone number again");
-            } else {
-                bookingInfo.setPassengerInfos(passengerInfos);
-                bookingInfo.setContactInfo(contactInfo);
-                FlightSeatPanel flightSeatPanel = new FlightSeatPanel(mainPanel, cardLayout, bookingInfo,
-                        flightService, bookingService);
-                mainPanel.add(flightSeatPanel, Constants.FLIGHT_SEAT_SCREEN);
-                cardLayout.show(mainPanel, Constants.FLIGHT_SEAT_SCREEN);
-            }
-
-        });
+        continueButton.addActionListener(e -> performContinueAction());
         buttonPanel.add(continueButton, BorderLayout.EAST);
 
         return buttonPanel;
@@ -180,7 +163,7 @@ public class ContactFormPanel extends JPanel{
         panel.setMaximumSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
         panel.setMinimumSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
         panel.setBackground(Color.WHITE);
-        panel.setBorder(new RoundedBorder(15));
+        panel.setBorder(new RoundedBorder());
 
         GridBagConstraints gbc = new GridBagConstraints();
         JPanel innerPanel = new JPanel();
@@ -206,7 +189,7 @@ public class ContactFormPanel extends JPanel{
         gbc.anchor = GridBagConstraints.NORTHWEST;
         innerPanel.add(firstnameLabel, gbc);
 
-        MyTextField firstnameField = new MyTextField();
+        FbTextField firstnameField = new FbTextField();
         firstnameField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
         firstnameField.setPreferredSize(new Dimension(300, 50));
         gbc.gridx = 0;
@@ -239,7 +222,7 @@ public class ContactFormPanel extends JPanel{
         gbc.anchor = GridBagConstraints.NORTHWEST;
         innerPanel.add(lastnameLabel, gbc);
 
-        MyTextField lastnameField = new MyTextField();
+        FbTextField lastnameField = new FbTextField();
         lastnameField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
         lastnameField.setPreferredSize(new Dimension(300, 50));
         gbc.gridx = 1;
@@ -272,7 +255,7 @@ public class ContactFormPanel extends JPanel{
         gbc.anchor = GridBagConstraints.NORTHWEST;
         innerPanel.add(phoneLabel, gbc);
 
-        MyTextField phoneField = new MyTextField();
+        FbTextField phoneField = new FbTextField();
         phoneField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
         phoneField.setPreferredSize(new Dimension(300, 50));
         gbc.gridx = 0;
@@ -305,7 +288,7 @@ public class ContactFormPanel extends JPanel{
         gbc.anchor = GridBagConstraints.NORTHWEST;
         innerPanel.add(emailLabel, gbc);
 
-        MyTextField emailField = new MyTextField();
+        FbTextField emailField = new FbTextField();
         emailField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
         emailField.setPreferredSize(new Dimension(300, 50));
         gbc.gridx = 1;
@@ -359,7 +342,7 @@ public class ContactFormPanel extends JPanel{
         gbc.anchor = GridBagConstraints.NORTHWEST;
         panel.add(firstnameLabel, gbc);
 
-        MyTextField firstnameField = new MyTextField();
+        FbTextField firstnameField = new FbTextField();
         firstnameField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
         firstnameField.setPreferredSize(new Dimension(300, 50));
         gbc.gridx = 0;
@@ -392,7 +375,7 @@ public class ContactFormPanel extends JPanel{
         gbc.anchor = GridBagConstraints.NORTHWEST;
         panel.add(lastnameLabel, gbc);
 
-        MyTextField lastnameField = new MyTextField();
+        FbTextField lastnameField = new FbTextField();
         lastnameField.setFont(new Font(Constants.FB_FONT, Font.BOLD, 16));
         lastnameField.setPreferredSize(new Dimension(300, 50));
         gbc.gridx = 1;
@@ -468,6 +451,28 @@ public class ContactFormPanel extends JPanel{
         panel.add(nationalityPassengerField, gbc);
 
         return panel;
+    }
+
+    private void performContinueAction() {
+        logger.debug("contactInfo: {}, passengerInfos: {}", contactInfo, passengerInfos);
+        if (contactInfo.isEmptyField() || Arrays.stream(passengerInfos).anyMatch(PassengerInfo::isEmptyField)) {
+            AppUtils.showErrorDialog("Please fill out all information");
+            return;
+        }
+        if (!AppUtils.validateEmail(contactInfo.getEmail())) {
+            AppUtils.showErrorDialog("Invalid email! Please fill email again");
+            return;
+        }
+        if (!AppUtils.validatePhoneNumber(contactInfo.getPhone())) {
+            AppUtils.showErrorDialog("Invalid phone number! Please fill phone number again");
+            return;
+        }
+        bookingInfo.setPassengerInfos(passengerInfos);
+        bookingInfo.setContactInfo(contactInfo);
+        FlightSeatPanel flightSeatPanel = new FlightSeatPanel(mainPanel, cardLayout, bookingInfo,
+                flightService, bookingService);
+        mainPanel.add(flightSeatPanel, Constants.FLIGHT_SEAT_SCREEN);
+        cardLayout.show(mainPanel, Constants.FLIGHT_SEAT_SCREEN);
     }
 
     private JButton customButton(String text, Color color) {

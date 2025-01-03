@@ -1,4 +1,4 @@
-package com.group1.flight.booking.form.swing;
+package com.group1.flight.booking.form.component;
 
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;

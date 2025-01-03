@@ -1,7 +1,6 @@
 package com.group1.flight.booking.form.component;
 
-import
-        javax.swing.*;
+import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
 

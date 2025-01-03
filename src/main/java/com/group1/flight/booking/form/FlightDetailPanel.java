@@ -4,44 +4,35 @@ import javax.swing.*;
 import java.awt.*;
 
 import com.group1.flight.booking.core.AppUtils;
-import com.group1.flight.booking.core.Constants;
 import com.group1.flight.booking.dto.BookingInfo;
 import com.group1.flight.booking.dto.FlightInfo;
 import com.group1.flight.booking.service.BookingService;
-import com.group1.flight.booking.service.FlightService;
-import com.group1.flight.booking.service.PlaneService;
 import net.miginfocom.swing.MigLayout;
 import com.group1.flight.booking.form.component.FlightPayPanel;
 
 import static com.group1.flight.booking.core.Constants.*;
 
 public class FlightDetailPanel extends JPanel {
-
-    private static final String GAP_RIGHT = "gap right 10";
+    
+    private static final String GAP_LEFT = "gap left 10";
 
     private final FlightInfo flightInfo;
-
-    private final PlaneService planeService;
-
-    private final FlightService flightService;
 
     private final JPanel mainPanel;
 
     private final CardLayout cardLayout;
 
-    private BookingInfo bookingInfo = null;
+    private final BookingInfo bookingInfo;
 
-    private BookingService bookingService = null;
+    private final BookingService bookingService;
 
-    public FlightDetailPanel(JPanel mainPanel, CardLayout cardLayout, FlightInfo flightInfo,
-                             PlaneService planeService, FlightService flightService) {
+    public FlightDetailPanel(JPanel mainPanel, CardLayout cardLayout, FlightInfo flightInfo, BookingInfo bookingInfo,
+                             BookingService bookingService) {
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
+        this.flightInfo = flightInfo;
         this.bookingInfo = bookingInfo;
         this.bookingService = bookingService;
-        this.flightInfo = flightInfo;
-        this.planeService = planeService;
-        this.flightService = flightService;
         initComponents();
     }
 
@@ -49,7 +40,6 @@ public class FlightDetailPanel extends JPanel {
         setLayout(new MigLayout("wrap, fill", "[grow]", "[grow 80][grow 20]"));
         setBackground(Color.WHITE);
 
-        // Panel for flight information
         JPanel flightInfoPanel = new JPanel(new MigLayout("wrap 2", "[grow, right]20[grow, left]", "[]10[]10[]10[]10[]10[]10[]"));
         flightInfoPanel.setOpaque(false);
 
@@ -64,33 +54,28 @@ public class FlightDetailPanel extends JPanel {
         JLabel lblArrivalAirport = createLabel("Arrival Airport:");
         JLabel lblDepartureTime = createLabel("Departure Time:");
         JLabel lblArrivalTime = createLabel("Arrival Time:");
-        //JLabel lblSeatClass = createLabel("Seat Class:");
         JLabel lblTicketPrice = createLabel("Ticket Price:");
         JLabel lblSeat = createLabel("Seat:");
 
-        flightInfoPanel.add(lblFlightCode, "gap left 10");
+        flightInfoPanel.add(lblFlightCode, GAP_LEFT);
         flightInfoPanel.add(createValueLabel(String.valueOf(flightInfo.getFlightId())));
 
-        flightInfoPanel.add(lblDepartureAirport, "gap left 10");
+        flightInfoPanel.add(lblDepartureAirport, GAP_LEFT);
         flightInfoPanel.add(createValueLabel(flightInfo.getDepartureAirportInfo().getName()));
 
-        flightInfoPanel.add(lblArrivalAirport, "gap left 10");
+        flightInfoPanel.add(lblArrivalAirport, GAP_LEFT);
         flightInfoPanel.add(createValueLabel(flightInfo.getDestinationAirportInfo().getName()));
 
-        flightInfoPanel.add(lblDepartureTime, "gap left 10");
+        flightInfoPanel.add(lblDepartureTime, GAP_LEFT);
         flightInfoPanel.add(createValueLabel(AppUtils.formatDate(flightInfo.getDepartureDate())));
 
-        flightInfoPanel.add(lblArrivalTime, "gap left 10");
+        flightInfoPanel.add(lblArrivalTime, GAP_LEFT);
         flightInfoPanel.add(createValueLabel(AppUtils.formatDate(flightInfo.getReturnDate())));
 
-        //TODO
-//        flightInfoPanel.add(lblSeatClass, GAP_RIGHT);
-//        flightInfoPanel.add(createValueLabel("N/A"));
-
-        flightInfoPanel.add(lblTicketPrice, "gap left 10");
+        flightInfoPanel.add(lblTicketPrice, GAP_LEFT);
         flightInfoPanel.add(createValueLabel(String.valueOf(flightInfo.getBasePrice())));
 
-        flightInfoPanel.add(lblSeat, "gap left 10");
+        flightInfoPanel.add(lblSeat, GAP_LEFT);
         flightInfoPanel.add(createValueLabel("Not Selected"));
 
         add(flightInfoPanel, "align center");

@@ -10,7 +10,6 @@ import com.group1.flight.booking.service.AirlineService;
 import com.group1.flight.booking.service.BookingService;
 import com.group1.flight.booking.service.FlightService;
 import com.group1.flight.booking.service.NationService;
-import com.group1.flight.booking.form.swing.Button;
 import lombok.Setter;
 import org.apache.commons.lang3.Range;
 import org.slf4j.Logger;
@@ -88,7 +87,7 @@ public class FlightListPanel extends JPanel {
         filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.Y_AXIS));
         filterPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         filterPanel.setBackground(Color.WHITE);
-        filterPanel.setPreferredSize(new Dimension(300, 700)); // You can adjust this value as needed
+        filterPanel.setPreferredSize(new Dimension(300, 700));
 
         JPanel headerPanel = new JPanel();
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.X_AXIS));
@@ -96,11 +95,11 @@ public class FlightListPanel extends JPanel {
 
         JLabel headerLabel = new JLabel("Filter");
         headerLabel.setFont(new Font(Constants.FB_FONT, Font.BOLD, 20));
-        headerLabel.setForeground(new Color(34, 139, 34)); // Dark green color
+        headerLabel.setForeground(new Color(34, 139, 34));
 
         JButton resetButton = new JButton("Reset");
         resetButton.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 14));
-        resetButton.setForeground(new Color(0, 123, 255)); // Blue color for the button
+        resetButton.setForeground(new Color(0, 123, 255));
         resetButton.setContentAreaFilled(false);
         resetButton.addActionListener(e -> {
             setBaseFilterCriteria();
@@ -112,14 +111,12 @@ public class FlightListPanel extends JPanel {
         headerPanel.add(Box.createHorizontalGlue());
         headerPanel.add(resetButton);
 
-        // Airline filter section
         JPanel airlineFilterPanel = new JPanel();
         airlineFilterPanel.setLayout(new BoxLayout(airlineFilterPanel, BoxLayout.Y_AXIS));
         airlineFilterPanel.setBackground(Color.WHITE);
         airlineFilterPanel.setBorder(BorderFactory.createTitledBorder("Airline"));
         airlineFilterPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Set maximum width for the airline filter panel
         airlineFilterPanel.setMaximumSize(new Dimension(filterPanel.getPreferredSize().width, Integer.MAX_VALUE));
 
 

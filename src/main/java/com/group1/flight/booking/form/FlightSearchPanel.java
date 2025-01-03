@@ -1,19 +1,20 @@
 package com.group1.flight.booking.form;
 
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
 
 import com.group1.flight.booking.core.AppUtils;
 import com.group1.flight.booking.core.Constants;
-import com.group1.flight.booking.core.exception.LogicException;
 import com.group1.flight.booking.dto.AirportInfo;
 import com.group1.flight.booking.dto.BookingInfo;
 import com.group1.flight.booking.dto.FlightInfo;
 import com.group1.flight.booking.dto.NationInfo;
-import com.group1.flight.booking.service.*;
 import com.group1.flight.booking.form.component.FbButton;
+import com.group1.flight.booking.service.*;
 import com.toedter.calendar.JDateChooser;
 import net.miginfocom.swing.MigLayout;
 import org.slf4j.Logger;
@@ -118,16 +119,16 @@ public class FlightSearchPanel extends JPanel {
             } else {
                 passengerCount[0] = value;
                 if (needsReset[0]) {
-                    needsReset[0] = false; // Đã reset xong, không cần reset nữa
-                    return true; // Chỉ reset, không tăng/giảm
+                    needsReset[0] = false;
+                    return true;
                 }
             }
         } catch (NumberFormatException ex) {
-            passengerCount[0] = 1; // Giá trị mặc định nếu nhập sai
+            passengerCount[0] = 1;
             needsReset[0] = true;
         }
-        lblPassengerCount.setText(String.valueOf(passengerCount[0])); // Cập nhật giao diện
-        return needsReset[0]; // Trả về true nếu vừa reset
+        lblPassengerCount.setText(String.valueOf(passengerCount[0]));
+        return needsReset[0];
     }
 
     private void initComponents() {
@@ -181,32 +182,7 @@ public class FlightSearchPanel extends JPanel {
 
         JPanel bottomPanel = new JPanel(new MigLayout("align center"));
         bottomPanel.setOpaque(false);
-        FbButton btnSearch = new FbButton();
-        btnSearch.setText("Search");
-        btnSearch.setBackground(new Color(7, 164, 121));
-        btnSearch.setForeground(new Color(255, 255, 255));
-        btnSearch.setPreferredSize(new Dimension(200, 40));
-        btnSearch.addActionListener(e -> {
-            logger.debug("Find flight by departureId = {}, destinationId =  {}, departureDate = {}",
-                    bookingInfo.getDepartureAirportId(), bookingInfo.getDestinationAirportId(), bookingInfo.getDepartureDate());
-            if (ObjectUtils.isEmpty(bookingInfo.getDepartureAirportId()) ||
-                    ObjectUtils.isEmpty(bookingInfo.getDestinationAirportId()) ||
-                    ObjectUtils.isEmpty(bookingInfo.getDepartureDate())) {
-                JOptionPane.showMessageDialog(null, "Please choose full of information", "Error", JOptionPane.ERROR_MESSAGE);
-            } else {
-                try {
-                    logger.debug("Travel info: {}", bookingInfo);
-                    flightInfoList.addAll(flightService.findFlight(bookingInfo.getDepartureAirportId(), bookingInfo.getDestinationAirportId(), bookingInfo.getDepartureDate())) ;
-                    logger.debug("Flight list: {}", flightInfoList);
-                    FlightListPanel flightListPanel = new FlightListPanel(mainPanel, cardLayout, bookingInfo,
-                            flightInfoList, airlineService, flightService, bookingService, nationService);
-                    mainPanel.add(flightListPanel, FLIGHT_LIST_SCREEN);
-                    cardLayout.show(mainPanel, FLIGHT_LIST_SCREEN);
-                } catch (LogicException ex) {
-                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
+        FbButton btnSearch = createSearchButton(flightInfoList);
         bottomPanel.add(btnSearch);
 
         JPanel passengerPanel = new JPanel(new GridBagLayout());
@@ -219,11 +195,11 @@ public class FlightSearchPanel extends JPanel {
         lblPassengerCount.setFont(new Font(Constants.FB_FONT, Font.BOLD, 14));
         lblPassengerCount.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         lblPassengerCount.setPreferredSize(new Dimension(50, 30));
-        lblPassengerCount.setHorizontalAlignment(JTextField.CENTER);
+        lblPassengerCount.setHorizontalAlignment(SwingConstants.CENTER);
         lblPassengerCount.addActionListener(e -> validateAndSetReset(lblPassengerCount, passengerCount, needsReset));
-        lblPassengerCount.addFocusListener(new java.awt.event.FocusAdapter() {
+        lblPassengerCount.addFocusListener(new FocusAdapter() {
             @Override
-            public void focusLost(java.awt.event.FocusEvent e) {
+            public void focusLost(FocusEvent e) {
                 validateAndSetReset(lblPassengerCount, passengerCount, needsReset);
             }
         });
@@ -232,7 +208,6 @@ public class FlightSearchPanel extends JPanel {
         btnDecrease.setFont(new Font(Constants.FB_FONT, Font.BOLD, 14));
         btnDecrease.addActionListener(e -> {
             if (validateAndSetReset(lblPassengerCount, passengerCount, needsReset)) {
-                // Lần đầu reset, không giảm giá trị
                 return;
             }
             if (passengerCount[0] > 1) {
@@ -245,7 +220,6 @@ public class FlightSearchPanel extends JPanel {
         btnIncrease.setFont(new Font(Constants.FB_FONT, Font.BOLD, 14));
         btnIncrease.addActionListener(e -> {
             if (validateAndSetReset(lblPassengerCount, passengerCount, needsReset)) {
-                // Lần đầu reset, không tăng giá trị
                 return;
             }
             if (passengerCount[0] < 9) {
@@ -261,7 +235,7 @@ public class FlightSearchPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 1;
-        gbc.insets = new Insets(0, 0, 0, 10); // Thêm khoảng cách ben phải
+        gbc.insets = new Insets(0, 0, 0, 10);
         passengerPanel.add(airline1Panel, gbc);
 
         gbc.gridx = 1;
@@ -277,6 +251,39 @@ public class FlightSearchPanel extends JPanel {
         flightSearcherPanel.add(passengerPanel, BorderLayout.CENTER);
         add(bottomPanel, "wrap, grow");
         add(bottomPanel, "dock south");
+    }
+
+    private FbButton createSearchButton(List<FlightInfo> flightInfoList) {
+        FbButton btnSearch = new FbButton();
+        btnSearch.setText("Search");
+        btnSearch.setBackground(new Color(7, 164, 121));
+        btnSearch.setForeground(new Color(255, 255, 255));
+        btnSearch.setPreferredSize(new Dimension(200, 40));
+        btnSearch.addActionListener(e -> performSearchAction(flightInfoList));
+        return btnSearch;
+    }
+
+    private void performSearchAction(List<FlightInfo> flightInfoList) {
+        logger.debug("Find flight by departureId = {}, destinationId =  {}, departureDate = {}",
+                bookingInfo.getDepartureAirportId(), bookingInfo.getDestinationAirportId(), bookingInfo.getDepartureDate());
+        if (ObjectUtils.isEmpty(bookingInfo.getDepartureAirportId()) ||
+                ObjectUtils.isEmpty(bookingInfo.getDestinationAirportId()) ||
+                ObjectUtils.isEmpty(bookingInfo.getDepartureDate())) {
+            JOptionPane.showMessageDialog(null, "Please choose full of information", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            logger.debug("Travel info: {}", bookingInfo);
+            flightInfoList.addAll(flightService.findFlight(bookingInfo.getDepartureAirportId(), bookingInfo.getDestinationAirportId(), bookingInfo.getDepartureDate())) ;
+            logger.debug("Flight list: {}", flightInfoList);
+            FlightListPanel flightListPanel = new FlightListPanel(mainPanel, cardLayout, bookingInfo,
+                    flightInfoList, airlineService, flightService, bookingService, nationService);
+            mainPanel.add(flightListPanel, FLIGHT_LIST_SCREEN);
+            cardLayout.show(mainPanel, FLIGHT_LIST_SCREEN);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private Map<String, Long> generateMenuData(List<AirportInfo> airportInfos) {

@@ -3,8 +3,8 @@ package com.group1.flight.booking.form;
 import com.group1.flight.booking.core.Constants;
 import com.group1.flight.booking.core.ErrorCode;
 import com.group1.flight.booking.core.exception.LogicException;
-import com.group1.flight.booking.form.swing.Button;
-import com.group1.flight.booking.form.swing.MyTextField;
+import com.group1.flight.booking.form.component.FbButton;
+import com.group1.flight.booking.form.component.FbTextField;
 import com.group1.flight.booking.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,13 +45,13 @@ public class ForgotPasswordPanel extends JPanel {
         lblForgotPassword.setBounds(0, 135, leftPanelWidth, 40);
         add(lblForgotPassword);
 
-        MyTextField txtEmail = new MyTextField();
+        FbTextField txtEmail = new FbTextField();
         txtEmail.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/mail.png"))));
         txtEmail.setBounds((leftPanelWidth - 300) / 2, 195, 300, 40);
         txtEmail.setHint("Enter your email");
         add(txtEmail);
 
-        Button sendOtpButton = createSendOtpButton(leftPanelWidth, txtEmail);
+        FbButton sendOtpButton = createSendOtpButton(leftPanelWidth, txtEmail);
         add(sendOtpButton);
 
         JButton backToLoginBtn = new JButton("Back to Login");
@@ -63,8 +63,8 @@ public class ForgotPasswordPanel extends JPanel {
         add(backToLoginBtn);
     }
 
-    private Button createSendOtpButton(int leftPanelWidth, MyTextField txtEmail) {
-        Button sendOtpButton = new Button();
+    private FbButton createSendOtpButton(int leftPanelWidth, FbTextField txtEmail) {
+        FbButton sendOtpButton = new FbButton();
         sendOtpButton.setText("Send OTP");
         sendOtpButton.setFont(new Font(Constants.FB_FONT, Font.BOLD, 14));
         sendOtpButton.setForeground(Color.WHITE);

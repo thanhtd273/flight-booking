@@ -1,11 +1,10 @@
 package com.group1.flight.booking.form;
 
-import com.group1.flight.booking.core.exception.LogicException;
 import com.group1.flight.booking.dto.UserInfo;
-import com.group1.flight.booking.form.swing.Button;
-import com.group1.flight.booking.form.swing.ButtonOutLine;
-import com.group1.flight.booking.form.swing.MyPasswordField;
-import com.group1.flight.booking.form.swing.MyTextField;
+import com.group1.flight.booking.form.component.FbButton;
+import com.group1.flight.booking.form.component.ButtonOutLine;
+import com.group1.flight.booking.form.component.FbPasswordField;
+import com.group1.flight.booking.form.component.FbTextField;
 import com.group1.flight.booking.model.User;
 import com.group1.flight.booking.service.AuthService;
 import org.slf4j.Logger;
@@ -104,72 +103,62 @@ public class SignUpPanel extends JPanel {
         lblCreateAccount.setBounds(0, 135, leftPanelWidth, 40);
         leftPanel.add(lblCreateAccount);
 
-        MyTextField txtName = new MyTextField();
+        FbTextField txtName = new FbTextField();
         txtName.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/user.png"))));
         txtName.setBounds((leftPanelWidth-300)/2, 195, 300, 40);
         txtName.setHint("Name");
         leftPanel.add(txtName);
 
-        MyTextField txtEmail = new MyTextField();
-        txtEmail.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/mail.png"))));
-        txtEmail.setBounds((leftPanelWidth-300)/2, 245, 300, 40);
-        txtEmail.setHint("Email");
-        leftPanel.add(txtEmail);
+        FbTextField emailField = new FbTextField();
+        emailField.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/mail.png"))));
+        emailField.setBounds((leftPanelWidth-300)/2, 245, 300, 40);
+        emailField.setHint("Email");
+        leftPanel.add(emailField);
 
-        MyPasswordField txtPassword = new MyPasswordField();
-        txtPassword.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/pass.png"))));
-        txtPassword.setBounds((leftPanelWidth-300)/2, 295, 300, 40);
-        txtPassword.setHint("Password");
-        leftPanel.add(txtPassword);
+        FbPasswordField passwordField = new FbPasswordField();
+        passwordField.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/pass.png"))));
+        passwordField.setBounds((leftPanelWidth-300)/2, 295, 300, 40);
+        passwordField.setHint("Password");
+        leftPanel.add(passwordField);
 
-        MyPasswordField confirmPasswordField = new MyPasswordField();
-        //confirmPasswordField.setBorder(BorderFactory.createTitledBorder("Confirm Password"));
+        FbPasswordField confirmPasswordField = new FbPasswordField();
         confirmPasswordField.setPrefixIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/pass.png"))));
         confirmPasswordField.setBounds((leftPanelWidth-300)/2, 345, 300, 40);
         confirmPasswordField.setHint("Confirm Password");
         leftPanel.add(confirmPasswordField);
 
-        Button btnSignUp = new Button();
-        btnSignUp.setText("SIGN UP");
-        btnSignUp.setFont(new Font(FONT_NAME, Font.BOLD, 14));
-        btnSignUp.setForeground(Color.WHITE);
-        btnSignUp.setBackground(new Color(34, 177, 76));
-        btnSignUp.setBounds((leftPanelWidth-200)/2, 405, 200, 40);
-        btnSignUp.setFocusPainted(false);
-        btnSignUp.setBorderPainted(false);
-        btnSignUp.addActionListener(e -> {
-            UserInfo userInfo = new UserInfo();
-            userInfo.setEmail(txtEmail.getText());
-            userInfo.setPassword(String.valueOf(txtPassword.getPassword()));
-            userInfo.setConfirmPassword(String.valueOf(confirmPasswordField.getPassword()));
-            try {
-                User user = authService.signUp(userInfo);
-                logger.debug("Create user successfully, user = {}", user);
-                activateAccountPanel.setEmail(txtEmail.getText());
-                cardLayout.show(mainPanel, ACCOUNT_ACTIVATOR);
-            } catch (LogicException ex) {
-                JOptionPane.showMessageDialog(null, ex.getMessage(), "Sign Up Fail", JOptionPane.ERROR_MESSAGE);
-            }
-        });
+        FbButton btnSignUp = createSignUpBtn(emailField, passwordField, confirmPasswordField);
         leftPanel.add(btnSignUp);
-
-        confirmPasswordField.addActionListener(e -> performSignUp(txtName, txtEmail, txtPassword, confirmPasswordField));
 
         add(leftPanel);
         add(rightPanel);
     }
 
-    private void performSignUp(MyTextField txtName, MyTextField txtEmail, MyPasswordField txtPassword, MyPasswordField confirmPasswordField) {
+    private FbButton createSignUpBtn(FbTextField emailField, FbPasswordField passwordField, FbPasswordField confirmPasswordField) {
+        FbButton button = new FbButton();
+        button.setText("SIGN UP");
+        button.setFont(new Font(FONT_NAME, Font.BOLD, 14));
+        button.setForeground(Color.WHITE);
+        button.setBackground(new Color(34, 177, 76));
+        button.setBounds((leftPanelWidth-200)/2, 405, 200, 40);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.addActionListener(e -> signUpAction(emailField.getText(),
+                String.valueOf(passwordField.getPassword()), String.valueOf(confirmPasswordField.getPassword())));
+        return button;
+    }
+
+    private void signUpAction(String email, String password, String confirmPassword) {
         UserInfo userInfo = new UserInfo();
-        userInfo.setEmail(txtEmail.getText());
-        userInfo.setPassword(String.valueOf(txtPassword.getPassword()));
-        userInfo.setConfirmPassword(String.valueOf(confirmPasswordField.getPassword()));
+        userInfo.setEmail(email);
+        userInfo.setPassword(password);
+        userInfo.setConfirmPassword(confirmPassword);
         try {
             User user = authService.signUp(userInfo);
             logger.debug("Create user successfully, user = {}", user);
-            activateAccountPanel.setEmail(txtEmail.getText());
+            activateAccountPanel.setEmail(email);
             cardLayout.show(mainPanel, ACCOUNT_ACTIVATOR);
-        } catch (LogicException ex) {
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Sign Up Fail", JOptionPane.ERROR_MESSAGE);
         }
     }
