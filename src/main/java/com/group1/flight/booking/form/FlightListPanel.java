@@ -236,7 +236,7 @@ public class FlightListPanel extends JPanel {
         filterPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         JButton backButton = new JButton("Back");
         backButton.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 14));
-        backButton.setBackground(new Color(7, 164, 121));
+        backButton.setBackground(new Color(34, 177, 76));
         backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         backButton.addActionListener(e -> cardLayout.show(mainPanel, Constants.FLIGHT_SEARCHER_SCREEN));
         filterPanel.add(backButton);
