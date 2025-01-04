@@ -144,7 +144,7 @@ public class FlightSearchPanel extends JPanel {
 
         JLabel lblTitle = new JLabel("Search Flights");
         lblTitle.setFont(new Font("sanserif", Font.BOLD, 30));
-        lblTitle.setForeground(new Color(7, 164, 121));
+        lblTitle.setForeground(new Color(34, 177, 76));
         add(lblTitle, "wrap, align center");
 
         List<AirportInfo> airportInfoList = airportService.getAllAirportInfos();
@@ -259,7 +259,7 @@ public class FlightSearchPanel extends JPanel {
     private FbButton createSearchButton(List<FlightInfo> flightInfoList) {
         FbButton btnSearch = new FbButton();
         btnSearch.setText("Search");
-        btnSearch.setBackground(new Color(7, 164, 121));
+        btnSearch.setBackground(new Color(34, 177, 76));
         btnSearch.setForeground(new Color(255, 255, 255));
         btnSearch.setPreferredSize(new Dimension(200, 40));
         btnSearch.addActionListener(e -> performSearchAction(flightInfoList));
