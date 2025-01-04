@@ -72,7 +72,7 @@ public class LoginPanel extends JPanel{
 
         ButtonOutLine btnSignUp = new ButtonOutLine();
         btnSignUp.setText("SIGN UP");
-        btnSignUp.setFont(new Font(FONT_NAME, Font.BOLD, 16));
+        btnSignUp.setFont(new Font(FONT_NAME, Font.BOLD, 13));
         btnSignUp.setForeground(new Color(255, 255, 255));
         btnSignUp.setBackground(new Color(255, 255, 255));
         btnSignUp.setBounds((leftPanelWidth-200)/2, 320, 200, 40);
@@ -89,7 +89,7 @@ public class LoginPanel extends JPanel{
 
         JLabel lblSignIn = new JLabel("Sign In");
         lblSignIn.setFont(new Font(FB_FONT, Font.BOLD, 30));
-        lblSignIn.setForeground(new Color(7, 164, 121));
+        lblSignIn.setForeground(new Color(34, 177, 76));
         lblSignIn.setHorizontalAlignment(SwingConstants.CENTER);
         lblSignIn.setVerticalAlignment(SwingConstants.CENTER);
         lblSignIn.setBounds(0, 140, rightPanelWidth, 40);
@@ -112,9 +112,9 @@ public class LoginPanel extends JPanel{
 
         FbButton btnSignIn = new FbButton();
         btnSignIn.setText("SIGN IN");
-        btnSignIn.setBackground(new Color(7, 164, 121));
+        btnSignIn.setBackground(new Color(34, 177, 76));
         btnSignIn.setForeground(Color.WHITE);
-        btnSignIn.setFont(new Font(FONT_NAME, Font.BOLD, 16));
+        btnSignIn.setFont(new Font(FONT_NAME, Font.BOLD, 13));
         btnSignIn.setBounds((rightPanelWidth-200)/2, 350, 200, 40);
         btnSignIn.addActionListener(e -> loginAction(emailField.getText(), String.valueOf(passwordField.getPassword())));
         rightPanel.add(btnSignIn);
