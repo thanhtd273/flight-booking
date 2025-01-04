@@ -55,8 +55,8 @@ public class FlightSeatPanel extends JPanel {
 
         JLabel lblTitle = new JLabel(String.format("Select %d seats", bookingInfo.getNumOfPassengers()));
         lblTitle.setFont(new Font(Constants.FB_FONT, Font.BOLD, 24));
-        lblTitle.setForeground(new Color(7, 164, 121));
-        add(lblTitle, "span, center, gapbottom 20");
+        lblTitle.setForeground(new Color(34, 177, 76));
+        add(lblTitle, "span, center, gap bottom 20");
 
         JPanel seatPanel = new JPanel(new GridBagLayout());
         seatPanel.setOpaque(false);
@@ -102,7 +102,7 @@ public class FlightSeatPanel extends JPanel {
         seatButton.setPreferredSize(new Dimension(20, 50));
 
         if (Boolean.TRUE.equals(seatInfo.getAvailable())) {
-            seatButton.setBackground(new Color(7, 164, 121));
+            seatButton.setBackground(new Color(34, 177, 76));
             seatButton.setForeground(Color.WHITE);
             seatButton.addActionListener(e -> selectSeatAction(seatInfo, seatButton));
         } else {
@@ -119,7 +119,7 @@ public class FlightSeatPanel extends JPanel {
         buttonPanel.setOpaque(false);
 
         JButton btnBack = new JButton("Back");
-        btnBack.setBackground(new Color(7, 164, 121));
+        btnBack.setBackground(new Color(34, 177, 76));
         btnBack.setForeground(Color.WHITE);
         btnBack.addActionListener(e -> cardLayout.show(mainPanel, Constants.CONTACT_FORM));
         buttonPanel.add(btnBack, "w 100!, h 40!");
@@ -160,7 +160,7 @@ public class FlightSeatPanel extends JPanel {
 
     private void selectSeatAction(SeatInfo seatInfo, FbButton seatButton) {
         if (selectedSeats.contains(seatInfo)) {
-            seatButton.setBackground(new Color(7, 164, 121));
+            seatButton.setBackground(new Color(34, 177, 76));
             selectedSeats.remove(seatInfo);
         }
         if (selectedSeats.size() == bookingInfo.getNumOfPassengers()) {
