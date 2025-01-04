@@ -9,10 +9,7 @@ import javax.swing.*;
 
 import com.group1.flight.booking.core.AppUtils;
 import com.group1.flight.booking.core.Constants;
-import com.group1.flight.booking.dto.AirportInfo;
-import com.group1.flight.booking.dto.BookingInfo;
-import com.group1.flight.booking.dto.FlightInfo;
-import com.group1.flight.booking.dto.NationInfo;
+import com.group1.flight.booking.dto.*;
 import com.group1.flight.booking.form.component.FbButton;
 import com.group1.flight.booking.service.*;
 import com.toedter.calendar.JDateChooser;
@@ -46,6 +43,8 @@ public class FlightSearchPanel extends JPanel {
     private final NationService nationService;
 
     final boolean[] needsReset = {false};
+
+    final int[] passengerCount = {1};
 
     public FlightSearchPanel(JPanel mainPanel, CardLayout cardLayout, AirportService airportService,
                              FlightService flightService, AirlineService airlineService, BookingService bookingService,
@@ -120,6 +119,7 @@ public class FlightSearchPanel extends JPanel {
                 passengerCount[0] = value;
                 if (needsReset[0]) {
                     needsReset[0] = false;
+                    bookingInfo.setNumOfPassengers(passengerCount[0]);
                     return true;
                 }
             }
@@ -128,6 +128,7 @@ public class FlightSearchPanel extends JPanel {
             needsReset[0] = true;
         }
         lblPassengerCount.setText(String.valueOf(passengerCount[0]));
+        bookingInfo.setNumOfPassengers(passengerCount[0]);
         return needsReset[0];
     }
 
@@ -190,7 +191,7 @@ public class FlightSearchPanel extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        final int[] passengerCount = {1};
+
         JTextField lblPassengerCount = new JTextField(String.valueOf(passengerCount[0]), SwingConstants.CENTER);
         lblPassengerCount.setFont(new Font(Constants.FB_FONT, Font.BOLD, 14));
         lblPassengerCount.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
@@ -213,6 +214,7 @@ public class FlightSearchPanel extends JPanel {
             if (passengerCount[0] > 1) {
                 passengerCount[0]--;
                 lblPassengerCount.setText(String.valueOf(passengerCount[0]));
+                bookingInfo.setNumOfPassengers(passengerCount[0]);
             }
         });
 
@@ -225,6 +227,7 @@ public class FlightSearchPanel extends JPanel {
             if (passengerCount[0] < 9) {
                 passengerCount[0]++;
                 lblPassengerCount.setText(String.valueOf(passengerCount[0]));
+                bookingInfo.setNumOfPassengers(passengerCount[0]);
             }
         });
 
@@ -272,7 +275,7 @@ public class FlightSearchPanel extends JPanel {
             JOptionPane.showMessageDialog(null, "Please choose full of information", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
+        bookingInfo.setNumOfPassengers(passengerCount[0]);
         try {
             logger.debug("Travel info: {}", bookingInfo);
             flightInfoList.addAll(flightService.findFlight(bookingInfo.getDepartureAirportId(), bookingInfo.getDestinationAirportId(), bookingInfo.getDepartureDate())) ;
