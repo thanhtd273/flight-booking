@@ -39,7 +39,7 @@ public class FlightPayPanel extends JPanel {
 
         JLabel lblTitle = new JLabel("Payment Information");
         lblTitle.setFont(new Font(Constants.FB_FONT, Font.BOLD, 24));
-        lblTitle.setForeground(new Color(7, 164, 121));
+        lblTitle.setForeground(new Color(34, 177, 76));
         add(lblTitle, "span, center, gap top 20");
 
         JLabel lblPaymentInfo = new JLabel("Please make your payment using the details below:");
@@ -82,7 +82,7 @@ public class FlightPayPanel extends JPanel {
         buttonPanel.setOpaque(false);
 
         JButton btnBack = new JButton("Back");
-        btnBack.setBackground(new Color(7, 164, 121));
+        btnBack.setBackground(new Color(34, 177, 76));
         btnBack.setForeground(Color.WHITE);
         btnBack.addActionListener(e -> cardLayout.show(mainPanel, Constants.FLIGHT_SEAT_SCREEN));
         buttonPanel.add(btnBack, "w 100!, h 40!");
