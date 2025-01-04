@@ -13,6 +13,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
 
+import static com.group1.flight.booking.core.Constants.LOGIN_SCREEN;
+
 public class ForgotPasswordPanel extends JPanel {
 
     private static final Logger logger = LoggerFactory.getLogger(ForgotPasswordPanel.class);
@@ -54,13 +56,21 @@ public class ForgotPasswordPanel extends JPanel {
         FbButton sendOtpButton = createSendOtpButton(leftPanelWidth, txtEmail);
         add(sendOtpButton);
 
-        JButton backToLoginBtn = new JButton("Back to Login");
-        backToLoginBtn.setFont(new Font(Constants.FB_FONT, Font.PLAIN, 14));
-        backToLoginBtn.setForeground(new Color(34, 177, 76));
-        backToLoginBtn.setHorizontalAlignment(SwingConstants.CENTER);
-        backToLoginBtn.setBounds(0, 305, leftPanelWidth, 20);
-        backToLoginBtn.addActionListener(e -> cardLayout.show(mainPanel, Constants.LOGIN_SCREEN));
+        FbButton backToLoginBtn = createBackToLoginBtn(leftPanelWidth, txtEmail);
         add(backToLoginBtn);
+    }
+
+    private FbButton createBackToLoginBtn(int leftPanelWidth, FbTextField txtEmail) {
+        FbButton backToLoginBtn = new FbButton();
+        backToLoginBtn.setText("Back to Login");
+        backToLoginBtn.setFont(new Font(Constants.FB_FONT, Font.BOLD, 14));
+        backToLoginBtn.setForeground(Color.WHITE);
+        backToLoginBtn.setBackground(new Color(34, 177, 76));
+        backToLoginBtn.setBounds(300, 255, 130, 40);
+        backToLoginBtn.setFocusPainted(false);
+        backToLoginBtn.setBorderPainted(false);
+        backToLoginBtn.addActionListener(e -> cardLayout.show(mainPanel, LOGIN_SCREEN));
+        return backToLoginBtn;
     }
 
     private FbButton createSendOtpButton(int leftPanelWidth, FbTextField txtEmail) {
@@ -68,8 +78,8 @@ public class ForgotPasswordPanel extends JPanel {
         sendOtpButton.setText("Send OTP");
         sendOtpButton.setFont(new Font(Constants.FB_FONT, Font.BOLD, 14));
         sendOtpButton.setForeground(Color.WHITE);
-        sendOtpButton.setBackground(new Color(34, 177, 76));
-        sendOtpButton.setBounds((leftPanelWidth - 200) / 2, 255, 200, 40);
+        sendOtpButton.setBackground(new Color(20, 140, 180));
+        sendOtpButton.setBounds(470, 255, 130, 40);
         sendOtpButton.setFocusPainted(false);
         sendOtpButton.setBorderPainted(false);
         sendOtpButton.addActionListener(e -> sendOTPAction(txtEmail.getText()));
@@ -78,6 +88,11 @@ public class ForgotPasswordPanel extends JPanel {
 
     private void sendOTPAction(String email) {
         logger.debug("Send OTP to email: {}", email);
+
+        if (!isValidEmail(email)) {
+            return;
+        }
+
         try {
             ErrorCode errorCode = userService.forgotPassword(email);
             if (errorCode != ErrorCode.SUCCESS) {
@@ -91,5 +106,20 @@ public class ForgotPasswordPanel extends JPanel {
         } catch (Exception ex) {
             logger.error("Send OTP fail: {}", ex.getMessage());
         }
+    }
+
+    private boolean isValidEmail(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Email cannot be empty", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        if (!email.matches(emailRegex)) {
+            JOptionPane.showMessageDialog(this, "Invalid email format", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        return true;
     }
 }
