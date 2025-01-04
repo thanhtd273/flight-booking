@@ -45,8 +45,8 @@ public class FlightDetailPanel extends JPanel {
 
         JLabel lblTitle = new JLabel("Flight Information");
         lblTitle.setFont(new Font(FB_FONT, Font.BOLD, 28));
-        lblTitle.setForeground(new Color(7, 164, 121));
-        flightInfoPanel.add(lblTitle, "span, center, gapbottom 20");
+        lblTitle.setForeground(new Color(34, 177, 76));
+        flightInfoPanel.add(lblTitle, "span, center, gap bottom 20");
 
         // Add flight information labels
         JLabel lblFlightCode = createLabel("Flight Code:");
@@ -80,15 +80,14 @@ public class FlightDetailPanel extends JPanel {
 
         add(flightInfoPanel, "align center");
 
-        // Panel for buttons
         JPanel buttonPanel = new JPanel(new MigLayout("fill, insets 0", "[grow, left][center][grow, right]", "[grow]"));
         buttonPanel.setOpaque(false);
 
         JButton btnBack = createButton("Back");
-        btnBack.addActionListener(e -> cardLayout.show(mainPanel, FLIGHT_SEARCHER_SCREEN));
+        btnBack.addActionListener(e -> cardLayout.show(mainPanel, FLIGHT_SEAT_SCREEN));
         buttonPanel.add(btnBack, "cell 0 0, align left, w 120!, h 40!");
 
-        JButton btnSelectSeat = createButton("Select Seat");
+        JButton btnSelectSeat = createButton("Book");
         btnSelectSeat.addActionListener(e -> {
             FlightPayPanel payPanel = new FlightPayPanel(mainPanel, cardLayout, bookingInfo, bookingService);
             mainPanel.add(payPanel, FLIGHT_PAYER);
@@ -116,7 +115,7 @@ public class FlightDetailPanel extends JPanel {
     private JButton createButton(String text) {
         JButton button = new JButton(text);
         button.setFont(new Font(FB_FONT, Font.BOLD, 14));
-        button.setBackground(new Color(7, 164, 121));
+        button.setBackground(new Color(34, 177, 76));
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
         return button;
