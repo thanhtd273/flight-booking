@@ -66,7 +66,7 @@ public class ResetPasswordPanel extends JPanel{
 
     private FbButton createSummitButton(int leftPanelWidth, FbPasswordField passwordField, FbPasswordField confirmPasswordField) {
         FbButton summitButton = new FbButton();
-        summitButton.setText("Summit");
+        summitButton.setText("Submit");
         summitButton.setFont(new Font(Constants.FB_FONT, Font.BOLD, 14));
         summitButton.setForeground(Color.WHITE);
         summitButton.setBackground(new Color(34, 177, 76));
