@@ -25,9 +25,6 @@ import com.group1.flight.booking.model.Invoice;
 
 import com.group1.flight.booking.service.*;
 import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -36,9 +33,6 @@ import org.springframework.util.ObjectUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -211,133 +205,12 @@ public class BookingServiceImpl implements BookingService {
             throws MessagingException, DocumentException, FileNotFoundException {
             String body = String.format("Hi %s, %nYour booking request has been successfully confirmed. Please find the receipt in the attached file",
                     bookingInfo.getContactInfo().getFirstName());
-            String attachedFilePath = exportReceipt(bookingInfo);
+            String attachedFilePath = PdfExporter.exportReceipt(bookingInfo);
+            String ticketFilePath = PdfExporter.exportETicket(bookingInfo);
             File attachedFile = new File(attachedFilePath);
-            mailService.sendMailWithAttachment(bookingInfo.getContactInfo().getEmail(), "[FB] Flight Receipt", body, attachedFile);
-    }
+            File ticketFile = new File(ticketFilePath);
 
-    private String exportReceipt(BookingInfo bookingInfo) throws DocumentException, FileNotFoundException {
-        String filePath = String.format("data/receipt/Receipt_%d.pdf", System.currentTimeMillis());
-
-
-        Document document = new Document();
-        PdfWriter.getInstance(document, new FileOutputStream(filePath));
-        document.open();
-
-        // Header
-        Paragraph header = new Paragraph("RECEIPT", FontFactory.getFont(FontFactory.TIMES_BOLD, 16, BaseColor.BLUE));
-        header.setAlignment(Element.ALIGN_LEFT);
-        header.setSpacingAfter(10);
-        document.add(header);
-
-        // Invoice Information: Number and Date on separate rows
-        PdfPTable invoiceTable = new PdfPTable(1);
-        invoiceTable.setWidthPercentage(100);
-        invoiceTable.setSpacingAfter(20);
-        invoiceTable.addCell(createCellWithoutBorder("Number: #1819037520398153009", Element.ALIGN_LEFT
-        ));
-        DateFormat dateFormat = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss");
-        invoiceTable.addCell(createCellWithoutBorder(String.format("Date: %s", dateFormat.format(new Date())),
-                Element.ALIGN_LEFT));
-        document.add(invoiceTable);
-
-        // Payment Information
-        document.add(createSection("PAYMENT INFORMATION", new BaseColor(242, 243, 255)));
-        PdfPTable paymentTable = new PdfPTable(new float[]{2, 3, 2}); // Three columns: Code, Method, Status
-        paymentTable.setWidthPercentage(100);
-        paymentTable.setSpacingAfter(20);
-        paymentTable.addCell(createCellWithoutBorder("Reservation code: 1210070435", Element.ALIGN_LEFT
-        ));
-        paymentTable.addCell(createCellWithoutBorder(String.format("Method: %s", "Internet Banking"),
-                Element.ALIGN_CENTER));
-        paymentTable.addCell(createCellWithoutBorder("Status: Done", Element.ALIGN_RIGHT
-        ));
-        document.add(paymentTable);
-
-        // Customer Information
-        document.add(createSection("CUSTOMER INFORMATION", new BaseColor(242, 243, 255)));
-        PdfPTable customerTable = new PdfPTable(1);
-        customerTable.setWidthPercentage(100);
-        customerTable.setSpacingAfter(20);
-        ContactInfo contactInfo = bookingInfo.getContactInfo();
-        customerTable.addCell(createCellWithoutBorder(String.format("Full name: %s %s", contactInfo.getFirstName(),
-                contactInfo.getLastName()), Element.ALIGN_LEFT));
-        customerTable.addCell(createCellWithoutBorder(String.format("Email: %s", contactInfo.getEmail()),
-                Element.ALIGN_LEFT));
-        customerTable.addCell(createCellWithoutBorder(String.format("Phone number: %s", contactInfo.getPhone()),
-                Element.ALIGN_LEFT));
-        document.add(customerTable);
-
-        // Passenger Information
-        document.add(createSection("PASSENGER INFORMATION", new BaseColor(242, 243, 255)));
-        PassengerInfo[] passengerInfos = bookingInfo.getPassengerInfos();
-        for (PassengerInfo passengerInfo: passengerInfos) {
-            Paragraph passengerInfoPara = new Paragraph(String.format("%s %s", passengerInfo.getFirstName(), passengerInfo.getLastName()),
-                    FontFactory.getFont(FontFactory.TIMES_ROMAN, 10));
-            passengerInfoPara.setSpacingAfter(20);
-            document.add(passengerInfoPara);
-        }
-
-        // Transaction Information
-        document.add(createSection("TRANSACTION INFORMATION", new BaseColor(242, 243, 255)));
-        PdfPTable transactionTable = new PdfPTable(new float[]{1, 2, 4, 1, 2, 2});
-        transactionTable.setWidthPercentage(100);
-        transactionTable.setSpacingAfter(20);
-        transactionTable.addCell(createHeaderCell("Sequence"));
-        transactionTable.addCell(createHeaderCell("Category"));
-        transactionTable.addCell(createHeaderCell("Description"));
-        transactionTable.addCell(createHeaderCell("Quantity"));
-        transactionTable.addCell(createHeaderCell("Unit Price"));
-        transactionTable.addCell(createHeaderCell("Total Amount"));
-
-        // Add transaction row
-        transactionTable.addCell(createCell("1", Element.ALIGN_CENTER));
-        transactionTable.addCell(createCell("Flight ticket ", Element.ALIGN_CENTER));
-        FlightInfo flightInfo = bookingInfo.getFlightInfo();
-        transactionTable.addCell(createCell(String.format("%s %s - %s | %s",
-                flightInfo.getAirline().getName(), flightInfo.getDepartureAirportInfo().getName(),
-                flightInfo.getDestinationAirportInfo().getName(), new SimpleDateFormat("dd MMMM yyyy").format(flightInfo.getDepartureDate())),
-                Element.ALIGN_LEFT));
-        transactionTable.addCell(createCell(String.valueOf(flightInfo.getNumOfPassengers()), Element.ALIGN_CENTER));
-        transactionTable.addCell(createCell(String.valueOf(flightInfo.getBasePrice()), Element.ALIGN_RIGHT));
-        transactionTable.addCell(createCell(String.valueOf(bookingInfo.getNumOfPassengers() * flightInfo.getBasePrice()),
-                Element.ALIGN_RIGHT));
-        document.add(transactionTable);
-
-        document.close();
-
-        return filePath;
-    }
-
-    private static PdfPCell createCell(String content, int alignment) {
-        PdfPCell cell = new PdfPCell(new Phrase(content, FontFactory.getFont(FontFactory.TIMES_ROMAN, 10)));
-        cell.setHorizontalAlignment(alignment);
-        return cell;
-    }
-
-    private static PdfPCell createCellWithoutBorder(String content, int alignment) {
-        PdfPCell cell = new PdfPCell(new Phrase(content, FontFactory.getFont(FontFactory.TIMES_ROMAN, 10)));
-        cell.setHorizontalAlignment(alignment);
-        cell.setBorder(Rectangle.NO_BORDER);
-        return cell;
-    }
-
-    private static PdfPCell createHeaderCell(String content) {
-        PdfPCell cell = new PdfPCell(new Phrase(content, FontFactory.getFont(FontFactory.TIMES_BOLD, 10)));
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setBackgroundColor(new BaseColor(242, 243, 255));
-        return cell;
-    }
-
-    private static PdfPTable createSection(String title, BaseColor bgColor) {
-        PdfPTable sectionTable = new PdfPTable(1);
-        sectionTable.setWidthPercentage(100);
-        PdfPCell sectionCell = new PdfPCell(new Phrase(title, FontFactory.getFont(FontFactory.TIMES_BOLD, 12, BaseColor.BLACK)));
-        sectionCell.setBackgroundColor(bgColor);
-        sectionCell.setHorizontalAlignment(Element.ALIGN_LEFT);
-        sectionCell.setPadding(5);
-        sectionCell.setBorder(Rectangle.NO_BORDER);
-        sectionTable.addCell(sectionCell);
-        return sectionTable;
+            mailService.sendMailWithAttachment(bookingInfo.getContactInfo().getEmail(), "[FB] Flight Receipt",
+                    body, new File[] {attachedFile, ticketFile});
     }
 }

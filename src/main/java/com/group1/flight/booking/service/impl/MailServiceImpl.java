@@ -50,7 +50,7 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendMailWithAttachment(String to, String subject, String content, File file) throws MessagingException {
+    public void sendMailWithAttachment(String to, String subject, String content, File[] files) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
@@ -58,8 +58,11 @@ public class MailServiceImpl implements MailService {
         helper.setSubject(subject);
         helper.setText(content);
 
-        FileSystemResource fsr = new FileSystemResource(file);
-        helper.addAttachment(file.getName(), fsr);
+        for (File file: files) {
+            FileSystemResource fsr = new FileSystemResource(file);
+            helper.addAttachment(file.getName(), fsr);
+        }
+
 
         mailSender.send(message);
     }

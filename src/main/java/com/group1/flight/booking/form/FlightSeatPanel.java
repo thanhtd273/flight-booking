@@ -8,6 +8,7 @@ import java.util.List;
 import com.group1.flight.booking.core.AppUtils;
 import com.group1.flight.booking.core.Constants;
 import com.group1.flight.booking.dto.BookingInfo;
+import com.group1.flight.booking.dto.FlightInfo;
 import com.group1.flight.booking.dto.SeatInfo;
 import com.group1.flight.booking.form.component.FlightPayPanel;
 import com.group1.flight.booking.service.BookingService;
@@ -153,21 +154,24 @@ public class FlightSeatPanel extends JPanel {
         }
         bookingInfo.setSeatInfos(seatIds);
         logger.debug("bookingInfo: {}", bookingInfo);
-        FlightPayPanel payPanel = new FlightPayPanel(mainPanel, cardLayout, bookingInfo, bookingService);
-        mainPanel.add(payPanel, Constants.FLIGHT_PAYER);
-        cardLayout.show(mainPanel, Constants.FLIGHT_PAYER);
+        FlightDetailPanel flightDetailPanel = new FlightDetailPanel(mainPanel, cardLayout, bookingInfo, bookingService);
+
+        mainPanel.add(flightDetailPanel, Constants.FLIGHT_DETAIL_SCREEN);
+        cardLayout.show(mainPanel, Constants.FLIGHT_DETAIL_SCREEN);
     }
 
     private void selectSeatAction(SeatInfo seatInfo, FbButton seatButton) {
+
         if (selectedSeats.contains(seatInfo)) {
             seatButton.setBackground(new Color(34, 177, 76));
             selectedSeats.remove(seatInfo);
+        } else {
+            if (selectedSeats.size() == bookingInfo.getNumOfPassengers()) {
+                AppUtils.showErrorDialog("You have not selected enough seats");
+            }
+            selectedSeats.add(seatInfo);
+            seatButton.setBackground(new Color(0, 123, 255));
         }
-        if (selectedSeats.size() == bookingInfo.getNumOfPassengers()) {
-            AppUtils.showErrorDialog("You have not selected enough seats");
-            return;
-        }
-        selectedSeats.add(seatInfo);
-        seatButton.setBackground(new Color(0, 123, 255));
+
     }
 }

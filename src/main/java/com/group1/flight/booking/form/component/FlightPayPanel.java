@@ -84,7 +84,7 @@ public class FlightPayPanel extends JPanel {
         JButton btnBack = new JButton("Back");
         btnBack.setBackground(new Color(34, 177, 76));
         btnBack.setForeground(Color.WHITE);
-        btnBack.addActionListener(e -> cardLayout.show(mainPanel, Constants.FLIGHT_SEAT_SCREEN));
+        btnBack.addActionListener(e -> cardLayout.show(mainPanel, Constants.FLIGHT_DETAIL_SCREEN));
         buttonPanel.add(btnBack, "w 100!, h 40!");
 
         JButton btnDone = new JButton("Done");

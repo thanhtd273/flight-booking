@@ -12,5 +12,5 @@ public interface MailService {
 
     SimpleMailMessage sendSimpleMail(String[] to, String subject, String text) throws LogicException;
 
-    void sendMailWithAttachment(String to, String subject, String text, File file) throws MessagingException;
+    void sendMailWithAttachment(String to, String subject, String text, File[] file) throws MessagingException;
 }

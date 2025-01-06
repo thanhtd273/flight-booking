@@ -2,11 +2,15 @@ package com.group1.flight.booking.form;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import com.group1.flight.booking.core.AppUtils;
 import com.group1.flight.booking.dto.BookingInfo;
 import com.group1.flight.booking.dto.FlightInfo;
+import com.group1.flight.booking.dto.SeatInfo;
 import com.group1.flight.booking.service.BookingService;
+import com.group1.flight.booking.service.impl.PdfExporter;
 import net.miginfocom.swing.MigLayout;
 import com.group1.flight.booking.form.component.FlightPayPanel;
 
@@ -16,8 +20,6 @@ public class FlightDetailPanel extends JPanel {
     
     private static final String GAP_LEFT = "gap left 10";
 
-    private final FlightInfo flightInfo;
-
     private final JPanel mainPanel;
 
     private final CardLayout cardLayout;
@@ -26,11 +28,10 @@ public class FlightDetailPanel extends JPanel {
 
     private final BookingService bookingService;
 
-    public FlightDetailPanel(JPanel mainPanel, CardLayout cardLayout, FlightInfo flightInfo, BookingInfo bookingInfo,
+    public FlightDetailPanel(JPanel mainPanel, CardLayout cardLayout, BookingInfo bookingInfo,
                              BookingService bookingService) {
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
-        this.flightInfo = flightInfo;
         this.bookingInfo = bookingInfo;
         this.bookingService = bookingService;
         initComponents();
@@ -57,6 +58,8 @@ public class FlightDetailPanel extends JPanel {
         JLabel lblTicketPrice = createLabel("Ticket Price:");
         JLabel lblSeat = createLabel("Seat:");
 
+        FlightInfo flightInfo = bookingInfo.getFlightInfo();
+
         flightInfoPanel.add(lblFlightCode, GAP_LEFT);
         flightInfoPanel.add(createValueLabel(String.valueOf(flightInfo.getFlightId())));
 
@@ -76,7 +79,10 @@ public class FlightDetailPanel extends JPanel {
         flightInfoPanel.add(createValueLabel(String.valueOf(flightInfo.getBasePrice())));
 
         flightInfoPanel.add(lblSeat, GAP_LEFT);
-        flightInfoPanel.add(createValueLabel("Not Selected"));
+        String seats = Arrays.stream(bookingInfo.getSeatInfos())
+                .map(SeatInfo::getSeatCode)
+                .collect(Collectors.joining(", "));
+        flightInfoPanel.add(createValueLabel(seats));
 
         add(flightInfoPanel, "align center");
 
